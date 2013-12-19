@@ -5,22 +5,7 @@
         <posx>0</posx>
         <posy>0</posy>
     </coordinates>
-    <controls>
-        <!--TextColor/Focusedcolor/ChannelBugColor--><!--TODO-->
-<!--         <control type="group" id="100">
-            <control type="label" id="100">
-                <description>TextColor</description>
-                <label>font14</label>
-            </control>  
-            <control type="label" id="100">
-                <description>Focusedcolor</description>
-                <label>FF7d7d7d</label>
-            </control>  
-            <control type="label" id="100">
-                <description>Channelbugcolor</description>
-                <label>FF00b4db</label>
-            </control>   
-        </control>   --> 
+    <controls>      
         <control type="image" id="101">
             <description>Background</description>
             <posx>0</posx>
@@ -39,9 +24,14 @@
             <aspectratio>keep</aspectratio>
             <texture></texture>
             <animation effect="fade" start="40" end="40" condition="True">Conditional</animation>
+        </control> 
+        <control type="button" id="520">
+            <description>Channel num color</description>
+            <label>0xFF00b4db</label>
+            <visible>false</visible>
         </control>
         <control type="group" id="102">
-            <animation effect="fade" time="500">VisibleChange</animation>
+            <animation effect="fade" time="500">VisibleChange</animation> 
             <control type="image">
                 <description>Info Background Image</description>
                 <posx>0</posx>
@@ -49,32 +39,110 @@
                 <width>1280</width>
                 <height>720</height>
                 <texture>pstvInfoWindow.png</texture>
+            </control>      
+            <control type="button" id="509">
+                <description>Dynamic art</description>
+                <label>logo</label>
+                <visible>false</visible>
             </control>
+            <control type="image" id="510">
+                <posx>1100</posx>
+                <posy>575</posy>
+                <description>Dynamic art</description>
+                <width>150</width>
+                <height>62</height>
+                <align>right</align>
+                <aligny>center</aligny>
+                <aspectratio>keep</aspectratio>
+            </control>   
+            <control type="image">
+                <description>Channel Background</description>        
+                <posx>0</posx>
+                <posy>500</posy>
+                <width>1280</width>
+                <height>550</height>
+                <colordiffuse>FFFFFFFF</colordiffuse>
+                <texture>BottomRSS.png</texture>
+            </control>
+            <control type="image">
+                <description>Channel Background</description>            
+                <posx>0</posx>
+                <posy>675</posy>
+                <width>1280</width>
+                <height>50</height>
+                <colordiffuse>FFFFFFFF</colordiffuse>
+                <texture>Bottom2.png</texture>
+            </control>
+            <control type="group">
+            <!-- landscape Window --> 
+                <posx>-15</posx>
+                <posy>530</posy>
+                <control type="image">
+                    <texture fallback="poster.png">$INFO[Player.Art(landscape)]</texture>
+                    <width>300</width>
+                    <height>125</height>
+                    <align>center</align>
+                    <aspectratio>keep</aspectratio>
+                </control>
+                <control type="image">
+                    <texture>$INFO[Player.Art(tvshow.landscape)]</texture>
+                    <width>300</width>
+                    <height>125</height>
+                    <align>center</align>
+                    <aspectratio>keep</aspectratio>
+                </control>
+                <control type="button" id="507">
+                    <description>Dynamic art</description>
+                    <label>landscape</label>
+                    <visible>false</visible>
+                </control>
+                <control type="image" id="508">
+                    <description>Dynamic art</description>
+                    <colordiffuse>C0C0C0C0</colordiffuse>
+                    <width>300</width>
+                    <height>125</height>
+                    <align>center</align>
+                    <aspectratio>keep</aspectratio>
+                </control> 
+            </control>
+            <control type="label" id="502">
+                <posx>-15</posx>
+                <posy>652</posy>
+                <description>Now watching Label</description>
+                <width min="100" max="300">auto</width>
+                <height>30</height>
+                <label>Now Playing</label>
+                <font>Font_Bold34</font>
+                <align>center</align>
+                <textcolor>C0C0C0C0</textcolor>
+            </control>  
+            
+            
+            
+            
+            
+            
+            
+            
+            
+            
+            
 <!--line 1 -->
             <control type="grouplist">
-                <posx>155</posx>
-                <posy>500</posy>
-                <width>850</width>
+                <posx>285</posx>
+                <posy>525</posy>
+                <width>750</width>
                 <height>30</height>
                 <orientation>horizontal</orientation>
                 <itemgap>5</itemgap>
-                <control type="label" id="502">
-                    <description>Now watching Label</description>
-                    <width>175</width>
-                    <height>30</height>
-                    <label>Now watching </label>
-                    <font>Font_Bold34</font>
-                    <align>center</align>
-                    <textcolor>FFFFFFFF</textcolor>
-                </control>   
                 <control type="label" id="503">
                     <description>Showtitle Label</description>
-                    <width min="5" max="650">auto</width>
+                    <width min="100" max="675">auto</width>
                     <height>30</height>
                     <label>Show title</label>
                     <font>Font_Bold34</font>
                     <align>left</align>
-                    <textcolor>FF00b4db</textcolor>
+                    <textcolor>FF0297eb</textcolor>
                 </control>
                 <control type="label">
                     <description>Showtitle Sep Label</description>
@@ -84,12 +152,12 @@
                     <font>font12</font>
                     <align>center</align>
                     <aligny>center</aligny>
-                    <textcolor>FF00b4db</textcolor>
+                    <textcolor>FF0297eb</textcolor>
                     <visible>!VideoPlayer.Content(movie)</visible>
                 </control>
                 <control type="label" id="504">
                     <description>ShowTitle Description</description>
-                    <width min="15" max="800">auto</width>
+                    <width>550</width>
                     <height>30</height>
                     <label>Show Title detail</label>
                     <font>Font_Reg28</font>
@@ -98,9 +166,9 @@
                 </control>
                 <control type="image" id="511">
                     <description>Sickbeard/Couchpotato Icon</description>            
-                    <width>30</width>
-                    <height>30</height>
-                    <aspectratio>keep</aspectratio>
+                    <width>15</width>
+                    <height>15</height>
+                    <aspectratio>scale</aspectratio>
                 </control>
     <!--chan bug?-->				
                 <control type="label">
@@ -110,7 +178,7 @@
                     <label></label>
                     <font>font_bold20</font>
                     <align>left</align>
-                    <textcolor>FF00b4db</textcolor>
+                    <textcolor>FF0297eb</textcolor>
                 </control>
             </control>
 <!--
@@ -124,71 +192,7 @@
 <aligny>center</aligny>
 <textcolor>FFFFFFFF</textcolor>
 </control> -->
-<!--line 2 logos-->      
-        <!--NowPlaying.Window-->   
-        <control type="group">  
-            <posx>155</posx>
-            <posy>540</posy>        
-            <!-- <control type="image" >
-                <texture fallback="clearlogo.png">$INFO[Player.Art(clearlogo)]</texture>
-                <width>170</width>
-                <height>75</height>
-                <align>center</align>
-                <aspectratio>keep</aspectratio>
-                <visible>[VideoPlayer.Content(movies) + IsEmpty(Control.GetImage(516))]</visible>
-            </control>
-            <control type="image" >
-                <texture fallback="clearlogo.png">$INFO[Player.Art(tvshow.clearlogo)]</texture>
-                <width>170</width>
-                <height>75</height>
-                <align>center</align>
-                <aspectratio>keep</aspectratio>
-                <visible>[VideoPlayer.Content(episodes) + IsEmpty(Control.GetImage(516))]</visible>
-            </control> -->
-            <control type="button" id="509">
-                <description>Dynamic art</description>
-                <label>logo</label>
-                <visible>false</visible>
-            </control>
-            <control type="image" id="510">
-                <description>Dynamic art</description>
-                <width>170</width>
-                <height>75</height>
-                <align>center</align>
-                <aspectratio>keep</aspectratio>
-            </control>
-        </control>
-        <!-- Poster Window --> 
-        <control type="image">
-            <texture fallback="poster.png">$INFO[Player.Art(poster)]</texture>
-            <posx>1040</posx>
-            <posy>420</posy>
-            <width  max="200">auto</width>
-            <height  max="300">auto</height>
-            <aspectratio>scale</aspectratio>
-        </control>
-        <control type="image">
-            <texture>$INFO[Player.Art(tvshow.poster)]</texture>
-            <posx>1040</posx>
-            <posy>420</posy>
-            <width  max="200">auto</width>
-            <height  max="300">auto</height>
-            <aspectratio>scale</aspectratio>
-        </control>
-        <control type="button" id="507">
-            <description>Dynamic art</description>
-            <label>landscape</label>
-            <visible>false</visible>
-        </control>
-        <control type="image" id="508">
-            <description>Dynamic art</description>
-            <posx>1040</posx>
-            <posy>420</posy>
-            <colordiffuse>FFFFFFFF</colordiffuse>
-            <width  max="200">auto</width>
-            <height  max="300">auto</height>
-            <aspectratio>scale</aspectratio>
-        </control>
+
         <control type="image" id="512">
             <description>Unaired NEW Icon</description> 
             <posx>1040</posx>
@@ -199,10 +203,10 @@
         </control>
         <control type="label" id="505">
             <description>Show Description</description>
-            <posx>335</posx>
-            <posy>540</posy>
-            <width min="635" max="645">auto</width>
-            <height>50</height>
+            <posx>285</posx>
+            <posy>550</posy>
+            <width min="100" max="750">auto</width>
+            <height>100</height>
             <align>left</align>
             <aligny>top</aligny>
             <label>Show Description</label>
@@ -212,7 +216,7 @@
             <autoscroll time="1000" delay="1000" repeat="2000">Skin.HasSetting(AutoScroll)</autoscroll>
         </control>
 <!--line 3 logos-->
-        <control type="grouplist">
+      <!--   <control type="grouplist">
             <posx>155</posx>
             <posy>625</posy>
             <width>850</width>
@@ -308,7 +312,7 @@
             </control>
         </control>                
             <!--hulu.logo-->
-            <control type="image">
+<!--             <control type="image">
                 <description>hulu</description>                
                 <posx>1175</posx>
                 <posy>626</posy>
@@ -319,7 +323,7 @@
                 <align>center</align>
                 <texture>hulu.png</texture>
                 <visible>[substring(Player.FilenameAndPath,hulu)]</visible>
-            </control>
+            </control>-->
 			<control type="image" id="506">
                 <description>Channel Logo</description>
                 <posx>10</posx>
@@ -328,12 +332,11 @@
                 <height>125</height>
     			<aspectratio>keep</aspectratio>
             </control>
-			
 
         
         
         
-        
+<!--         
         <control type="image" id="506">
             <description>Channel Logo2</description>
             <posx>160</posx>
@@ -342,28 +345,7 @@
             <height>75</height>
             <aspectratio>keep</aspectratio>
         </control>
-        <control type="label">
-            <description>Time</description>
-            <posx>17</posx>
-            <posy>5</posy>
-            <width min="40" max="100">auto</width>
-            <height>30</height>
-            <label>$INFO[System.Time]</label>
-            <font>font12</font>
-            <align>left</align>
-            <textcolor>FFFFFFFF</textcolor>
-        </control>
-        <control type="label" id="513">
-            <description>Weather</description>
-            <posx>17</posx>
-            <posy>30</posy>
-            <width min="40" max="100">auto</width>
-            <height>30</height>
-            <label>$INFO[Weather.Temperature]</label>
-            <font>font12</font>
-            <align>left</align>
-            <textcolor>FFFFFFFF</textcolor>
-        </control>
+        
         <control type="label" id="512">
             <description>Weather</description>
             <posx>17</posx>
@@ -374,7 +356,67 @@
             <font>font12</font>
             <align>left</align>
             <textcolor>FFFFFFFF</textcolor>
+        </control> -->
+        
+        
+        
+        
+        <control type="label">
+            <description>startime</description>
+            <posx>285</posx>
+            <posy>688</posy>
+            <width>100</width>
+            <height>10</height>
+            <label>$INFO[System.Time(ii:mm)]</label>
+            <font>font12</font>
+            <align>left</align>
+            <textcolor>C0C0C0C0</textcolor>
         </control>
+        <control type="progress" id="20">
+            <posx>360</posx>
+            <posy>690</posy>
+            <width>675</width>
+            <height>20</height>
+            <texturebg>osd/seek/progress_back.png</texturebg>
+            <lefttexture border="1">osd/seek/progresscache_left.png</lefttexture>
+            <midtexture border="1">osd/seek/progresscache_mid.png</midtexture>
+            <righttexture border="1">osd/seek/progresscache_right.png</righttexture>
+            <info>Player.ProgressCache</info>
         </control>
-    </controls>
+        <control type="progress" id="20">
+            <posx>360</posx>
+            <posy>690</posy>
+            <width>675</width>
+            <height>20</height>
+            <texturebg>osd/seek/progresscache_back.png</texturebg>
+            <lefttexture border="1">osd/seek/progress_left.png</lefttexture>
+            <midtexture border="1">osd/seek/progress_mid.png</midtexture>
+            <righttexture border="1">osd/seek/progress_right.png</righttexture>
+            <info>Player.Progress</info>
+        </control>
+        <control type="label">
+            <description>remtime</description>
+            <posx>1000</posx>
+            <posy>688</posy>
+            <width>100</width>
+            <height>10</height>
+            <label>$INFO[Player.TimeRemaining(ii:mm)]</label>
+            <font>font12</font>
+            <align>right</align>
+            <textcolor>C0C0C0C0</textcolor>
+        </control>
+        <control type="label">
+            <description>endtime</description>
+            <posx>1105</posx>
+            <posy>688</posy>
+            <width>100</width>
+            <height>10</height>
+            <label>$INFO[Player.FinishTime(ii:mm)]</label>
+            <font>font12</font>
+            <align>right</align>
+            <textcolor>C0C0C0C0</textcolor>
+        </control>
+            
+    </control>
+    </controls>      
 </window>

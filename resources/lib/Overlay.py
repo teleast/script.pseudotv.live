@@ -100,11 +100,18 @@ class TVOverlay(xbmcgui.WindowXMLDialog):
         self.ignoreInfoAction = False
         self.shortItemLength = 60
         self.runningActionChannel = 0
-        self.channelDelay = 0    
-        
-        for i in range(3):
-            self.channelLabel.append(xbmcgui.ControlImage(50 + (50 * i), 50, 50, 50, IMAGES_LOC + 'solid.png', colorDiffuse=''))
-            # self.channelLabel.append(xbmcgui.ControlImage(50 + (50 * i), 50, 50, 50, IMAGES_LOC + 'solid.png', colorDiffuse='0xFF00b4db'))
+        self.channelDelay = 0
+        # Channelbugcolor = '0xC0C0C0C0'  
+        Channelbugcolor = '0xFF0297eb'    
+        # # try:
+        # Channelbugcolor = str(self.getControl(520).getLabel())
+        # self.logDebug('Channelbugcolor = ' + str(Channelbugcolor))
+        # # except:
+            # # pass
+        for i in range(3):       
+
+            # self.channelLabel.append(xbmcgui.ControlImage(50 + (50 * i), 50, 50, 50, IMAGES_LOC + 'solid.png', colorDiffuse=''))
+            self.channelLabel.append(xbmcgui.ControlImage(50 + (50 * i), 50, 50, 50, IMAGES_LOC + 'solid.png', colorDiffuse = Channelbugcolor))
             self.addControl(self.channelLabel[i])
             self.channelLabel[i].setVisible(False)
 
@@ -763,9 +770,9 @@ class TVOverlay(xbmcgui.WindowXMLDialog):
         
             if chtype <= 7:
                 mediapathSeason, filename = os.path.split(mediapath)
-                self.logDebug('Overlay.mediapath.2 = ' + str(mediapathSeason))  
+                self.logDebug('Overlay.mediapath.2 = ' + uni(mediapathSeason))  
                 mediapathSeries = os.path.dirname(mediapathSeason)
-                self.logDebug('Overlay.mediapath.3 = ' + str(mediapathSeries))
+                self.logDebug('Overlay.mediapath.3 = ' + uni(mediapathSeries))
                 mediapathSeries1PNG = (mediapathSeries + '/' + type1 + ('.png'))
                 mediapathSeries1JPG = (mediapathSeries + '/' + type1 + ('.jpg'))
                 mediapathSeason1PNG = (mediapathSeason + '/' + type1 + ('.png')) 
