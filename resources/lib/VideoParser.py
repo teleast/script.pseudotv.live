@@ -43,6 +43,7 @@ class VideoParser:
         self.MKVExts = ['.mkv']
         self.FLVExts = ['.flv']
         self.TSExts  = ['.ts', '.m2ts']
+        self.mountedFS = False
 
 
     def log(self, msg, level = xbmc.LOGDEBUG):

@@ -764,7 +764,8 @@ class ChannelList:
         if append == False:
             channelplaylist.write(uni("#EXTM3U\n"))
 
-        if len(fileList) == 0:
+        # if len(fileList) == 0:
+        if None == fileList or len(fileList) == 0:
             self.log("Unable to get information about channel " + str(channel), xbmc.LOGERROR)
             channelplaylist.close()
             return False
@@ -2490,7 +2491,10 @@ class ChannelList:
             limit = int(setting3)
             self.log("createYoutubeFilelist, Overriding Global Parse-limit to " + str(limit))
             
-        stop = (limit / 25)
+        if setting2 == '2':
+            stop = 2
+        else:
+            stop = (limit / 25)
 
         if self.background == False:
             self.updateDialog.update(self.updateDialogProgress, "Updating channel " + str(self.settingChannel), "Parsing Youtube")
@@ -2670,7 +2674,8 @@ class ChannelList:
                         eptitle = eptitle[:50]     
                         studio = feed.entries[i].author_detail['name']                        
                         try:
-                            thumburl = feed.entries[i].media_thumbnail[0]['url']
+                            if 'media_thumbnail' in feed.entries[i]:
+                                thumburl = feed.entries[i].media_thumbnail[0]['url']
                         except:
                             self.log("createRSSFileList, Invalid media_thumbnail")
                             pass 
@@ -2681,6 +2686,7 @@ class ChannelList:
                             epdesc = head
                         else:
                             epdesc = feed.entries[i]['subtitle']
+                        
                         if 'media_content' in feed.entries[i]:
                             url = feed.entries[i].media_content[0]['url']
                         else:
@@ -2690,11 +2696,11 @@ class ChannelList:
                         runtimex = feed.entries[i]['itunes_duration']
                         summary = feed.channel.subtitle
                         summary = summary.replace(":", "")
-                        try:
+                        if feed.channel.has_key("tags"):
                             genre = feed.channel.tags[0]['term']
                             genre = uni(genre)
-                        except:
-                            pass
+                        else:
+                            genre = "RSS"
                         time = (feed.entries[i].published_parsed)
                         time = str(time)
                         time = time.replace("time.struct_time", "")
