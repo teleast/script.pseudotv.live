@@ -24,9 +24,9 @@ import ChannelList
 # import ConfigParser
 # import Overlay
 import time
+import sys, re
 
-
-# from xml.parsers.expat import ExpatError
+from xml.etree import ElementTree as ET
 from FileAccess import FileLock, FileAccess
 
 class Migrate:
@@ -34,7 +34,10 @@ class Migrate:
     def log(self, msg, level = xbmc.LOGDEBUG):
         Globals.log('Migrate: ' + msg, level)
 
-
+    def logDebug(self, msg, level = xbmc.LOGDEBUG):
+        if Globals.REAL_SETTINGS.getSetting('enable_Debug') == "true":
+            Globals.log('Migrate: ' + msg, level)
+            
     def migrate(self):
         self.log("migrate")
         settingsFile = xbmc.translatePath(os.path.join(Globals.SETTINGS_LOC, 'settings2.xml'))    
@@ -139,10 +142,96 @@ class Migrate:
         self.updateDialog = xbmcgui.DialogProgress()
         self.updateDialog.create("PseudoTV Live", "Auto Tune")
         
-        # LiveTV - USTVNOW
+        # LiveTV - PVR
         self.updateDialogProgress = 5
-        if Globals.REAL_SETTINGS.getSetting("autoFindLiveUSTVnow") == "true" :
+        if Globals.REAL_SETTINGS.getSetting("autoFindLivePVR") == "true":
+            CHnum = 0
+            RCHnum = 0
+            CHname = ''
+            CHid = 0
+            CHzapit = ''
+            CHlst = ''
+            if channelNum == 0:
+                channelNum = 1
+            try:
+                json_query = '{"jsonrpc":"2.0","method":"PVR.GetChannels","params":{"channelgroupid":2}, "id":1}'
+                json_folder_detail = chanlist.sendJSON(json_query)
+                file_detail = re.compile( "{(.*?)}", re.DOTALL ).findall(json_folder_detail)
+                self.log('autoFindLivePVR, file_detail = ' + str(file_detail))
+                self.xmlTvFile = xbmc.translatePath(os.path.join(Globals.REAL_SETTINGS.getSetting('xmltvLOC'), 'xmltv.xml'))
+
+                f = FileAccess.open(self.xmlTvFile, "rb")
+                tree = ET.parse(f)
+                root = tree.getroot()
+
+                file_detail = str(file_detail)
+                CHnameLST = re.findall('"label" *: *(.*?),', file_detail)
+                CHidLST = re.findall('"channelid" *: *(.*?),', file_detail)
+                self.log('autoFindLivePVR, CHnameLST = ' + str(CHnameLST))
+                self.log('autoFindLivePVR, CHidLST = ' + str(CHidLST))
+                    
+                for CHnum in range(len(file_detail)):
+                    CHname = CHnameLST[CHnum]
+                    CHname = str(CHname)
+                    CHname = CHname.split('"', 1)[-1]
+                    CHname = CHname.split('"')[0]
+                    CHlst = (CHname + ',' + CHidLST[CHnum])
+                    inSet = False
+                    self.log('autoFindLivePVR, CHlst.1 = ' + str(CHlst))
+                    # search xmltv for channel name, then find its id
+                    for elem in root.getiterator():
+                        if elem.tag == ("channel"):
+                            name = elem.findall('display-name')
+                            for i in name:
+                                RCHnum = (CHnum + 1)
+                                if CHname == i.text:
+                                    CHzapit = elem.attrib
+                                    CHzapit = str(CHzapit)
+                                    CHzapit = CHzapit.split(": '", 1)[-1]
+                                    CHzapit = CHzapit.split("'")[0]
+                                    CHlst = (CHlst + ',' + str(CHzapit))
+                                    self.log('autoFindLivePVR, CHlst.2 = ' + str(CHlst))
+                                    inSet = True
+                    
+                    self.logDebug('inSet = ' + str(inSet) + ' , ' +  str(CHlst))
+                    if inSet == True:
+                        Globals.ADDON_SETTINGS.setSetting("Channel_" + str(channelNum) + "_type", "8")
+                        Globals.ADDON_SETTINGS.setSetting("Channel_" + str(channelNum) + "_time", "0")
+                        Globals.ADDON_SETTINGS.setSetting("Channel_" + str(channelNum) + "_1", CHzapit)
+                        Globals.ADDON_SETTINGS.setSetting("Channel_" + str(channelNum) + "_2", "pvr://channels/tv/All TV channels/" + str(CHnum) + ".pvr")
+                        Globals.ADDON_SETTINGS.setSetting("Channel_" + str(channelNum) + "_3", "xmltv")
+                        Globals.ADDON_SETTINGS.setSetting("Channel_" + str(channelNum) + "_4", "")
+                        Globals.ADDON_SETTINGS.setSetting("Channel_" + str(channelNum) + "_rulecount", "1")
+                        Globals.ADDON_SETTINGS.setSetting("Channel_" + str(channelNum) + "_rule_1_id", "1")
+                        Globals.ADDON_SETTINGS.setSetting("Channel_" + str(channelNum) + "_rule_1_opt_1", CHname + 'LiveTV')  
+                        Globals.ADDON_SETTINGS.setSetting("Channel_" + str(channelNum) + "_changed", "true")
+                        channelNum = channelNum + 1
+                    
+                    if inSet == False:
+                        Globals.ADDON_SETTINGS.setSetting("Channel_" + str(channelNum) + "_type", "9")
+                        Globals.ADDON_SETTINGS.setSetting("Channel_" + str(channelNum) + "_time", "0")
+                        Globals.ADDON_SETTINGS.setSetting("Channel_" + str(channelNum) + "_1", "5400")
+                        Globals.ADDON_SETTINGS.setSetting("Channel_" + str(channelNum) + "_2", "pvr://channels/tv/All TV channels/" + str(CHnum) + ".pvr")
+                        Globals.ADDON_SETTINGS.setSetting("Channel_" + str(channelNum) + "_3", CHname)
+                        Globals.ADDON_SETTINGS.setSetting("Channel_" + str(channelNum) + "_4", "XMLTV DATA NOT FOUND")
+                        Globals.ADDON_SETTINGS.setSetting("Channel_" + str(channelNum) + "_rulecount", "1")
+                        Globals.ADDON_SETTINGS.setSetting("Channel_" + str(channelNum) + "_rule_1_id", "1")
+                        Globals.ADDON_SETTINGS.setSetting("Channel_" + str(channelNum) + "_rule_1_opt_1", CHname + 'LiveTV')  
+                        Globals.ADDON_SETTINGS.setSetting("Channel_" + str(channelNum) + "_changed", "true")
+                        channelNum = channelNum + 1
+                    
+                    
+            except:
+                pass
+            channelNum = channelNum
+            self.log('channelNum = ' + str(channelNum))
+            
+        # LiveTV - USTVNOW
+        self.updateDialogProgress = 10
+        if Globals.REAL_SETTINGS.getSetting("autoFindLiveUSTVnow") == "true":
             id = 'plugin.video.ustvnow'
+            if channelNum == 0:
+                channelNum = 1
             try:
                 xbmcaddon.Addon(id)
                 installed = True
@@ -154,71 +243,72 @@ class Migrate:
                 self.updateDialog.update(self.updateDialogProgress,"Auto Tune","Adding USTVnow Channel","")
                 for i in range(1):
                     # add ustvnow presets
+                    Globals.ADDON_SETTINGS.setSetting("Channel_" + str(channelNum) + "_type", "8")
+                    Globals.ADDON_SETTINGS.setSetting("Channel_" + str(channelNum) + "_time", "0")
+                    Globals.ADDON_SETTINGS.setSetting("Channel_" + str(channelNum) + "_1", "I27.28460898.microsoft.com")
+                    Globals.ADDON_SETTINGS.setSetting("Channel_" + str(channelNum) + "_2", "plugin://plugin.video.ustvnow/?name=ABC&mode=play")
+                    Globals.ADDON_SETTINGS.setSetting("Channel_" + str(channelNum) + "_3", "ustvnow")
+                    Globals.ADDON_SETTINGS.setSetting("Channel_" + str(channelNum) + "_rulecount", "1")
+                    Globals.ADDON_SETTINGS.setSetting("Channel_" + str(channelNum) + "_rule_1_id", "1")
+                    Globals.ADDON_SETTINGS.setSetting("Channel_" + str(channelNum) + "_rule_1_opt_1", "ABC USTVNOW")  
+                    Globals.ADDON_SETTINGS.setSetting("Channel_" + str(channelNum) + "_changed", "true")
                     Globals.ADDON_SETTINGS.setSetting("Channel_" + str(channelNum + 1) + "_type", "8")
                     Globals.ADDON_SETTINGS.setSetting("Channel_" + str(channelNum + 1) + "_time", "0")
-                    Globals.ADDON_SETTINGS.setSetting("Channel_" + str(channelNum + 1) + "_1", "I27.28460898.microsoft.com")
-                    Globals.ADDON_SETTINGS.setSetting("Channel_" + str(channelNum + 1) + "_2", "plugin://plugin.video.ustvnow/?name=ABC&mode=play")
+                    Globals.ADDON_SETTINGS.setSetting("Channel_" + str(channelNum + 1) + "_1", "I21.28459588.microsoft.com")
+                    Globals.ADDON_SETTINGS.setSetting("Channel_" + str(channelNum + 1) + "_2", "plugin://plugin.video.ustvnow/?name=CBS&mode=play")    
                     Globals.ADDON_SETTINGS.setSetting("Channel_" + str(channelNum + 1) + "_3", "ustvnow")
                     Globals.ADDON_SETTINGS.setSetting("Channel_" + str(channelNum + 1) + "_rulecount", "1")
                     Globals.ADDON_SETTINGS.setSetting("Channel_" + str(channelNum + 1) + "_rule_1_id", "1")
-                    Globals.ADDON_SETTINGS.setSetting("Channel_" + str(channelNum + 1) + "_rule_1_opt_1", "ABC USTVNOW")  
+                    Globals.ADDON_SETTINGS.setSetting("Channel_" + str(channelNum + 1) + "_rule_1_opt_1", "CBS USTVNOW") 
                     Globals.ADDON_SETTINGS.setSetting("Channel_" + str(channelNum + 1) + "_changed", "true")
                     Globals.ADDON_SETTINGS.setSetting("Channel_" + str(channelNum + 2) + "_type", "8")
                     Globals.ADDON_SETTINGS.setSetting("Channel_" + str(channelNum + 2) + "_time", "0")
-                    Globals.ADDON_SETTINGS.setSetting("Channel_" + str(channelNum + 2) + "_1", "I21.28459588.microsoft.com")
-                    Globals.ADDON_SETTINGS.setSetting("Channel_" + str(channelNum + 2) + "_2", "plugin://plugin.video.ustvnow/?name=CBS&mode=play")    
+                    Globals.ADDON_SETTINGS.setSetting("Channel_" + str(channelNum + 2) + "_1", "I15.28461494.microsoft.com")
+                    Globals.ADDON_SETTINGS.setSetting("Channel_" + str(channelNum + 2) + "_2", "plugin://plugin.video.ustvnow/?name=CW&mode=play")  
                     Globals.ADDON_SETTINGS.setSetting("Channel_" + str(channelNum + 2) + "_3", "ustvnow")
                     Globals.ADDON_SETTINGS.setSetting("Channel_" + str(channelNum + 2) + "_rulecount", "1")
                     Globals.ADDON_SETTINGS.setSetting("Channel_" + str(channelNum + 2) + "_rule_1_id", "1")
-                    Globals.ADDON_SETTINGS.setSetting("Channel_" + str(channelNum + 2) + "_rule_1_opt_1", "CBS USTVNOW") 
+                    Globals.ADDON_SETTINGS.setSetting("Channel_" + str(channelNum + 2) + "_rule_1_opt_1", "CW USTVNOW")
                     Globals.ADDON_SETTINGS.setSetting("Channel_" + str(channelNum + 2) + "_changed", "true")
                     Globals.ADDON_SETTINGS.setSetting("Channel_" + str(channelNum + 3) + "_type", "8")
                     Globals.ADDON_SETTINGS.setSetting("Channel_" + str(channelNum + 3) + "_time", "0")
-                    Globals.ADDON_SETTINGS.setSetting("Channel_" + str(channelNum + 3) + "_1", "I15.28461494.microsoft.com")
-                    Globals.ADDON_SETTINGS.setSetting("Channel_" + str(channelNum + 3) + "_2", "plugin://plugin.video.ustvnow/?name=CW&mode=play")  
+                    Globals.ADDON_SETTINGS.setSetting("Channel_" + str(channelNum + 3) + "_1", "I43.28457987.microsoft.com")
+                    Globals.ADDON_SETTINGS.setSetting("Channel_" + str(channelNum + 3) + "_2", "plugin://plugin.video.ustvnow/?name=FOX&mode=play")   
                     Globals.ADDON_SETTINGS.setSetting("Channel_" + str(channelNum + 3) + "_3", "ustvnow")
                     Globals.ADDON_SETTINGS.setSetting("Channel_" + str(channelNum + 3) + "_rulecount", "1")
                     Globals.ADDON_SETTINGS.setSetting("Channel_" + str(channelNum + 3) + "_rule_1_id", "1")
-                    Globals.ADDON_SETTINGS.setSetting("Channel_" + str(channelNum + 3) + "_rule_1_opt_1", "CW USTVNOW")
+                    Globals.ADDON_SETTINGS.setSetting("Channel_" + str(channelNum + 3) + "_rule_1_opt_1", "FOX USTVNOW")  
                     Globals.ADDON_SETTINGS.setSetting("Channel_" + str(channelNum + 3) + "_changed", "true")
                     Globals.ADDON_SETTINGS.setSetting("Channel_" + str(channelNum + 4) + "_type", "8")
                     Globals.ADDON_SETTINGS.setSetting("Channel_" + str(channelNum + 4) + "_time", "0")
-                    Globals.ADDON_SETTINGS.setSetting("Channel_" + str(channelNum + 4) + "_1", "I43.28457987.microsoft.com")
-                    Globals.ADDON_SETTINGS.setSetting("Channel_" + str(channelNum + 4) + "_2", "plugin://plugin.video.ustvnow/?name=FOX&mode=play")   
+                    Globals.ADDON_SETTINGS.setSetting("Channel_" + str(channelNum + 4) + "_1", "I8.28460167.microsoft.com")
+                    Globals.ADDON_SETTINGS.setSetting("Channel_" + str(channelNum + 4) + "_2", "plugin://plugin.video.ustvnow/?name=NBC&mode=play")     
                     Globals.ADDON_SETTINGS.setSetting("Channel_" + str(channelNum + 4) + "_3", "ustvnow")
                     Globals.ADDON_SETTINGS.setSetting("Channel_" + str(channelNum + 4) + "_rulecount", "1")
                     Globals.ADDON_SETTINGS.setSetting("Channel_" + str(channelNum + 4) + "_rule_1_id", "1")
-                    Globals.ADDON_SETTINGS.setSetting("Channel_" + str(channelNum + 4) + "_rule_1_opt_1", "FOX USTVNOW")  
+                    Globals.ADDON_SETTINGS.setSetting("Channel_" + str(channelNum + 4) + "_rule_1_opt_1", "NBC USTVNOW")  
                     Globals.ADDON_SETTINGS.setSetting("Channel_" + str(channelNum + 4) + "_changed", "true")
                     Globals.ADDON_SETTINGS.setSetting("Channel_" + str(channelNum + 5) + "_type", "8")
                     Globals.ADDON_SETTINGS.setSetting("Channel_" + str(channelNum + 5) + "_time", "0")
-                    Globals.ADDON_SETTINGS.setSetting("Channel_" + str(channelNum + 5) + "_1", "I8.28460167.microsoft.com")
-                    Globals.ADDON_SETTINGS.setSetting("Channel_" + str(channelNum + 5) + "_2", "plugin://plugin.video.ustvnow/?name=NBC&mode=play")     
+                    Globals.ADDON_SETTINGS.setSetting("Channel_" + str(channelNum + 5) + "_1", "I33.28455626.microsoft.com")
+                    Globals.ADDON_SETTINGS.setSetting("Channel_" + str(channelNum + 5) + "_2", "plugin://plugin.video.ustvnow/?name=PBS&mode=play")   
                     Globals.ADDON_SETTINGS.setSetting("Channel_" + str(channelNum + 5) + "_3", "ustvnow")
                     Globals.ADDON_SETTINGS.setSetting("Channel_" + str(channelNum + 5) + "_rulecount", "1")
                     Globals.ADDON_SETTINGS.setSetting("Channel_" + str(channelNum + 5) + "_rule_1_id", "1")
-                    Globals.ADDON_SETTINGS.setSetting("Channel_" + str(channelNum + 5) + "_rule_1_opt_1", "NBC USTVNOW")  
+                    Globals.ADDON_SETTINGS.setSetting("Channel_" + str(channelNum + 5) + "_rule_1_opt_1", "PBS USTVNOW")
                     Globals.ADDON_SETTINGS.setSetting("Channel_" + str(channelNum + 5) + "_changed", "true")
                     Globals.ADDON_SETTINGS.setSetting("Channel_" + str(channelNum + 6) + "_type", "8")
                     Globals.ADDON_SETTINGS.setSetting("Channel_" + str(channelNum + 6) + "_time", "0")
-                    Globals.ADDON_SETTINGS.setSetting("Channel_" + str(channelNum + 6) + "_1", "I33.28455626.microsoft.com")
-                    Globals.ADDON_SETTINGS.setSetting("Channel_" + str(channelNum + 6) + "_2", "plugin://plugin.video.ustvnow/?name=PBS&mode=play")   
+                    Globals.ADDON_SETTINGS.setSetting("Channel_" + str(channelNum + 6) + "_1", "I238.28455933.microsoft.com")
+                    Globals.ADDON_SETTINGS.setSetting("Channel_" + str(channelNum + 6) + "_2", "plugin://plugin.video.ustvnow/?name=My9&mode=play")  
                     Globals.ADDON_SETTINGS.setSetting("Channel_" + str(channelNum + 6) + "_3", "ustvnow")
                     Globals.ADDON_SETTINGS.setSetting("Channel_" + str(channelNum + 6) + "_rulecount", "1")
                     Globals.ADDON_SETTINGS.setSetting("Channel_" + str(channelNum + 6) + "_rule_1_id", "1")
-                    Globals.ADDON_SETTINGS.setSetting("Channel_" + str(channelNum + 6) + "_rule_1_opt_1", "PBS USTVNOW")
+                    Globals.ADDON_SETTINGS.setSetting("Channel_" + str(channelNum + 6) + "_rule_1_opt_1", "MY9 USTVNOW")  
                     Globals.ADDON_SETTINGS.setSetting("Channel_" + str(channelNum + 6) + "_changed", "true")
-                    Globals.ADDON_SETTINGS.setSetting("Channel_" + str(channelNum + 7) + "_type", "8")
-                    Globals.ADDON_SETTINGS.setSetting("Channel_" + str(channelNum + 7) + "_time", "0")
-                    Globals.ADDON_SETTINGS.setSetting("Channel_" + str(channelNum + 7) + "_1", "I238.28455933.microsoft.com")
-                    Globals.ADDON_SETTINGS.setSetting("Channel_" + str(channelNum + 7) + "_2", "plugin://plugin.video.ustvnow/?name=My9&mode=play")  
-                    Globals.ADDON_SETTINGS.setSetting("Channel_" + str(channelNum + 7) + "_3", "ustvnow")
-                    Globals.ADDON_SETTINGS.setSetting("Channel_" + str(channelNum + 7) + "_rulecount", "1")
-                    Globals.ADDON_SETTINGS.setSetting("Channel_" + str(channelNum + 7) + "_rule_1_id", "1")
-                    Globals.ADDON_SETTINGS.setSetting("Channel_" + str(channelNum + 7) + "_rule_1_opt_1", "MY9 USTVNOW")  
-                    Globals.ADDON_SETTINGS.setSetting("Channel_" + str(channelNum + 7) + "_changed", "true")
         
             channelNum = channelNum + 7
+            self.log('channelNum = ' + str(channelNum))
         
         # LiveTV - Hdhomerun
         self.updateDialogProgress = 10
@@ -586,8 +676,8 @@ class Migrate:
         # reset auto tune settings        
         Globals.REAL_SETTINGS.setSetting('Autotune', "false")
         Globals.REAL_SETTINGS.setSetting('Warning1', "false")
+        Globals.REAL_SETTINGS.setSetting('autoFindLivePVR', "false")
         Globals.REAL_SETTINGS.setSetting('autoFindLiveUSTVnow', "false")
-        Globals.REAL_SETTINGS.setSetting("autoFindLiveHDhomerun","false")
         Globals.REAL_SETTINGS.setSetting("autoFindCustom","false")
         Globals.REAL_SETTINGS.setSetting("autoFindNetworks","false")
         Globals.REAL_SETTINGS.setSetting("autoFindStudios","false")

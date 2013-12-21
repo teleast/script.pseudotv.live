@@ -228,7 +228,7 @@
                 <description>Show Name Label</description>
                 <width min="5" max="840">auto</width>
                 <label>Show Name</label>
-                <font>font_bold20</font>
+                <font>Font_Bold34</font>
                 <textcolor>FF00b4db</textcolor>
             </control>
             <control type="label">
@@ -242,7 +242,7 @@
                 <description>Show Title Label</description>
                 <width min="-5" max="840">auto</width>
                 <label>Show Title</label>
-                <font>font_bold20</font>
+                <font>Font_Reg28</font>
                 <textcolor>FFFFFFFF</textcolor>
             </control>        
         </control>
@@ -266,7 +266,6 @@
             <aligny>top</aligny>
             <textcolor>FFFFFFFF</textcolor>
             <wrapmultiline>true</wrapmultiline>
-    		<autoscroll time="2000" delay="2000" repeat="9000">Skin.HasSetting(AutoScroll)</autoscroll>
         </control>
         <control type="image" id="503">
             <description>Show Channel Icon</description>
@@ -298,13 +297,13 @@
             <label>Time 2</label>
             <font>font12</font>
             <align>left</align>
-        <aligny>center</aligny>
+            <aligny>center</aligny>
             <textcolor>FFFFFFFF</textcolor>
         </control>
 		<control type="label" id="103">
             <description>Time Right Label</description>
             <posx>915</posx>
-        <posy>152</posy>
+            <posy>152</posy>
             <width>270</width>
             <height>26</height>
             <label>Time 2</label>
@@ -599,17 +598,5 @@
         <texture>hulu.png</texture>
         <visible>[substring(Player.FilenameAndPath,hulu)]</visible>
     </control>
-<!--     <control type="image">
-        <description>NavFlagEpg Image</description>
-        <posy>625</posy>
-        <posx>800</posx>
-        <width>200</width>
-        <height>30</height>
-        <align>right</align>
-        <aligny>center</aligny>
-        <colordiffuse>FFFFFFFF</colordiffuse>
-        <aspectratio>keep</aspectratio>
-        <texture>NavFlagEpg.png</texture>
-    </control> -->
 </controls>
 </window>

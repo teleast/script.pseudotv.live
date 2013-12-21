@@ -696,6 +696,10 @@ class ChannelList:
                         fileList = self.buildInternetTVFileList(setting1, setting2, setting3, setting4, channel)
                         self.log('makeChannelList, Building STRM channel')
                         
+                elif setting2[0:3] == 'pvr':#pvr check
+                    fileList = self.buildInternetTVFileList(setting1, setting2, setting3, setting4, channel)
+                    self.log('makeChannelList, Building pvr channel')
+                        
                         
         elif chtype == 10: # Youtube
             self.log("Building Youtube Channel " + setting1 + " using type " + setting2 + "...")
@@ -1976,7 +1980,6 @@ class ChannelList:
         
         if setting3 == 'ustvnow':
             f = urlopen(self.xmlTvFile)    
-        
         elif setting3 != 'ustvnow':
             f = FileAccess.open(self.xmlTvFile, "rb")
         
@@ -2048,7 +2051,6 @@ class ChannelList:
                         if movie:
                             category = 'Movie'
 
-
                         #Decipher the TVDB ID by using the Zap2it ID in dd_progid
                         dd_progid = ''
                         tvdbid = 0
@@ -2064,16 +2066,16 @@ class ChannelList:
                             for epNum in episodeNumList:
                                 if epNum.attrib["system"] == 'dd_progid':
                                     dd_progid = epNum.text
-                                    # self.log('dd_progid %s' % dd_progid) ##debug
+                                    self.logDebug('dd_progid %s' % dd_progid)
 
                             #The Zap2it ID is the first part of the string delimited by the dot
                             #  Ex: <episode-num system="dd_progid">MV00044257.0000</episode-num>
                             dd_progid = dd_progid.split('.',1)[0]
                             try:
                                 tvdbid = tvdbAPI.getIdByZap2it(dd_progid)
-                                # self.log('title.tvdbid.1 = ' + title + ' - ' + str(tvdbid))#debug
+                                self.logDebug('title.tvdbid.1 = ' + title + ' - ' + str(tvdbid))
                                 if tvdbid == 0 or tvdbid == '0' or tvdbid == None or tvdbid == 'None': #clean output
-                                    # self.log('clean.title.tvdbid.1 = ' + title + ' - ' + str(tvdbid))#debug
+                                    self.logDebug('clean.title.tvdbid.1 = ' + title + ' - ' + str(tvdbid))
                                     tvdbid = 0
                             except:
                                 pass
@@ -2084,12 +2086,12 @@ class ChannelList:
                                 try:
                                     t = tvdb_api.Tvdb()
                                     tvdbid = t[title]['seriesid']
-                                    # self.log('title.tvdbid.2 = ' + title + ' - ' + str(tvdbid))#debug
+                                    self.logDebug('title.tvdbid.2 = ' + title + ' - ' + str(tvdbid))
                                     if tvdbid == 0 or tvdbid == '0' or tvdbid == None or tvdbid == 'None':
                                         tvdbid = tvdbAPI.getIdByShowName(elem.findtext('title'))
-                                        # self.log('title.tvdbid.3 = ' + title + ' - ' + str(tvdbid))#debug
+                                        self.logDebug('title.tvdbid.3 = ' + title + ' - ' + str(tvdbid))
                                         if tvdbid == 0 or tvdbid == '0' or tvdbid == None or tvdbid == 'None': #clean output
-                                            # self.log('clean.title.tvdbid.2 = ' + title + ' - ' + str(tvdbid))#debug
+                                            self.logDebug('clean.title.tvdbid.2 = ' + title + ' - ' + str(tvdbid))
                                             tvdbid = 0
                                 except:
                                     pass
@@ -2098,11 +2100,11 @@ class ChannelList:
                             if imdbid == 0:
                                 try:
                                     imdbid = tvdbAPI.getIMDBbyShowName(elem.findtext('title'))  
-                                    # self.log('title.imdbid.1 = ' + title + ' - ' + str(imdbid))#debug
+                                    self.logDebug('title.imdbid.1 = ' + title + ' - ' + str(imdbid))
                                     if imdbid == 0 or imdbid == '0' or imdbid == None or imdbid == 'None':
                                         t = tvdb_api.Tvdb()
                                         imdbid = t[title]['imdb_id']  
-                                        # self.log('title.imdbid.2 = ' + title + ' - ' + str(imdbid))#debug
+                                        self.logDebug('title.imdbid.2 = ' + title + ' - ' + str(imdbid))
                                         if imdbid == 0 or imdbid == '0' or imdbid == None or imdbid == 'None': #clean output
                                             imdbid = 0
                                 except:
@@ -2112,7 +2114,7 @@ class ChannelList:
                             if tvdbid == 0 and imdbid != 0:
                                 try:
                                     tvdbid = tvdbAPI.getIdByIMDB(imdbid)  
-                                    # self.log('title.tvdbid.4 = ' + title + ' - ' + str(imdbid))#debug   
+                                    self.logDebug('title.tvdbid.4 = ' + title + ' - ' + str(imdbid))   
                                     if tvdbid == 0 or tvdbid == '0' or tvdbid == None or tvdbid == 'None': #clean output
                                         tvdbid = 0  
                                 except:
@@ -2135,13 +2137,13 @@ class ChannelList:
                                         episode = ET.fromstring(tvdbAPI.getEpisodeByAirdate(tvdbid, airdate))
                                         episode = episode.find("Episode")
                                         seasonNumber = episode.findtext("SeasonNumber")
-                                        # self.log('title.seasonNumber.1 = ' + title + ' - ' + str(seasonNumber))#debug
+                                        self.logDebug('title.seasonNumber.1 = ' + title + ' - ' + str(seasonNumber))
                                         episodeNumber = episode.findtext("EpisodeNumber")
-                                        # self.log('title.episodeNumber.1 = ' + title + ' - ' + str(episodeNumber))#debug
+                                        self.logDebug('title.episodeNumber.1 = ' + title + ' - ' + str(episodeNumber))
                                         episodeDesc = episode.findtext("Overview")
-                                        # self.log('title.episodeDesc.1 = ' + title + ' - ' + episodeDesc)#debug 
+                                        self.logDebug('title.episodeDesc.1 = ' + title + ' - ' + episodeDesc)
                                         episodeName = episode.findtext("EpisodeName")  
-                                        # self.log('title.episodename.1 = ' + title + ' - ' + episodeName)#debug 
+                                        self.logDebug('title.episodename.1 = ' + title + ' - ' + episodeName) 
                                     except:
                                         pass
  
@@ -2155,22 +2157,22 @@ class ChannelList:
                                 if episodeName == None or episodeName == 'None' or episodeName == ' ':
                                     episodeName = ''
 
-                            ## Find missing information by compairing subtitle to episodename. 
+                            ## Find missing information by comparing subtitle to episode-name. 
                             if subtitle != 'LiveTV' and (seasonNumber == 0 or episodeNumber == 0):
                                 try:
                                     t = tvdb_api.Tvdb()
                                     episode = t[title].search(subtitle, key = 'episodename')# Output example: [<Episode 01x01 - My First Day>]
                                     episode = str(episode)
-                                    # self.log('title.episodename.2 = ' + title + ' - ' + episode)#debug 
+                                    self.logDebug('title.episodename.2 = ' + title + ' - ' + episode) 
                                     episodeNum = episode.split(' - ')[0]
                                     episodeNum = episodeNum.split('[<Episode ', 1)[-1]
                                     seasonNumber = episodeNum.split('x')[0]
-                                    # self.log('title.seasonNumber.2 = ' + title + ' - ' + str(seasonNumber))#debug 
+                                    self.logDebug('title.seasonNumber.2 = ' + title + ' - ' + str(seasonNumber)) 
                                     episodeNumber = episodeNum.split('x', 1)[-1]
-                                    # self.log('title.episodeNumber.2 = ' + title + ' - ' + str(episodeNumber))#debug 
+                                    self.logDebug('title.episodeNumber.2 = ' + title + ' - ' + str(episodeNumber)) 
                                     episodeName = episode.split(' - ', 1)[-1]
                                     episodeName = episodeName.split('>]')[0]
-                                    # self.log('title.episodeName.2 = ' + title + ' - ' + str(episodeName))#debug
+                                    self.logDebug('title.episodeName.2 = ' + title + ' - ' + str(episodeName))
                                 except:
                                     pass
                                                                             
@@ -2188,7 +2190,7 @@ class ChannelList:
                                     t = tvdb_api.Tvdb()
                                     episode = t[title][seasonNumber][episodeNumber]
                                     episodeDesc = episode['overview'] 
-                                    # self.log('title.episodeDesc.2 = ' + title + ' - ' + str(episodeDesc))#debug
+                                    self.logDebug('title.episodeDesc.2 = ' + title + ' - ' + str(episodeDesc))
                                 except:
                                     pass
                             
@@ -2197,7 +2199,7 @@ class ChannelList:
                                     t = tvdb_api.Tvdb()
                                     episode = t[title][seasonNumber][episodeNumber]
                                     episodeName = episode['episodename']
-                                    # self.log('title.episodeName.3 = ' + title + ' - ' + str(episodeName))#debug
+                                    self.logDebug('title.episodeName.3 = ' + title + ' - ' + str(episodeName))
                                 except:
                                     pass
                             
@@ -2205,11 +2207,11 @@ class ChannelList:
                                 try:
                                     t = tvdb_api.Tvdb()
                                     episodeGenre = t[title]['genre']## Output ex. Comedy|Talk Show|
-                                    self.log('title.episodeGenre.1 = ' + title + ' - ' + str(episodeGenre))#debug
+                                    self.logDebug('title.episodeGenre.1 = ' + title + ' - ' + str(episodeGenre))
                                     episodeGenre = episodeGenre.split('|', 1)[-1]
-                                    self.log('title.episodeGenre.2 = ' + title + ' - ' + str(episodeGenre))#debug
+                                    self.logDebug('title.episodeGenre.2 = ' + title + ' - ' + str(episodeGenre))
                                     category = episodeGenre.split("|")[0]
-                                    self.log('title.episodeGenre.3 = ' + title + ' - ' + str(category))#debug
+                                    self.logDebug('title.episodeGenre.3 = ' + title + ' - ' + str(category))
                                     if category == 0 or category == '0' or category == None or category == 'None': #clean output
                                         category = 'Unknown'  
                                 except:
@@ -2236,13 +2238,14 @@ class ChannelList:
                                 #Date element holds the original air date of the program
                                 movieYear = elem.findtext('date')
                                 self.logDebug('movieYear = ' + str(movieYear))
+                                movieTitle = (uni(elem.findtext('title')), movieYear)
                                 movieInfo = tmdbAPI.getMovie(uni(elem.findtext('title')), movieYear)
                                 imdbid = movieInfo['imdb_id']
                                 self.logDebug('movie.title.imdbid.1 = ' + title + ' - ' + str(imdbid))
                                 if imdbid == 0 or imdbid == '0' or imdbid == None or imdbid == 'None': ## Fix search
                                     tmdbs = TMDB(REAL_SETTINGS.getSetting('tmdb.apikey'))
                                     search = tmdbs.Search()
-                                    search.movie({'query': title + '(' + movieYear + ')'})
+                                    search.movie({'query': movieTitle + '(' + movieYear + ')'})
                                     for s in search.results:
                                         imdbid = (s['id'])
                                         self.logDebug('movie.title.imdbid.2 = ' + title + ' - ' + str(imdbid))
@@ -2298,7 +2301,6 @@ class ChannelList:
                         else:
                             Unaired = False
 
-                        #Correct encoding??
                         title = uni(title)
                         description = uni(description)
                         subtitle = uni(subtitle)
@@ -2531,6 +2533,7 @@ class ChannelList:
                         genre = (feed.entries[0].tags[1]['term'])
                     except:
                         self.log("createYoutubeFilelist, Invalid genre")
+                        genre = 'Youtube'
                         pass
                     
                     try:

@@ -145,25 +145,21 @@ class TVOverlay(xbmcgui.WindowXMLDialog):
             self.log('Autotune onInit') 
             settingsFile = xbmc.translatePath(os.path.join(SETTINGS_LOC, 'settings2.xml'))
             nsettingsFile = xbmc.translatePath(os.path.join(SETTINGS_LOC, 'settings2.bak.xml'))
-            #Backup and Delete old settings2.xml before autotune runs.
-            if FileAccess.exists(settingsFile) and FileAccess.exists(nsettingsFile):
-                os.remove(nsettingsFile)
-                self.log('Autotune, Deleted Old Backup') 
-            elif FileAccess.exists(settingsFile):
-                FileAccess.rename(settingsFile, nsettingsFile)
-                self.log('Autotune, Backing up settings...') 
-  
-                if FileAccess.exists(nsettingsFile):
-                    self.log('Autotune, Settings2 Backup Complete')
-                    # self.channelList.autoTune()
-                else:
-                    self.log('Autotune, Settings2 Backup Failed')
-        
-        if REAL_SETTINGS.getSetting("ATRestore") == "true" and REAL_SETTINGS.getSetting("Warning2") == "true":
-            if FileAccess.exists(settingsFile):
-                os.remove(settingsFile)
-                FileAccess.rename(nsettingsFile, settingsFile)
 
+            if FileAccess.exists(settingsFile):
+                FileAccess.rename(settingsFile, nsettingsFile)
+                self.log('Autotune, Backing up Settings...')
+                
+                if FileAccess.exists(nsettingsFile):
+                    self.log('Autotune, Backing Complete...')
+                    
+                    f = FileAccess.open(settingsFile, "w")
+                    f.write('\n')
+                    self.log('Autotune, Settings Deleted...')
+                    f.close()
+                
+            
+            
         if FileAccess.exists(GEN_CHAN_LOC) == False:
             try:
                 FileAccess.makedirs(GEN_CHAN_LOC)
@@ -224,6 +220,11 @@ class TVOverlay(xbmcgui.WindowXMLDialog):
             REAL_SETTINGS.setSetting("Autotune","true")
             REAL_SETTINGS.setSetting("Warning1","true")
             autoTune = False
+            
+            if dlg.yesno("No Channels Configured", "Would you like PseudoTV Live to Auto Tune LiveTV PVR Backend\nchannels the next time it loads?"):
+                REAL_SETTINGS.setSetting("autoFindLivePVR","true")
+                autoTune = True
+            
             if dlg.yesno("No Channels Configured", "Would you like PseudoTV Live to Auto Tune LiveTV USTVnow\nchannels the next time it loads?"):
                 REAL_SETTINGS.setSetting("autoFindLiveUSTVnow","true")
                 autoTune = True
