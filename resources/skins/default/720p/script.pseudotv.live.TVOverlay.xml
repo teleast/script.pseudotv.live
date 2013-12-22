@@ -145,7 +145,7 @@
                 <aspectratio>keep</aspectratio>
                 <visible>[VideoPlayer.Content(episodes) + IsEmpty(Control.GetImage(516))]</visible>
             </control> -->
-            <control type="label" id="509">
+            <control type="button" id="509">
                 <description>Dynamic art</description>
                 <label>logo</label>
                 <visible>false</visible>
@@ -175,9 +175,9 @@
             <height  max="300">auto</height>
             <aspectratio>scale</aspectratio>
         </control>
-        <control type="label" id="507">
+        <control type="button" id="507">
             <description>Dynamic art</description>
-            <label>landscape</label>
+            <label>poster</label>
             <visible>false</visible>
         </control>
         <control type="image" id="508">

@@ -34,9 +34,9 @@
         <control type="group">            
             <posx>960</posx>
             <posy>570</posy>
-            <control type="label" id="509">
+            <control type="button" id="509">
                 <description>Dynamic art</description>
-                <label>logo</label>
+                <label>landscape</label>
                 <visible>false</visible>
             </control>
             <control type="image" id="510">
@@ -80,7 +80,7 @@
                 <texture>EPG.Hulu</texture>
                 <visible>[substring(Player.FilenameAndPath,hulu) + IsEmpty(Player.Art(tvshow.landscape))]</visible>
             </control>     
-            <control type="label" id="507">
+            <control type="button" id="507">
                 <description>Dynamic art</description>
                 <label>landscape</label>
                 <visible>false</visible>
@@ -227,6 +227,7 @@
             <control type="label" id="500">
                 <description>Show Name Label</description>
                 <width min="5" max="840">auto</width>
+                 <height>40</height>
                 <label>Show Name</label>
                 <font>Font_Bold34</font>
                 <textcolor>FF00b4db</textcolor>
@@ -234,6 +235,7 @@
             <control type="label">
                 <description>Show Name Label</description>
                 <width>40</width>
+                <height>40</height>
                 <label>•</label>
                 <font>font12</font>
                 <textcolor>FF00b4db</textcolor>
@@ -241,6 +243,7 @@
             <control type="label" id="501">
                 <description>Show Title Label</description>
                 <width min="-5" max="840">auto</width>
+                <height>40</height>
                 <label>Show Title</label>
                 <font>Font_Reg28</font>
                 <textcolor>FFFFFFFF</textcolor>

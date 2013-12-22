@@ -39,3 +39,9 @@ class CouchPotato(object):
         response = json.load(urllib.urlopen(self._buildUrl('movie.add', {'identifier' : imdbid})))
         #self.log('imdbid=%s, result=%s' % (imdbid, response['added']))
         return response['added'] == 'true'
+    
+    def getMoviebyTitle(self, title):
+        response = json.load(urllib.urlopen(self._buildUrl('movie.list', {'search' : title})))
+        self.log('imdbid=%s, result=%s' % (imdbid, response['added']))
+        return response['added'] == 'true'
+        return self._api_call('movie.list', params).get('movies', [])

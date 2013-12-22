@@ -180,6 +180,7 @@ class ChannelList:
             chsetting2 = ''
             chsetting3 = ''
             chsetting4 = ''
+            chsetting5 = ''
 
             try:
                 chtype = int(ADDON_SETTINGS.getSetting('Channel_' + str(i + 1) + '_type'))
@@ -187,6 +188,7 @@ class ChannelList:
                 chsetting2 = ADDON_SETTINGS.getSetting('Channel_' + str(i + 1) + '_2')
                 chsetting3 = ADDON_SETTINGS.getSetting('Channel_' + str(i + 1) + '_3')
                 chsetting4 = ADDON_SETTINGS.getSetting('Channel_' + str(i + 1) + '_4')
+                chsetting5 = ADDON_SETTINGS.getSetting('Channel_' + str(i + 1) + '_5')
             except:
                 pass
 
@@ -309,6 +311,7 @@ class ChannelList:
         chsetting2 = ''
         chsetting3 = ''
         chsetting4 = ''
+        chsetting5 = ''
         needsreset = False
         self.background = background
         self.settingChannel = channel
@@ -319,6 +322,7 @@ class ChannelList:
             chsetting2 = ADDON_SETTINGS.getSetting('Channel_' + str(channel) + '_2')
             chsetting3 = ADDON_SETTINGS.getSetting('Channel_' + str(channel) + '_3')
             chsetting4 = ADDON_SETTINGS.getSetting('Channel_' + str(channel) + '_4')
+            chsetting5 = ADDON_SETTINGS.getSetting('Channel_' + str(channel) + '_5')
 
         except:
             pass
@@ -435,7 +439,7 @@ class ChannelList:
                 self.updateDialogProgress = (channel - 1) * 100 // self.enteredChannelCount
                 self.updateDialog.update(self.updateDialogProgress, "Updating channel " + str(channel), "adding videos", '')
 
-            if self.makeChannelList(channel, chtype, chsetting1, chsetting2, chsetting3, chsetting4, append) == True:
+            if self.makeChannelList(channel, chtype, chsetting1, chsetting2, chsetting3, chsetting4, chsetting5, append) == True:
                 if self.channels[channel - 1].setPlaylist(CHANNELS_LOC + 'channel_' + str(channel) + '.m3u') == True:
                     returnval = True
                     self.channels[channel - 1].fileName = CHANNELS_LOC + 'channel_' + str(channel) + '.m3u'
@@ -595,7 +599,7 @@ class ChannelList:
             return ''
     
     # Based on a smart playlist, create a normal playlist that can actually be used by us
-    def makeChannelList(self, channel, chtype, setting1, setting2, setting3, setting4, append = False):
+    def makeChannelList(self, channel, chtype, setting1, setting2, setting3, setting4, setting5, append = False):
         self.log('makeChannelList, CHANNEL: ' + str(channel))
         israndom = False
         fileList = []
@@ -663,13 +667,13 @@ class ChannelList:
             #Override Checks# 
             if REAL_SETTINGS.getSetting('Override_ok') == "true":
                 self.log("Overriding Stream Validation")
-                fileList = self.buildInternetTVFileList(setting1, setting2, setting3, setting4, channel)
+                fileList = self.buildInternetTVFileList(setting1, setting2, setting3, setting4, setting5, channel)
             else:
             
                 if setting2[0:4] == 'rtmp':#rtmp check
                     self.rtmpDump(setting2)
                     if self.rtmpValid == True:
-                        fileList = self.buildInternetTVFileList(setting1, setting2, setting3, setting4, channel)
+                        fileList = self.buildInternetTVFileList(setting1, setting2, setting3, setting4, setting5, channel)
                     else:
                         self.log('makeChannelList, CHANNEL: ' + str(channel) + ', CHTYPE: ' + str(chtype), 'RTMP invalid: ' + str(setting2))
                         return
@@ -677,7 +681,7 @@ class ChannelList:
                 elif setting2[0:4] == 'http':#http check                
                     self.url_ok(setting2)
                     if self.urlValid == True:
-                        fileList = self.buildInternetTVFileList(setting1, setting2, setting3, setting4, channel)
+                        fileList = self.buildInternetTVFileList(setting1, setting2, setting3, setting4, setting5, channel)
                     else:
                         self.log('makeChannelList, CHANNEL: ' + str(channel) + ', CHTYPE: ' + str(chtype), 'HTTP invalid: ' + str(setting2))
                         return   
@@ -685,7 +689,7 @@ class ChannelList:
                 elif setting2[0:6] == 'plugin':#plugin check                
                     self.plugin_ok(setting2)
                     if self.PluginFound == True:
-                        fileList = self.buildInternetTVFileList(setting1, setting2, setting3, setting4, channel)
+                        fileList = self.buildInternetTVFileList(setting1, setting2, setting3, setting4, setting5, channel)
                     else:
                         self.log('makeChannelList, CHANNEL: ' + str(channel) + ', CHTYPE: ' + str(chtype), 'PLUGIN invalid: ' + str(setting2))
                         return
@@ -693,11 +697,11 @@ class ChannelList:
                 elif setting2[-4:] == 'strm':#strm check           
                     self.strm_ok(setting2)
                     if self.strmValid == True:
-                        fileList = self.buildInternetTVFileList(setting1, setting2, setting3, setting4, channel)
+                        fileList = self.buildInternetTVFileList(setting1, setting2, setting3, setting4, setting5, channel)
                         self.log('makeChannelList, Building STRM channel')
                         
                 elif setting2[0:3] == 'pvr':#pvr check
-                    fileList = self.buildInternetTVFileList(setting1, setting2, setting3, setting4, channel)
+                    fileList = self.buildInternetTVFileList(setting1, setting2, setting3, setting4, setting5, channel)
                     self.log('makeChannelList, Building pvr channel')
                         
                         
@@ -744,8 +748,15 @@ class ChannelList:
 
             if self.getSmartPlaylistType(dom) == 'mixed':
                 fileList = self.buildMixedFileList(dom, channel)
+                self.log('building mixed filelist')
+            elif self.getSmartPlaylistType(dom) == 'songs':
+                Btype = 'music'
+                fileList = self.buildFileList(fle, channel, Btype)
+                self.log('building music filelist')
             else:
-                fileList = self.buildFileList(fle, channel)
+                Btype = 'videos'
+                fileList = self.buildFileList(fle, channel, Btype)
+                self.log('building video filelist')
 
             try:
                 order = dom.getElementsByTagName('order')
@@ -842,55 +853,8 @@ class ChannelList:
             if len(self.musicGenreList) == 0:
                 self.fillMusicInfo()
             return self.createGenrePlaylist('songs', chtype, setting1)
+
             
-    
-    def createMusicPlaylist(self, genre, channelname):
-        self.log("createMusicPlaylist")
-        flename = xbmc.makeLegalFilename(GEN_CHAN_LOC + 'songs_' + genre + '.xsp')
-
-        ATLimit = {}
-        ATLimit['0'] = 25 
-        ATLimit['1'] = 50 
-        ATLimit['2'] = 100           
-        ATLimit['3'] = 250           
-        ATLimit['4'] = 500             
-        ATLimit['5'] = 1000
-        ATLimit['6'] = 0 #unlimited
-
-        if Globals.REAL_SETTINGS.getSetting("Autotune") == "true" and Globals.REAL_SETTINGS.getSetting("Warning1") == "true":  
-            limit = int(ATLimit[REAL_SETTINGS.getSetting('ATLimit')])
-        else:
-            limit = 0
-
-        try:
-            fle = FileAccess.open(flename, "w")
-        except:
-            self.Error('Unable to open the cache file ' + flename, xbmc.LOGERROR)
-            return ''
-        
-        self.writeXSPHeader(fle, "songs", self.getChannelName(1, genre))
-        genre = genre.lower()
-        added = False
-        
-        for i in range(len(self.showList)):
-            if self.threadPause() == False:
-                fle.close()
-                return ''
-
-            if self.musicGenreList[i][1].lower() == genre:
-                thesong = self.cleanString(self.musicGenreList[i][0])
-                fle.write('    <rule field="songs" operator="is">' + thesong + '</rule>\n')
-                added = True
-
-        self.writeXSPFooter(fle, limit, "random")
-        fle.close()
-
-        if added == False:
-            return ''
-
-        return flename
-    
-    
     def createNetworkPlaylist(self, network):
         flename = xbmc.makeLegalFilename(GEN_CHAN_LOC + 'Network_' + network + '.xsp')
   
@@ -1227,7 +1191,7 @@ class ChannelList:
     def fillMusicInfo(self, sortbycount = False):
         self.log("fillMusicInfo")
         self.musicGenreList = [] 
-        json_query = '{"jsonrpc": "2.0", "method": "AudioLibrary.GetAlbums", "params": {"fields":["genre"]}, "id": 1}'
+        json_query = '{"jsonrpc":"2.0","method":"AudioLibrary.GetAlbums","params":{"properties":["genre"]}, "id": 1}'
         
         if self.background == False:
             self.updateDialog.update(self.updateDialogProgress, "Updating channel " + str(self.settingChannel), "adding music", "reading music data")
@@ -1550,7 +1514,7 @@ class ChannelList:
         return newlist
 
     def buildGenreLiveID(self, showtitle, type): ##return genre and LiveID by json
-        #query GetTVShows for by tv or movie: get title/genre, match title return genre...
+        #query GetTVShows/GetMovie for tv/movie: get title/genre, match title return genre...
         self.log("buildGenreLiveID")
         match = []
         TVtype = False
@@ -1624,7 +1588,7 @@ class ChannelList:
             self.logDebug('buildGenreLiveID, GenreLiveID failed')
     
 
-    def buildFileList(self, dir_name, channel): ##fix music channel todo
+    def buildFileList(self, dir_name, channel, Btype): ##fix music channel todo
         self.log("buildFileList")
         fileList = []
         seasoneplist = []
@@ -1633,8 +1597,16 @@ class ChannelList:
         tvdbid = 0
         genre = ''
         LiveID = ''
+        media = ''
+        Btype = ''
         cpManaged = False
         sbManaged = False
+        
+        # if Btype == 'music':
+            # media = 'Music'
+            # json_query = uni('{"jsonrpc": "2.0", "method": "Files.GetDirectory", "params": {"directory": "%s", "media": "music", "fields":["duration","tagline","showtitle","album","artist","plot"]}, "id": 1}' % (self.escapeDirJSON(dir_name)))
+        # elif Btype == 'videos':
+            # media = 'Videos'
         json_query = uni('{"jsonrpc": "2.0", "method": "Files.GetDirectory", "params": {"directory": "%s", "media": "video", "fields":["season","episode","playcount","streamdetails","duration","runtime","tagline","showtitle","album","artist","plot"]}, "id": 1}' % (self.escapeDirJSON(dir_name)))
 
         if self.background == False:
@@ -1677,6 +1649,9 @@ class ChannelList:
                     # If duration doesn't exist, try to figure it out
                     if dur == 0:
                         dur = self.videoParser.getVideoLength(uni(match.group(1)).replace("\\\\", "\\"))
+                    # else:
+                        # dur = 300
+                        # self.log('buildFileList, Music duration default to 5mins... No Duration found')
 
                     # Remove any file types that we don't want (ex. IceLibrary)
                     if self.incIceLibrary == False:
@@ -1691,9 +1666,9 @@ class ChannelList:
 
                             if self.background == False:
                                 if filecount == 1:
-                                    self.updateDialog.update(self.updateDialogProgress, "Updating channel " + str(self.settingChannel), "adding videos", "added " + str(filecount) + " entry")
+                                    self.updateDialog.update(self.updateDialogProgress, "Updating channel " + str(self.settingChannel), "adding" + str(media) + ", added " + str(filecount) + " entry")
                                 else:
-                                    self.updateDialog.update(self.updateDialogProgress, "Updating channel " + str(self.settingChannel), "adding videos", "added " + str(filecount) + " entries")
+                                    self.updateDialog.update(self.updateDialogProgress, "Updating channel " + str(self.settingChannel), "adding" + str(media) + ", added " + str(filecount) + " entries")
 
                             title = re.search('"label" *: *"(.*?)"', f)
                             tmpstr = str(dur) + ','
@@ -1818,7 +1793,7 @@ class ChannelList:
                                 
                                     if tagline != None:
                                         tmpstr += tagline.group(1)
-                                    
+
                                     GenreLiveID = self.buildGenreLiveID(title.group(1), 'Movie')
                                     self.logDebug('buildFileList.GenreLiveID.Movie = ' + str(GenreLiveID))
                                     try:
@@ -1853,12 +1828,12 @@ class ChannelList:
                                                 imdbid = ('tt' + str(imdbid))
 
                                             cpManaged = False
-                                            # if REAL_SETTINGS.getSetting('couchpotato.enabled') == 'true':
-                                                # try:
-                                                    # if cpAPI.isMovieManaged(imdbid):
-                                                        # cpManaged = True
-                                                # except:
-                                                    # pass
+                                            if REAL_SETTINGS.getSetting('couchpotato.enabled') == 'true':
+                                                try:
+                                                    if cpAPI.getMoviebyTitle(title):
+                                                        cpManaged = True
+                                                except:
+                                                    pass
                                             
                                             #Build LiveID (imdb/tvdb/sickbeard or couchpoato/unaired or aired)
                                             
@@ -1896,7 +1871,7 @@ class ChannelList:
                                         tmpstr += "//" + theplot[:250] + "//" + 'Movie' + "////" + 'LiveID|'
                                 else:
                                     artist = re.search('"artist" *: *"(.*?)"', f)
-                                    tmpstr += album.group(1) + "//" + artist.group(1)
+                                    tmpstr += album.group(1) + "//" + artist.group(1) + "//" + 'Music' + "////" + 'LiveID|'
 
                             tmpstr = tmpstr
                             tmpstr = tmpstr.replace("\\n", " ").replace("\\r", " ").replace("\\\"", "\"")
@@ -2050,7 +2025,8 @@ class ChannelList:
                         #If the movie flag was set, it should override the rest (ex: comedy and movie sometimes come together)
                         if movie:
                             category = 'Movie'
-
+                            
+                        ######################################################### Find TVDB/IMDB ids
                         #Decipher the TVDB ID by using the Zap2it ID in dd_progid
                         dd_progid = ''
                         tvdbid = 0
@@ -2123,7 +2099,8 @@ class ChannelList:
                             ## Correct Invalid IMDBID format   
                             if imdbid != 0 and str(imdbid[0:2]) != 'tt':
                                 imdbid = ('tt' + str(imdbid))
-                                    
+                            
+                            ############################################### Find TVDB/IMDB Information        
                             if tvdbid != 0: #Find Episode info by air date.
                                 #Date element holds the original air date of the program                   
                                 airdateStr = elem.findtext('date')
@@ -2161,7 +2138,8 @@ class ChannelList:
                             if subtitle != 'LiveTV' and (seasonNumber == 0 or episodeNumber == 0):
                                 try:
                                     t = tvdb_api.Tvdb()
-                                    episode = t[title].search(subtitle, key = 'episodename')# Output example: [<Episode 01x01 - My First Day>]
+                                    episode = t[title].search(subtitle, key = 'episodename')
+                                    # Output example: [<Episode 01x01 - My First Day>]
                                     episode = str(episode)
                                     self.logDebug('title.episodename.2 = ' + title + ' - ' + episode) 
                                     episodeNum = episode.split(' - ')[0]
@@ -2267,7 +2245,7 @@ class ChannelList:
                         cpManaged = False
                         if REAL_SETTINGS.getSetting('couchpotato.enabled') == 'true':
                             try:
-                                if cpAPI.isMovieManaged(imdbid):
+                                if cpAPI.getMoviebyTitle(title):
                                     cpManaged = True
                             except:
                                 pass
@@ -2411,7 +2389,7 @@ class ChannelList:
         return showList
 
     
-    def buildInternetTVFileList(self, setting1, setting2, setting3, setting4, channel):
+    def buildInternetTVFileList(self, setting1, setting2, setting3, setting4, setting5, channel):
         showList = []
         seasoneplist = []
         showcount = 0
@@ -2475,6 +2453,33 @@ class ChannelList:
             root.clear()
 
         return showList
+        
+        
+                    
+        # if setting5 == '12':     
+            # Last.fm Music Videos **TODO**    
+            # def LastFM(self):
+                # api = "http://api.tv.timbormans.com/user/"+user+"/topartists.xml"
+                # user = REAL_SETTINGS.getSetting('autoFindMusicVideosLastfmUser')
+                # url = "plugin://plugin.video.youtube/?path=/root/video&action=play_video&videoid='+url"
+                
+                # Sample xml output:
+                # <clip>
+                    # <artist url="http://www.last.fm/music/Tears+for+Fears">Tears for Fears</artist>
+                    # <track url="http://www.last.fm/music/Tears+for+Fears/_/Everybody+Wants+to+Rule+the+World">Everybody Wants to Rule the World</track>
+                    # <url>http://www.youtube.com/watch?v=ST86JM1RPl0&amp;feature=youtube_gdata_player</url>
+                    # <duration>191</duration>
+                    # <thumbnail>http://i.ytimg.com/vi/ST86JM1RPl0/0.jpg</thumbnail>
+                    # <rating max="5">4.9660454</rating>
+                    # <stats hits="1" misses="4" />
+                # </clip>
+                
+                #for loop
+                #Call api
+                #Parse data (artist,track,url,duration)
+                #Append tmpstr data
+                #repeat
+        # else:
 
         
     def createYoutubeFilelist(self, setting1, setting2, setting3, channel):

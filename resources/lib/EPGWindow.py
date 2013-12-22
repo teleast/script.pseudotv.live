@@ -790,7 +790,7 @@ class EPGWindow(xbmcgui.WindowXMLDialog):
 
         tvdbid = 0
         imdbid = 0
-        Artpath = xbmc.translatePath(os.path.join(CHANNELS_LOC, 'generated')  + '/' + 'artwork' + '/')##write code to clean on channel rebuild
+        Artpath = xbmc.translatePath(os.path.join(CHANNELS_LOC, 'generated')  + '/' + 'artwork' + '/')
         self.logDebug('EPG.Artpath.1 = ' + str(Artpath))
         mediapath = uni(self.MyOverlayWindow.channels[newchan - 1].getItemFilename(plpos))
         self.logDebug('EPG.mediapath.1 = ' + uni(mediapath))
@@ -803,7 +803,21 @@ class EPGWindow(xbmcgui.WindowXMLDialog):
         self.logDebug('EPG.type1 = ' + str(type1))  
         type2 = str(self.getControl(509).getLabel())
         self.logDebug('EPG.type2 = ' + str(type2))
-
+        jpg = ['banner', 'fanart', 'folder', 'landscape', 'poster']
+        png = ['character', 'clearart', 'logo']
+        
+        if type1 in jpg:
+            type1EXT = (type1 + '.jpg')
+        else:
+            type1EXT = (type1 + '.png')
+        self.logDebug('EPG.type1.ext = ' + str(type1EXT))  
+        
+        if type2 in jpg:
+            type2EXT = (type2 + '.jpg')
+        else:
+            type2EXT = (type2 + '.png')
+        self.logDebug('EPG.type2.ext = ' + str(type2EXT))   
+        
         if not 'LiveID' in LiveID:
             try:
                 LiveLST = LiveID.split("|", 4)
@@ -857,43 +871,23 @@ class EPGWindow(xbmcgui.WindowXMLDialog):
                 self.logDebug('EPG.mediapath.2 = ' + str(mediapathSeason))  
                 mediapathSeries = os.path.dirname(mediapathSeason)
                 self.logDebug('EPG.mediapath.3 = ' + str(mediapathSeries))
-                mediapathSeries1PNG = (mediapathSeries + '/' + type1 + ('.png'))
-                mediapathSeries1JPG = (mediapathSeries + '/' + type1 + ('.jpg'))
-                mediapathSeason1PNG = (mediapathSeason + '/' + type1 + ('.png')) 
-                mediapathSeason1JPG = (mediapathSeason + '/' + type1 + ('.jpg')) 
+                mediapathSeries1 = (mediapathSeries + '/' + type1EXT)
+                mediapathSeason1 = (mediapathSeason + '/' + type1EXT) 
 
-                if FileAccess.exists(mediapathSeries1PNG):
-                    self.getControl(508).setImage(mediapathSeries1PNG)
-                    self.logDebug('EPG.mediapathSeries1.png = ' + str(mediapathSeries1PNG))
-                elif FileAccess.exists(mediapathSeries1JPG):
-                    self.getControl(508).setImage(mediapathSeries1JPG)
-                    self.logDebug('EPG.mediapathSeries1.png = ' + str(mediapathSeries1JPG))
-                elif FileAccess.exists(mediapathSeason1PNG):
-                    self.getControl(508).setImage(mediapathSeason1PNG)
-                    self.logDebug('EPG.mediapathSeason1.png = ' + str(mediapathSeason1PNG)) 
-                elif FileAccess.exists(mediapathSeason1JPG):
-                    self.getControl(508).setImage(mediapathSeason1JPG)
-                    self.logDebug('EPG.mediapathSeason1.png = ' + str(mediapathSeason1JPG)) 
+                if FileAccess.exists(mediapathSeries1):
+                    self.getControl(508).setImage(mediapathSeries1)
+                elif FileAccess.exists(mediapathSeason1):
+                    self.getControl(508).setImage(mediapathSeason1)
                 else:
                     self.getControl(508).setImage(self.mediaPath + type1 + '.png')#default fallback art
 
-                mediapathSeries2PNG = (mediapathSeries + '/' + type2 + ('.png'))
-                mediapathSeries2JPG = (mediapathSeries + '/' + type2 + ('.jpg'))    
-                mediapathSeason2PNG = (mediapathSeason + '/' + type2 + ('.png'))
-                mediapathSeason2JPG = (mediapathSeason + '/' + type2 + ('.jpg'))
+                mediapathSeries2 = (mediapathSeries + '/' + type2EXT) 
+                mediapathSeason2 = (mediapathSeason + '/' + type2EXT)
                 
-                if FileAccess.exists(mediapathSeries2PNG):
-                    self.getControl(510).setImage(mediapathSeries2PNG)
-                    self.logDebug('EPG.mediapathSeries2.png = ' + str(mediapathSeries2PNG)) 
-                elif FileAccess.exists(mediapathSeries2JPG):
-                    self.getControl(510).setImage(mediapathSeries2JPG)
-                    self.logDebug('EPG.mediapathSeries2.png = ' + str(mediapathSeries2JPG)) 
-                elif FileAccess.exists(mediapathSeason2PNG):
-                    self.getControl(510).setImage(mediapathSeason2PNG)
-                    self.logDebug('EPG.mediapathSeason2.png = ' + str(mediapathSeason2PNG)) 
-                elif FileAccess.exists(mediapathSeason2JPG):
-                    self.getControl(510).setImage(mediapathSeason2JPG)
-                    self.logDebug('EPG.mediapathSeason2.png = ' + str(mediapathSeason2JPG)) 
+                if FileAccess.exists(mediapathSeries2):
+                    self.getControl(510).setImage(mediapathSeries2)
+                elif FileAccess.exists(mediapathSeason2):
+                    self.getControl(510).setImage(mediapathSeason2)
                 else:
                     self.getControl(510).setImage(self.mediaPath + type2 + '.png')#default fallback art
 

@@ -160,14 +160,14 @@ class FileAccess:
 
 class VFSFile:
     def __init__(self, filename, mode):
-        Globals.log("VFSFile: trying to open " + filename)
+        # Globals.log("VFSFile: trying to open " + filename)
 
         if mode == 'w':
             self.currentFile = xbmcvfs.File(filename, 'wb')
         else:        
             self.currentFile = xbmcvfs.File(filename)
 
-        Globals.log("VFSFile: Opening " + filename, xbmc.LOGDEBUG)
+        # Globals.log("VFSFile: Opening " + filename, xbmc.LOGDEBUG)
         
         if self.currentFile == None:
             Globals.log("VFSFile: Couldnt open " + filename, xbmc.LOGERROR)
