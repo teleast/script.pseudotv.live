@@ -2265,10 +2265,10 @@ class ChannelList:
                             Unaired = False
 
                         title = uni(title)
-                        description = uni(description)
-                        subtitle = uni(subtitle)
-                        episodeDesc = uni(episodeDesc)
-                        episodeName = uni(episodeName)
+                        description = uni(self.trim(description, 300, '...'))
+                        subtitle = uni(self.trim(subtitle, 100, ''))
+                        episodeDesc = uni(self.trim(episodeDesc, 300, '...'))
+                        episodeName = uni(self.trim(episodeName, 100, ''))
                         genre = uni(category)
                         
                         #Build LiveID (imdb/tvdb/sickbeard or couchpoato/unaired or aired)
@@ -2343,18 +2343,18 @@ class ChannelList:
                                     episodetitle = episodetitle.split("- ", 1)[-1]
                                     
                                 episodetitle = uni(episodetitle)
-                                tmpstr = uni(str(dur) + ',' + title + "//" + episodetitle[:50] + "//" + description[:150] + "//" + genre + "//" + str(startDate) + "//" + LiveID + '\n' + url)
+                                tmpstr = uni(str(dur) + ',' + title + "//" + episodetitle + "//" + description + "//" + genre + "//" + str(startDate) + "//" + LiveID + '\n' + url)
                             
                             else: #Movie IMDB           
-                                tmpstr = str(dur) + ',' + title + "//" + subtitle[:50] + "//" + description[:150] + "//" + genre + "//" + str(startDate) + "//" + LiveID + '\n' + url
+                                tmpstr = str(dur) + ',' + title + "//" + subtitle + "//" + description + "//" + genre + "//" + str(startDate) + "//" + LiveID + '\n' + url
                         
                         else: #Default Playlist
                             
                             if movie == False: #TV fallback  
-                                tmpstr = str(dur) + ',' + title + "//" + subtitle[:50] + "//" + description[:150] + "//" + genre + "//" + str(startDate) + "//" + LiveID + '\n' + url               
+                                tmpstr = str(dur) + ',' + title + "//" + subtitle + "//" + description + "//" + genre + "//" + str(startDate) + "//" + LiveID + '\n' + url               
                             
                             else: #Movie fallback         
-                                tmpstr = str(dur) + ',' + title + "//" + subtitle[:50] + "//" + description[:150] + "//" + genre + "//" + str(startDate) + "//" + LiveID + '\n' + url       
+                                tmpstr = str(dur) + ',' + title + "//" + subtitle + "//" + description + "//" + genre + "//" + str(startDate) + "//" + LiveID + '\n' + url       
                         
                         tmpstr = tmpstr.replace("\\n", " ").replace("\\r", " ").replace("\\\"", "\"")
                         showList.append(tmpstr)
@@ -2555,11 +2555,11 @@ class ChannelList:
                     eptitle = re.sub('[!@#$/:]', '', eptitle)
                     eptitle = uni(eptitle)
                     eptitle = re.sub("[\W]+", " ", eptitle.strip()) 
-                    eptitle = eptitle[:100]            
+                    eptitle = uni(self.trim(eptitle, 100, ''))     
                     summary = feed.entries[i].summary
                     summary = uni(summary)
                     summary = re.sub("[\W]+", " ", summary.strip())
-                    summary = summary[:200]
+                    summary = uni(self.trim(summary, 300, '...'))
                     
                     # try:
                         # runtime = feed.entries[i].media_content[0]['duration']
@@ -2623,6 +2623,8 @@ class ChannelList:
         showcount = 0
         limit = 0
         stop = 0 
+        runtime = 0
+        genre = ''
      
         if setting3 == '':
             limit = 50
@@ -2636,12 +2638,6 @@ class ChannelList:
         if self.background == False:
             self.updateDialog.update(self.updateDialogProgress, "Updating channel " + str(self.settingChannel), "Parsing RSS")
 
-        self.ninstance = xbmc.translatePath(os.path.join(Globals.SETTINGS_LOC, 'settings.xml'))
-        f = open(self.ninstance, "rb")
-        context = ET.iterparse(f, events=("start", "end"))
-        
-        event, root = context.next()
-        
         inSet = False
         startIndex = 1
         for x in range(stop):    
@@ -2663,15 +2659,16 @@ class ChannelList:
                         eptitle = eptitle.replace(":", " ")
                         eptitle = eptitle.replace("\"", "")
                         eptitle = eptitle.replace("?", "")
-                        eptitle = uni(eptitle)
-                        eptitle = eptitle[:50]     
-                        studio = feed.entries[i].author_detail['name']                        
-                        try:
-                            if 'media_thumbnail' in feed.entries[i]:
-                                thumburl = feed.entries[i].media_thumbnail[0]['url']
-                        except:
+                        eptitle = uni(self.trim(eptitle, 100, ''))
+                        if 'author_detail' in feed.entries[i]:
+                            studio = feed.entries[i].author_detail['name']  
+                        else:
+                            self.log("createRSSFileList, Invalid author_detail")  
+                            
+                        if 'media_thumbnail' in feed.entries[i]:
+                            thumburl = feed.entries[i].media_thumbnail[0]['url']
+                        else:
                             self.log("createRSSFileList, Invalid media_thumbnail")
-                            pass 
 
                         if not '<p>' in feed.entries[i].summary_detail.value:
                             epdesc = feed.entries[i]['summary_detail']['value']
@@ -2680,56 +2677,71 @@ class ChannelList:
                         else:
                             epdesc = feed.entries[i]['subtitle']
                         
+                        if epdesc == '':
+                            epdesc = eptitle
+                        epdesc = uni(self.trim(epdesc, 300, '...'))
+                        
                         if 'media_content' in feed.entries[i]:
                             url = feed.entries[i].media_content[0]['url']
                         else:
                             url = feed.entries[i].links[1]['href']
-                            
-                        epdesc = epdesc[:150]
-                        runtimex = feed.entries[i]['itunes_duration']
-                        summary = feed.channel.subtitle
-                        summary = summary.replace(":", "")
+                        
+                        try:
+                            runtimex = feed.entries[i]['itunes_duration']
+                        except:
+                            runtimex = 1350
+                            pass
+                        
+                        try:
+                            summary = feed.channel.subtitle
+                            summary = summary.replace(":", "")
+                        except:
+                            pass
+                        
                         if feed.channel.has_key("tags"):
                             genre = feed.channel.tags[0]['term']
                             genre = uni(genre)
                         else:
                             genre = "RSS"
-                        time = (feed.entries[i].published_parsed)
-                        time = str(time)
-                        time = time.replace("time.struct_time", "")
-                    
-                        showseason = [word for word in time.split() if word.startswith('tm_mon=')]
-                        showseason = str(showseason)
-                        showseason = showseason.replace("['tm_mon=", "")
-                        showseason = showseason.replace(",']", "")
-                        showepisodenum = [word for word in time.split() if word.startswith('tm_mday=')]
-                        showepisodenum = str(showepisodenum)
-                        showepisodenum = showepisodenum.replace("['tm_mday=", "")
-                        showepisodenum = showepisodenum.replace(",']", "")
-                        showepisodenuma = [word for word in time.split() if word.startswith('tm_hour=')]
-                        showepisodenuma = str(showepisodenuma)
-                        showepisodenuma = showepisodenuma.replace("['tm_hour=", "")
-                        showepisodenuma = showepisodenuma.replace(",']", "")  
                         
-                        if len(runtimex) > 4:
-                            runtime = runtimex.split(':')[-2]
-                            runtimel = runtimex.split(':')[-3]
-                            runtime = int(runtime)
-                            runtimel = int(runtimel)
-                            runtime = runtime + (runtimel*60)
-                        if not len(runtimex) > 4:
-                            runtimex = int(runtimex)
-                            runtime = round(runtimex/60.0)
-                            runtime = int(runtime)
+                        try:
+                            time = (feed.entries[i].published_parsed)
+                            time = str(time)
+                            time = time.replace("time.struct_time", "")
+                        
+                            showseason = [word for word in time.split() if word.startswith('tm_mon=')]
+                            showseason = str(showseason)
+                            showseason = showseason.replace("['tm_mon=", "")
+                            showseason = showseason.replace(",']", "")
+                            showepisodenum = [word for word in time.split() if word.startswith('tm_mday=')]
+                            showepisodenum = str(showepisodenum)
+                            showepisodenum = showepisodenum.replace("['tm_mday=", "")
+                            showepisodenum = showepisodenum.replace(",']", "")
+                            showepisodenuma = [word for word in time.split() if word.startswith('tm_hour=')]
+                            showepisodenuma = str(showepisodenuma)
+                            showepisodenuma = showepisodenuma.replace("['tm_hour=", "")
+                            showepisodenuma = showepisodenuma.replace(",']", "")  
                             
+                            if len(runtimex) > 4:
+                                runtime = runtimex.split(':')[-2]
+                                runtimel = runtimex.split(':')[-3]
+                                runtime = int(runtime)
+                                runtimel = int(runtimel)
+                                runtime = runtime + (runtimel*60)
+                            if not len(runtimex) > 4:
+                                runtimex = int(runtimex)
+                                runtime = round(runtimex/60.0)
+                                runtime = int(runtime)
+                        except:
+                            pass
+                        
                         if runtime >= 1:
                             duration = runtime
                         else:
                             duration = 90
-                        
+                            
                         duration = round(duration*60.0)
                         duration = int(duration)
-                        
                         # Build M3U
                         if setting2 == '1':
                             inSet = True
