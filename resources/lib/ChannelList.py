@@ -30,13 +30,12 @@ import feedparser
 import tvdb_api
 import tmdbsimple
 import shutil
-# import json 
-# try:
-    # import StorageServer
-# except:
-   # import storageserverdummy as StorageServer
+try:
+    import StorageServer
+except:
+   import storageserverdummy as StorageServer
 
-   # cache = StorageServer.StorageServer(ADDON_ID, 24) # (Your plugin name, Cache time in hours)
+   cache = StorageServer.StorageServer(ADDON_ID, 24) # (Your plugin name, Cache time in hours)
 
 
 from urllib import unquote
@@ -748,15 +747,8 @@ class ChannelList:
 
             if self.getSmartPlaylistType(dom) == 'mixed':
                 fileList = self.buildMixedFileList(dom, channel)
-                self.log('building mixed filelist')
-            elif self.getSmartPlaylistType(dom) == 'songs':
-                Btype = 'music'
-                fileList = self.buildFileList(fle, channel, Btype)
-                self.log('building music filelist')
             else:
-                Btype = 'videos'
-                fileList = self.buildFileList(fle, channel, Btype)
-                self.log('building video filelist')
+                fileList = self.buildFileList(fle, channel)
 
             try:
                 order = dom.getElementsByTagName('order')
@@ -1190,8 +1182,8 @@ class ChannelList:
             
     def fillMusicInfo(self, sortbycount = False):
         self.log("fillMusicInfo")
-        self.musicGenreList = [] 
-        json_query = '{"jsonrpc":"2.0","method":"AudioLibrary.GetAlbums","params":{"properties":["genre"]}, "id": 1}'
+        self.musicGenreList = []
+        json_query = '{"jsonrpc": "2.0", "method": "AudioLibrary.GetAlbums", "params": {"fields":["genre"]}, "id": 1}'
         
         if self.background == False:
             self.updateDialog.update(self.updateDialogProgress, "Updating channel " + str(self.settingChannel), "adding music", "reading music data")
@@ -1588,7 +1580,7 @@ class ChannelList:
             self.logDebug('buildGenreLiveID, GenreLiveID failed')
     
 
-    def buildFileList(self, dir_name, channel, Btype): ##fix music channel todo
+    def buildFileList(self, dir_name, channel): ##fix music channel todo
         self.log("buildFileList")
         fileList = []
         seasoneplist = []
@@ -1597,16 +1589,9 @@ class ChannelList:
         tvdbid = 0
         genre = ''
         LiveID = ''
-        media = ''
-        Btype = ''
         cpManaged = False
         sbManaged = False
         
-        # if Btype == 'music':
-            # media = 'Music'
-            # json_query = uni('{"jsonrpc": "2.0", "method": "Files.GetDirectory", "params": {"directory": "%s", "media": "music", "fields":["duration","tagline","showtitle","album","artist","plot"]}, "id": 1}' % (self.escapeDirJSON(dir_name)))
-        # elif Btype == 'videos':
-            # media = 'Videos'
         json_query = uni('{"jsonrpc": "2.0", "method": "Files.GetDirectory", "params": {"directory": "%s", "media": "video", "fields":["season","episode","playcount","streamdetails","duration","runtime","tagline","showtitle","album","artist","plot"]}, "id": 1}' % (self.escapeDirJSON(dir_name)))
 
         if self.background == False:
@@ -1649,10 +1634,7 @@ class ChannelList:
                     # If duration doesn't exist, try to figure it out
                     if dur == 0:
                         dur = self.videoParser.getVideoLength(uni(match.group(1)).replace("\\\\", "\\"))
-                    # else:
-                        # dur = 300
-                        # self.log('buildFileList, Music duration default to 5mins... No Duration found')
-
+                        
                     # Remove any file types that we don't want (ex. IceLibrary)
                     if self.incIceLibrary == False:
                         if match.group(1).replace("\\\\", "\\")[-4:].lower() == 'strm':
@@ -1666,9 +1648,9 @@ class ChannelList:
 
                             if self.background == False:
                                 if filecount == 1:
-                                    self.updateDialog.update(self.updateDialogProgress, "Updating channel " + str(self.settingChannel), "adding" + str(media) + ", added " + str(filecount) + " entry")
+                                    self.updateDialog.update(self.updateDialogProgress, "Updating channel " + str(self.settingChannel), "adding videos", "added " + str(filecount) + " entry")
                                 else:
-                                    self.updateDialog.update(self.updateDialogProgress, "Updating channel " + str(self.settingChannel), "adding" + str(media) + ", added " + str(filecount) + " entries")
+                                    self.updateDialog.update(self.updateDialogProgress, "Updating channel " + str(self.settingChannel), "adding videos", "added " + str(filecount) + " entries")
 
                             title = re.search('"label" *: *"(.*?)"', f)
                             tmpstr = str(dur) + ','
@@ -1680,6 +1662,9 @@ class ChannelList:
                             else:
                                 theplot = plot.group(1)
 
+                            theplot = uni(self.trim(theplot, 300, '...'))
+                            self.log('buildFileList, theplot trim = ' + str(theplot))
+                            
                             # This is a TV show
                             if showtitle != None and len(showtitle.group(1)) > 0:
                                 season = re.search('"season" *: *(.*?),', f)
@@ -1736,7 +1721,7 @@ class ChannelList:
                                         
                                         #Rob Newton - 20130130 - Check for show being managed by SickBeard
                                         sbManaged = False
-                                        if REAL_SETTINGS.getSetting('sickbeard.enabled') == 'true':
+                                        if REAL_SETTINGS.getSetting('sickbeard.enabled') == 'true' and REAL_SETTINGS.getSetting('tvdb.enabled') == 'true':
                                             try:
                                                 sbAPI = SickBeard(REAL_SETTINGS.getSetting('sickbeard.baseurl'),REAL_SETTINGS.getSetting('sickbeard.apikey'))
                                                 if sbAPI.isShowManaged(tvdbid):
@@ -1772,15 +1757,15 @@ class ChannelList:
                                         LiveID = uni(LiveID)
                                         genre = uni(genre)
                                         self.logDebug('buildFileList.LiveID = ' + LiveID)
-                                        tmpstr += showtitle.group(1) + "//" + swtitle + "//" + theplot[:250] + "//" + genre + "//" + "//" + LiveID
+                                        tmpstr += showtitle.group(1) + "//" + swtitle + "//" + theplot + "//" + genre + "//" + "//" + LiveID
                                         istvshow = True
 
                                     else:##Further parsing??
-                                        tmpstr += showtitle.group(1) + "//" + swtitle + "//" + theplot[:250] + "//" + 'Unknown' + "////" + 'LiveID|'
+                                        tmpstr += showtitle.group(1) + "//" + swtitle + "//" + theplot + "//" + 'Unknown' + "////" + 'LiveID|'
                                         istvshow = True
                                    
                                 except:
-                                    tmpstr += showtitle.group(1) + "//" + swtitle + "//" + theplot[:250] + "//" + 'Unknown' + "////" + 'LiveID|'
+                                    tmpstr += showtitle.group(1) + "//" + swtitle + "//" + theplot + "//" + 'Unknown' + "////" + 'LiveID|'
                                     istvshow = True
                             else:
                                 tmpstr += title.group(1) + "//"
@@ -1828,12 +1813,12 @@ class ChannelList:
                                                 imdbid = ('tt' + str(imdbid))
 
                                             cpManaged = False
-                                            if REAL_SETTINGS.getSetting('couchpotato.enabled') == 'true':
-                                                try:
-                                                    if cpAPI.getMoviebyTitle(title):
-                                                        cpManaged = True
-                                                except:
-                                                    pass
+                                            # if REAL_SETTINGS.getSetting('couchpotato.enabled') == 'true' and REAL_SETTINGS.getSetting('tmdb.enabled') == 'true':
+                                                # try:
+                                                    # if cpAPI.getMoviebyTitle(title):
+                                                        # cpManaged = True
+                                                # except:
+                                                    # pass
                                             
                                             #Build LiveID (imdb/tvdb/sickbeard or couchpoato/unaired or aired)
                                             
@@ -1864,11 +1849,11 @@ class ChannelList:
                                             genre = uni(genre)
                                             self.logDebug('buildFileList.LiveID = ' + LiveID)
                                             if (REAL_SETTINGS.getSetting('EPGcolor_MovieGenre') == "true" and REAL_SETTINGS.getSetting('EPGcolor_enabled') == "1"):
-                                                tmpstr += "//" + theplot[:250] + "//" + genre + "////" + LiveID
+                                                tmpstr += "//" + theplot + "//" + genre + "////" + LiveID
                                             else:
-                                                tmpstr += "//" + theplot[:250] + "//" + 'Movie' + "////" + LiveID
+                                                tmpstr += "//" + theplot + "//" + 'Movie' + "////" + LiveID
                                     except:
-                                        tmpstr += "//" + theplot[:250] + "//" + 'Movie' + "////" + 'LiveID|'
+                                        tmpstr += "//" + theplot + "//" + 'Movie' + "////" + 'LiveID|'
                                 else:
                                     artist = re.search('"artist" *: *"(.*?)"', f)
                                     tmpstr += album.group(1) + "//" + artist.group(1) + "//" + 'Music' + "////" + 'LiveID|'
@@ -2243,12 +2228,12 @@ class ChannelList:
                                 pass
                         #Rob Newton - 20130130 - Check for movie being managed by CouchPotato
                         cpManaged = False
-                        if REAL_SETTINGS.getSetting('couchpotato.enabled') == 'true':
-                            try:
-                                if cpAPI.getMoviebyTitle(title):
-                                    cpManaged = True
-                            except:
-                                pass
+                        # if REAL_SETTINGS.getSetting('couchpotato.enabled') == 'true':
+                            # try:
+                                # if cpAPI.getMoviebyTitle(title):
+                                    # cpManaged = True
+                            # except:
+                                # pass
                         
                         now = datetime.datetime.now()
                         stopDate = self.parseXMLTVDate(elem.get('stop'))
@@ -3327,11 +3312,48 @@ class ChannelList:
             # self.PlugInvalid = True        
             # # except Exception:
                 # # self.PlugInvalid = False
-                
-    def smart_truncate(content, length=250, suffix='.'):
-        if len(content) <= length:
+            
+            # xbmc.executeJSONRPC('{"jsonrpc": "2.0", "method": "Files.GetDirectory", "id": 1, "params": {"directory": "plugin://plugin.video.youtube"}}')    
+    
+    
+    # def trim(self, content, limit, suffix):
+        # content_limit = content[:limit]
+        # if content_limit.endswith('.'):
+            # return content_limit
+        # else:
+           # content_limit = content_limit.rsplit(".", 1)
+           # content_limit = str(content_limit[0])
+           # content_limit = content_limit.rsplit(" ", 1)
+           # return content_limit[0] + suffix    
+    
+    def trim(self, content, limit, suffix):
+        if len(content) <= limit:
             return content
         else:
-            return content[:length].rsplit(' ', 1)[0]+suffix
+            return content[:limit].rsplit(' ', 1)[0]+suffix
+            
+    def pi_count(self):
+        def arccot(x, unity):
+            sum = xpower = unity // x
+            n = 3
+            sign = -1
+            while 1:
+                xpower = xpower // (x*x)
+                term = xpower // n
+                if not term:
+                       break
+                sum += sign * term
+                sign = -sign
+                n += 2
+            return sum
 
-# xbmc.executeJSONRPC('{"jsonrpc": "2.0", "method": "Files.GetDirectory", "id": 1, "params": {"directory": "plugin://plugin.video.youtube"}}')
+        digits = 40
+        unity = 10**(digits + 10)
+        pi = 4 * (4*arccot(5, unity) - arccot(239, unity))
+        return pi // 10**10
+         
+     # result = cache.cacheFunction(pi_count) # This will call the pi_count function, save the result in the cache, and return the result.
+     # time.sleep(300)
+     # result = cache.cacheFunction(pi_count) # This will return the cached result
+     # time.sleep(3600)
+     # result = cache.cacheFunction(pi_count) # This will again call pi_count since the result is now considered stale.
