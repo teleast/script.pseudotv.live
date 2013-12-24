@@ -2596,13 +2596,18 @@ class ChannelList:
         stop = 0 
         runtime = 0
         genre = ''
-     
+        
         if setting3 == '':
             limit = 50
             self.log("createRSSFileList, Using Global Parse-limit " + str(limit))
         else:
             limit = int(setting3)
             self.log("createRSSFileList, Overiding Global Parse-limit to " + str(limit))    
+            
+        if setting2 == '1':
+            stop = 1
+        else:
+            stop = (limit / 25)
                
         if self.background == False:
             self.updateDialog.update(self.updateDialogProgress, "Updating channel " + str(self.settingChannel), "Parsing RSS")
