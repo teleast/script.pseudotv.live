@@ -2773,7 +2773,9 @@ class ChannelList:
                 break
             try:
                 file = urllib2.urlopen(api)
+                self.log('file' + str(file))
                 data = file.read()
+                self.log('data' + str(data))
                 file.close()
                 dom = parseString(data)
 
@@ -2781,11 +2783,15 @@ class ChannelList:
                 artist = xmlartist.replace('<artist>','').replace('</artist>','')
                 artist = artist.rsplit('>', -1)
                 artist = artist[1]
+                # artist = str(artist)
+                artist = self.uncleanString(artist)
 
                 xmltrack = dom.getElementsByTagName('track')[0].toxml()
                 track = xmltrack.replace('<track url>','').replace('</track>','')
                 track = track.rsplit('>', -1)
                 track = track[1]
+                # track = str(track)
+                track = self.uncleanString(track)
 
                 xmlurl = dom.getElementsByTagName('url')[0].toxml()
                 url = xmlurl.replace('<url>','').replace('</url>','')  
@@ -2802,10 +2808,17 @@ class ChannelList:
                 rating = rating.rsplit('>', -1)
                 rating = rating[1]
                 
-                eptitle = (artist + ' - ' + track)
-                epdesc = (eptitle + ', Rated ' + rating + '/5.0')
+                eptitle = uni(artist + ' - ' + track)
+                epdesc = uni(eptitle + ', Rated ' + rating + '/5.0')
+                
             except:
-                pass
+                self.log("User hasn't listened to enough artists on Last.fm yet. Using Default User...")
+                api = 'http://api.tv.timbormans.com/user/por/topartists.xml'
+                file = urllib2.urlopen(api)
+                data = file.read()
+                file.close()
+                dom = parseString(data)
+                continue
             
             if setting2 == '1':
                 inSet = True
@@ -3200,41 +3213,43 @@ class ChannelList:
         urlOK = True
         pluginOK = True
         lines = ''
-        # try:
-        f = FileAccess.open(setting2, "r")
-        linesLST = f.readlines()
-        self.log("strm_ok.Lines = " + str(linesLST))
-        f.close()
-
-        for i in range(len(set(linesLST))):
-            lines = linesLST[i]
-            if lines[0:4] == 'rtmp':#rtmp check
-                rtmpOK = self.rtmpDump(lines)
-                self.logDebug("strm_ok.Lines rtmp = " + str(lines))
-                #if invalid delete line
-            elif lines[0:4] == 'http':#http check                
-                urlOK = self.url_ok(lines)
-                self.logDebug("strm_ok.Lines http = " + str(lines))
-                #if invalid delete line
-            elif lines[0:6] == 'plugin':#plugin check                
-                pluginOK = self.plugin_ok(lines)
-                self.logDebug("strm_ok.Lines plugin= " + str(lines))
-            
-            if rtmpOK == False or urlOK == False or pluginOK == False:
-                self.strmFailed = True
-            
-        if self.strmFailed == True:
-            self.log("strm_ok, failed strmCheck; writing fallback video")
-            f = FileAccess.open(setting2, "w")
-            for i in range(len(linesLST)):
-                lines = linesLST[i]
-                f.write(lines + '\n')
-                self.logDebug("strm_ok, file write lines = " + str(lines))
-            f.write('plugin://plugin.video.youtube/?path=/root/video&action=play_video&videoid=-2GXT8bLe04')
+        try:
+            f = FileAccess.open(setting2, "r")
+            linesLST = f.readlines()
+            self.log("strm_ok.Lines = " + str(linesLST))
             f.close()
-            self.strmValid = True           
+
+            for i in range(len(set(linesLST))):
+                lines = linesLST[i]
+                if lines[0:4] == 'rtmp':#rtmp check
+                    rtmpOK = self.rtmpDump(lines)
+                    self.logDebug("strm_ok.Lines rtmp = " + str(lines))
+                    #if invalid delete line
+                elif lines[0:4] == 'http':#http check                
+                    urlOK = self.url_ok(lines)
+                    self.logDebug("strm_ok.Lines http = " + str(lines))
+                    #if invalid delete line
+                elif lines[0:6] == 'plugin':#plugin check                
+                    pluginOK = self.plugin_ok(lines)
+                    self.logDebug("strm_ok.Lines plugin= " + str(lines))
+                
+                if rtmpOK == False or urlOK == False or pluginOK == False:
+                    self.strmFailed = True
+                
+            if self.strmFailed == True:
+                self.log("strm_ok, failed strmCheck; writing fallback video")
+                f = FileAccess.open(setting2, "w")
+                for i in range(len(linesLST)):
+                    lines = linesLST[i]
+                    f.write(lines + '\n')
+                    self.logDebug("strm_ok, file write lines = " + str(lines))
+                f.write('plugin://plugin.video.youtube/?path=/root/video&action=play_video&videoid=-2GXT8bLe04')
+                f.close()
+                self.strmValid = True           
+        except:
+            pass
             
-            
+   
     def xmltv_ok(self, setting3):
         self.xmltvValid = False
         self.xmlTvFile = ''
@@ -3335,7 +3350,7 @@ class ChannelList:
             self.log("INFO: Connected...")
             self.rtmpValid = True
         else:
-            self.log("ERROR?: Unknown responce...")
+            self.log("ERROR?: Unknown response...")
             self.rtmpValid = False
         
         self.log("rtmpValid = " + str(self.rtmpValid))
@@ -3386,17 +3401,7 @@ class ChannelList:
                 # # self.PlugInvalid = False
             
             # xbmc.executeJSONRPC('{"jsonrpc": "2.0", "method": "Files.GetDirectory", "id": 1, "params": {"directory": "plugin://plugin.video.youtube"}}')    
-    
-    
-    # def trim(self, content, limit, suffix):
-        # content_limit = content[:limit]
-        # if content_limit.endswith('.'):
-            # return content_limit
-        # else:
-           # content_limit = content_limit.rsplit(".", 1)
-           # content_limit = str(content_limit[0])
-           # content_limit = content_limit.rsplit(" ", 1)
-           # return content_limit[0] + suffix    
+     
     
     def trim(self, content, limit, suffix):
         if len(content) <= limit:
@@ -3404,6 +3409,7 @@ class ChannelList:
         else:
             return content[:limit].rsplit(' ', 1)[0]+suffix
             
+    
     def pi_count(self):
         def arccot(x, unity):
             sum = xpower = unity // x
