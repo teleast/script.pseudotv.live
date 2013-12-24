@@ -179,7 +179,6 @@ class ChannelList:
             chsetting2 = ''
             chsetting3 = ''
             chsetting4 = ''
-            chsetting5 = ''
 
             try:
                 chtype = int(ADDON_SETTINGS.getSetting('Channel_' + str(i + 1) + '_type'))
@@ -187,7 +186,6 @@ class ChannelList:
                 chsetting2 = ADDON_SETTINGS.getSetting('Channel_' + str(i + 1) + '_2')
                 chsetting3 = ADDON_SETTINGS.getSetting('Channel_' + str(i + 1) + '_3')
                 chsetting4 = ADDON_SETTINGS.getSetting('Channel_' + str(i + 1) + '_4')
-                chsetting5 = ADDON_SETTINGS.getSetting('Channel_' + str(i + 1) + '_5')
             except:
                 pass
 
@@ -195,7 +193,7 @@ class ChannelList:
                 if FileAccess.exists(xbmc.translatePath(chsetting1)):
                     self.maxChannels = i + 1
                     self.enteredChannelCount += 1
-            elif chtype <= 12:
+            elif chtype <= 13:
                 if len(chsetting1) > 0:
                     self.maxChannels = i + 1
                     self.enteredChannelCount += 1
@@ -310,7 +308,6 @@ class ChannelList:
         chsetting2 = ''
         chsetting3 = ''
         chsetting4 = ''
-        chsetting5 = ''
         needsreset = False
         self.background = background
         self.settingChannel = channel
@@ -321,7 +318,6 @@ class ChannelList:
             chsetting2 = ADDON_SETTINGS.getSetting('Channel_' + str(channel) + '_2')
             chsetting3 = ADDON_SETTINGS.getSetting('Channel_' + str(channel) + '_3')
             chsetting4 = ADDON_SETTINGS.getSetting('Channel_' + str(channel) + '_4')
-            chsetting5 = ADDON_SETTINGS.getSetting('Channel_' + str(channel) + '_5')
 
         except:
             pass
@@ -438,7 +434,7 @@ class ChannelList:
                 self.updateDialogProgress = (channel - 1) * 100 // self.enteredChannelCount
                 self.updateDialog.update(self.updateDialogProgress, "Updating channel " + str(channel), "adding videos", '')
 
-            if self.makeChannelList(channel, chtype, chsetting1, chsetting2, chsetting3, chsetting4, chsetting5, append) == True:
+            if self.makeChannelList(channel, chtype, chsetting1, chsetting2, chsetting3, chsetting4, append) == True:
                 if self.channels[channel - 1].setPlaylist(CHANNELS_LOC + 'channel_' + str(channel) + '.m3u') == True:
                     returnval = True
                     self.channels[channel - 1].fileName = CHANNELS_LOC + 'channel_' + str(channel) + '.m3u'
@@ -598,7 +594,7 @@ class ChannelList:
             return ''
     
     # Based on a smart playlist, create a normal playlist that can actually be used by us
-    def makeChannelList(self, channel, chtype, setting1, setting2, setting3, setting4, setting5, append = False):
+    def makeChannelList(self, channel, chtype, setting1, setting2, setting3, setting4, append = False):
         self.log('makeChannelList, CHANNEL: ' + str(channel))
         israndom = False
         fileList = []
@@ -666,13 +662,13 @@ class ChannelList:
             #Override Checks# 
             if REAL_SETTINGS.getSetting('Override_ok') == "true":
                 self.log("Overriding Stream Validation")
-                fileList = self.buildInternetTVFileList(setting1, setting2, setting3, setting4, setting5, channel)
+                fileList = self.buildInternetTVFileList(setting1, setting2, setting3, setting4, channel)
             else:
             
                 if setting2[0:4] == 'rtmp':#rtmp check
                     self.rtmpDump(setting2)
                     if self.rtmpValid == True:
-                        fileList = self.buildInternetTVFileList(setting1, setting2, setting3, setting4, setting5, channel)
+                        fileList = self.buildInternetTVFileList(setting1, setting2, setting3, setting4, channel)
                     else:
                         self.log('makeChannelList, CHANNEL: ' + str(channel) + ', CHTYPE: ' + str(chtype), 'RTMP invalid: ' + str(setting2))
                         return
@@ -680,7 +676,7 @@ class ChannelList:
                 elif setting2[0:4] == 'http':#http check                
                     self.url_ok(setting2)
                     if self.urlValid == True:
-                        fileList = self.buildInternetTVFileList(setting1, setting2, setting3, setting4, setting5, channel)
+                        fileList = self.buildInternetTVFileList(setting1, setting2, setting3, setting4, channel)
                     else:
                         self.log('makeChannelList, CHANNEL: ' + str(channel) + ', CHTYPE: ' + str(chtype), 'HTTP invalid: ' + str(setting2))
                         return   
@@ -688,7 +684,7 @@ class ChannelList:
                 elif setting2[0:6] == 'plugin':#plugin check                
                     self.plugin_ok(setting2)
                     if self.PluginFound == True:
-                        fileList = self.buildInternetTVFileList(setting1, setting2, setting3, setting4, setting5, channel)
+                        fileList = self.buildInternetTVFileList(setting1, setting2, setting3, setting4, channel)
                     else:
                         self.log('makeChannelList, CHANNEL: ' + str(channel) + ', CHTYPE: ' + str(chtype), 'PLUGIN invalid: ' + str(setting2))
                         return
@@ -696,11 +692,11 @@ class ChannelList:
                 elif setting2[-4:] == 'strm':#strm check           
                     self.strm_ok(setting2)
                     if self.strmValid == True:
-                        fileList = self.buildInternetTVFileList(setting1, setting2, setting3, setting4, setting5, channel)
+                        fileList = self.buildInternetTVFileList(setting1, setting2, setting3, setting4, channel)
                         self.log('makeChannelList, Building STRM channel')
                         
                 elif setting2[0:3] == 'pvr':#pvr check
-                    fileList = self.buildInternetTVFileList(setting1, setting2, setting3, setting4, setting5, channel)
+                    fileList = self.buildInternetTVFileList(setting1, setting2, setting3, setting4, channel)
                     self.log('makeChannelList, Building pvr channel')
                         
                         
@@ -711,6 +707,10 @@ class ChannelList:
         elif chtype == 11: # RSS/iTunes/feedburner/Podcast
             self.log("Building RSS Feed " + setting1 + " using type " + setting2 + "...")
             fileList = self.createRSSFileList(setting1, setting2, setting3, channel)   
+        
+        elif chtype == 13: # LastFM
+            self.log("Last.FM " + setting1 + " using type " + setting2 + "...")
+            fileList = self.lastFM(setting1, setting2, setting3, channel)   
             
         else:
             if chtype == 0:
@@ -2374,7 +2374,8 @@ class ChannelList:
         return showList
 
     
-    def buildInternetTVFileList(self, setting1, setting2, setting3, setting4, setting5, channel):
+    def buildInternetTVFileList(self, setting1, setting2, setting3, setting4, channel):
+        self.log('buildInternetTVFileList')
         showList = []
         seasoneplist = []
         showcount = 0
@@ -2429,42 +2430,12 @@ class ChannelList:
                     tmpstr = tmpstr.replace("\\n", " ").replace("\\r", " ").replace("\\\"", "\"")
 
                     showList.append(tmpstr)
-                else:
-                    if inSet == True:
-                        self.log("buildInternetTVFileList, CHANNEL: " + str(self.settingChannel) + ", DONE")
-                        break
+
                 showcount += 1
                     
             root.clear()
 
         return showList
-        
-        
-                    
-        # if setting5 == '12':     
-            # Last.fm Music Videos **TODO**    
-            # def LastFM(self):
-                # api = "http://api.tv.timbormans.com/user/"+user+"/topartists.xml"
-                # user = REAL_SETTINGS.getSetting('autoFindMusicVideosLastfmUser')
-                # url = "plugin://plugin.video.youtube/?path=/root/video&action=play_video&videoid='+url"
-                
-                # Sample xml output:
-                # <clip>
-                    # <artist url="http://www.last.fm/music/Tears+for+Fears">Tears for Fears</artist>
-                    # <track url="http://www.last.fm/music/Tears+for+Fears/_/Everybody+Wants+to+Rule+the+World">Everybody Wants to Rule the World</track>
-                    # <url>http://www.youtube.com/watch?v=ST86JM1RPl0&amp;feature=youtube_gdata_player</url>
-                    # <duration>191</duration>
-                    # <thumbnail>http://i.ytimg.com/vi/ST86JM1RPl0/0.jpg</thumbnail>
-                    # <rating max="5">4.9660454</rating>
-                    # <stats hits="1" misses="4" />
-                # </clip>
-                
-                #for loop
-                #Call api
-                #Parse data (artist,track,url,duration)
-                #Append tmpstr data
-                #repeat
-        # else:
 
         
     def createYoutubeFilelist(self, setting1, setting2, setting3, channel):
@@ -2632,8 +2603,6 @@ class ChannelList:
         else:
             limit = int(setting3)
             self.log("createRSSFileList, Overiding Global Parse-limit to " + str(limit))    
-        
-        stop = (limit / 25)
                
         if self.background == False:
             self.updateDialog.update(self.updateDialogProgress, "Updating channel " + str(self.settingChannel), "Parsing RSS")
@@ -2759,9 +2728,92 @@ class ChannelList:
                     except:
                         pass
 
+          
         return showList
 
+     
+    def lastFM(self, setting1, setting2, setting3, channel):
+        self.log('LastFM') #Last.fm Music Videos 
+        # Sample xml output:
+        # <clip>
+            # <artist url="http://www.last.fm/music/Tears+for+Fears">Tears for Fears</artist>
+            # <track url="http://www.last.fm/music/Tears+for+Fears/_/Everybody+Wants+to+Rule+the+World">Everybody Wants to Rule the World</track>
+            # <url>http://www.youtube.com/watch?v=ST86JM1RPl0&amp;feature=youtube_gdata_player</url>
+            # <duration>191</duration>
+            # <thumbnail>http://i.ytimg.com/vi/ST86JM1RPl0/0.jpg</thumbnail>
+            # <rating max="5">4.9660454</rating>
+            # <stats hits="1" misses="4" />
+        # </clip>
+        showList = [] 
+        api = setting1
+        limit = 0  
         
+        if setting3 == '':
+            limit = 50
+            self.log("LastFM, Using Global Parse-limit " + str(limit))
+        else:
+            limit = int(setting3)
+            self.log("LastFM, Overriding Global Parse-limit to " + str(limit))
+        
+        if self.background == False:
+            self.updateDialog.update(self.updateDialogProgress, "Updating channel " + str(self.settingChannel), "Parsing Last.FM")
+        
+        inSet = False
+        for i in range(limit):
+            if self.threadPause() == False:
+                del fileList[:]
+                break
+            try:
+                file = urllib2.urlopen(api)
+                data = file.read()
+                file.close()
+                dom = parseString(data)
+
+                xmlartist = dom.getElementsByTagName('artist')[0].toxml()
+                artist = xmlartist.replace('<artist>','').replace('</artist>','')
+                artist = artist.rsplit('>', -1)
+                artist = artist[1]
+
+                xmltrack = dom.getElementsByTagName('track')[0].toxml()
+                track = xmltrack.replace('<track url>','').replace('</track>','')
+                track = track.rsplit('>', -1)
+                track = track[1]
+
+                xmlurl = dom.getElementsByTagName('url')[0].toxml()
+                url = xmlurl.replace('<url>','').replace('</url>','')  
+                url = url.replace("https://", "").replace("http://", "").replace("www.youtube.com/watch?v=", "").replace("&feature=youtube_gdata_player", "")     
+
+                xmlduration = dom.getElementsByTagName('duration')[0].toxml()
+                duration = xmlduration.replace('<duration>','').replace('</duration>','')
+
+                xmlthumbnail = dom.getElementsByTagName('thumbnail')[0].toxml()
+                thumburl = xmlthumbnail.replace('<thumbnail>','').replace('</thumbnail>','')
+
+                xmlrating = dom.getElementsByTagName('rating')[0].toxml()
+                rating = xmlrating.replace('<rating>','').replace('</rating>','')
+                rating = rating.rsplit('>', -1)
+                rating = rating[1]
+                
+                eptitle = (artist + ' - ' + track)
+                epdesc = (eptitle + ', Rated ' + rating + '/5.0')
+            except:
+                pass
+            
+            if setting2 == '1':
+                inSet = True
+                istvshow = True
+                tmpstr = str(duration) + ',' + eptitle + "//" + "Last.FM" + "//" + epdesc + "//" + 'Music' + "//NA//" + 'LiveID|' + '\n' + 'plugin://plugin.video.youtube/?path=/root/video&action=play_video&videoid='+url + '\n'
+                tmpstr = tmpstr.replace("\\n", " ").replace("\\r", " ").replace("\\\"", "\"")
+                self.log("LastFM, CHANNEL: " + str(self.settingChannel) + ", " + eptitle + "  DUR: " + str(duration))
+                
+                showList.append(tmpstr)                    
+            else:
+                if inSet == True:
+                    self.log("LastFM, CHANNEL: " + str(self.settingChannel) + ", DONE")
+                    break    
+        
+        return showList
+
     # Run rules for a channel
     def runActions(self, action, channel, parameter):
         self.log("runActions " + str(action) + " on channel " + str(channel))

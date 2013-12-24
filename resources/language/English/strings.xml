@@ -58,10 +58,10 @@
     <string id="30082">Find Mixed Genres</string>
     <string id="30083">Music:</string>
     <string id="30084">Find Music Genres</string>
+	<string id="30087">Find Music Videos using Last.FM</string>
+    <string id="30088">Last.FM Username</string>
     <string id="30085">Find Music Videos using Youtube</string>
 	<string id="30086">Find Music Videos using VevoTV (US Only)</string>
-	<string id="30087">Find Music Videos using Last.FM (Coming Soon)</string>
-    <string id="30088">Last.FM Username</string>
     <string id="30089">Find Music Videos using Local Directory</string>
     <string id="30090">InternetTV:</string>  
     <string id="30091">Find InternetTV using Strm Collections *</string>

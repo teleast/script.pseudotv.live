@@ -253,10 +253,6 @@ class TVOverlay(xbmcgui.WindowXMLDialog):
                 REAL_SETTINGS.setSetting("autoFindMixGenres","true")
                 autoTune = True
 
-            if dlg.yesno("No Channels Configured", "Would you like PseudoTV Live to Auto Tune Music Genre\nchannels the next time it loads?"):
-                REAL_SETTINGS.setSetting("autoFindMusicGenres","true")
-                autoTune = True
-
             if dlg.yesno("No Channels Configured", "Would you like PseudoTV Live to Auto Tune InternetTV\nchannels the next time it loads?"):
                 REAL_SETTINGS.setSetting("autoFindInternetStrms","true")
                 autoTune = True

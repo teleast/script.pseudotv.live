@@ -502,19 +502,18 @@ class Migrate:
             self.updateDialog.update(self.updateDialogProgress,"Auto Tune","Adding Last.FM Music Videos","")
             if channelNum == 0:
                 channelNum = 1
-            user = Globals.REAL_SETTINGS.getSetting("autoFindMusicVideosLastfmUser")
-            lastapi = "http://api.tv.timbormans.com/user/"+user+"/topartists.xml"
+            user = Globals.REAL_SETTINGS.getSetting("autoFindMusicVideosLastFMuser")
+            lastapi = "http://api.tv.timbormans.com/user/" + user + "/topartists.xml"
             for i in range(1):
                 # add Last.fm user presets
                 Globals.ADDON_SETTINGS.setSetting("Channel_" + str(channelNum) + "_type", "13")
                 Globals.ADDON_SETTINGS.setSetting("Channel_" + str(channelNum) + "_time", "0")
-                Globals.ADDON_SETTINGS.setSetting("Channel_" + str(channelNum) + "_1", "5400")
-                Globals.ADDON_SETTINGS.setSetting("Channel_" + str(channelNum) + "_2", "rtmp://vevohp2livefs.fplive.net:1935/vevohp2live-live/ playpath=stream2272000 swfUrl=http://cache.vevo.com/livepassdl.conviva.com/ver/2.64.0.68610/LivePassModuleMain_osmf.swf")
-                Globals.ADDON_SETTINGS.setSetting("Channel_" + str(channelNum) + "_3", "VevoTV")
-                Globals.ADDON_SETTINGS.setSetting("Channel_" + str(channelNum) + "_4", "Sit back and enjoy a 24/7 stream of music videos on VEVO TV.")
+                Globals.ADDON_SETTINGS.setSetting("Channel_" + str(channelNum) + "_1", lastapi)
+                Globals.ADDON_SETTINGS.setSetting("Channel_" + str(channelNum) + "_2", "1")
+                Globals.ADDON_SETTINGS.setSetting("Channel_" + str(channelNum) + "_3", "10")
                 Globals.ADDON_SETTINGS.setSetting("Channel_" + str(channelNum) + "_rulecount", "1")
                 Globals.ADDON_SETTINGS.setSetting("Channel_" + str(channelNum) + "_rule_1_id", "1")
-                Globals.ADDON_SETTINGS.setSetting("Channel_" + str(channelNum) + "_rule_1_opt_1", "Last.fm")  
+                Globals.ADDON_SETTINGS.setSetting("Channel_" + str(channelNum) + "_rule_1_opt_1", "Last.FM")  
                 Globals.ADDON_SETTINGS.setSetting("Channel_" + str(channelNum) + "_changed", "true")
        
             channelNum = channelNum
