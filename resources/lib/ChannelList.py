@@ -2746,7 +2746,15 @@ class ChannelList:
         # </clip>
         showList = [] 
         api = setting1
-        limit = 0  
+        limit = 0
+        duration = 0
+        artist = ''
+        track = ''
+        url = ''
+        thumburl = ''
+        rating = 0
+        eptitle = ''
+        epdesc = ''
         
         if setting3 == '':
             limit = 50
