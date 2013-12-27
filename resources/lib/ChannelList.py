@@ -1,4 +1,4 @@
-#   Copyright (C) 2011 Jason Anderson
+#   Copyright (C) 2013 Lunatixz
 #
 #
 # This file is part of PseudoTV.
@@ -1590,8 +1590,7 @@ class ChannelList:
         genre = ''
         LiveID = ''
         cpManaged = False
-        sbManaged = False
-        
+        sbManaged = False        
         json_query = uni('{"jsonrpc": "2.0", "method": "Files.GetDirectory", "params": {"directory": "%s", "media": "video", "fields":["season","episode","playcount","streamdetails","duration","runtime","tagline","showtitle","album","artist","plot"]}, "id": 1}' % (self.escapeDirJSON(dir_name)))
 
         if self.background == False:
@@ -1861,9 +1860,9 @@ class ChannelList:
                             tmpstr = tmpstr
                             tmpstr = tmpstr.replace("\\n", " ").replace("\\r", " ").replace("\\\"", "\"")
                             tmpstr = tmpstr + '\n' + match.group(1).replace("\\\\", "\\")
-
+                            
                             if self.channels[channel - 1].mode & MODE_ORDERAIRDATE > 0:
-                                    seasoneplist.append([seasonval, epval, tmpstr])
+                                    seasoneplist.append([seasonval, epval, tmpstr])                        
                             else:
                                 fileList.append(tmpstr)
                     except:
@@ -1927,6 +1926,8 @@ class ChannelList:
         showcount = 0  
         elements_parsed = 0
         xmltv = setting3
+        LiveID = ''
+        Unaired = False
         title = ''
         description = ''
         subtitle = ''
@@ -1936,7 +1937,9 @@ class ChannelList:
         cpAPI = CouchPotato(REAL_SETTINGS.getSetting('couchpotato.baseurl'),REAL_SETTINGS.getSetting('couchpotato.apikey'))
         
         if self.background == False:
-            self.updateDialog.update(self.updateDialogProgress, "Updating channel " + str(self.settingChannel), "Parsing LiveTV")
+            self.updateDialog.update(self.updateDialogProgress, "Updating channel " + str(self.settingChannel), "Parsing LiveTV...")
+            if  REAL_SETTINGS.getSetting('tvdb.enabled') == 'true' or  REAL_SETTINGS.getSetting('tmdb.enabled') == 'true':
+                self.updateDialog.update(self.updateDialogProgress, "Updating channel " + str(self.settingChannel), "Parsing LiveTV & Enhancing Guide Data")
         
         if setting3 == 'ustvnow':
             f = urlopen(self.xmlTvFile)    
@@ -1961,7 +1964,9 @@ class ChannelList:
                         title = elem.findtext('title')
                         try:
                             title = title.split("*")[0] #Remove "*" from title
+                            Unaired = True
                         except:
+                            Unaired = False
                             pass
                         description = elem.findtext("desc")
                         iconElement = elem.find("icon")
@@ -1981,7 +1986,6 @@ class ChannelList:
                         #Parse the category of the program
                         istvshow = True
                         movie = False
-                        Unaired = False
                         category = 'Unknown'
                         categories = ''
                         categoryList = elem.findall("category")
@@ -2011,7 +2015,7 @@ class ChannelList:
                         if movie:
                             category = 'Movie'
                             
-                        ######################################################### Find TVDB/IMDB ids
+                        ######################################################### Find TVDB/IMDB IDs
                         #Decipher the TVDB ID by using the Zap2it ID in dd_progid
                         dd_progid = ''
                         tvdbid = 0
@@ -2261,8 +2265,6 @@ class ChannelList:
                         if elem.find("new") != None:
                             Unaired = True
                             title = (title + '*NEW*')
-                        else:
-                            Unaired = False
 
                         title = uni(title)
                         description = uni(self.trim(description, 300, '...'))
@@ -2272,7 +2274,6 @@ class ChannelList:
                         genre = uni(category)
                         
                         #Build LiveID (imdb/tvdb/sickbeard or couchpoato/unaired or aired)
-                        LiveID = ''
                         if imdbid != 0:
                             IID = ('imdb_' + str(imdbid))
                             LiveID = (IID + '|')
@@ -2286,11 +2287,9 @@ class ChannelList:
                             LiveID = (LiveID + '|' + 'NA' + '|')
                                               
                         if sbManaged == True:
-                            SB = ('SB')
-                            LiveID = (LiveID + '|' + SB + '|')
+                            LiveID = (LiveID + '|' + 'SB' + '|')
                         elif cpManaged == True:
-                            CP = ('CP')
-                            LiveID = (LiveID + '|' + CP + '|')
+                            LiveID = (LiveID + '|' + 'CP' + '|')
                         else:
                             LiveID = (LiveID + '|' + 'NA' + '|')
                             
@@ -3024,191 +3023,191 @@ class ChannelList:
         # self.writeFileList(channel, fileList, location)
     
     
-    # def getBumpersList(self, channel):
-        # self.log("getBumpersList")
-        # bumpersList = []
-        # chname = ADDON_SETTINGS.getSetting("Channel_" + str(channel) + "_rule_1_opt_1")
-        # type = "bumpers"
+    def getBumpersList(self, channel):
+        self.log("getBumpersList")
+        bumpersList = []
+        chname = ADDON_SETTINGS.getSetting("Channel_" + str(channel) + "_rule_1_opt_1")
+        type = "bumpers"
 
-        # try:
-            # metafile = open(META_LOC + str(type) + ".meta", "r")
-        # except:
-            # self.Error('Unable to open the meta file ' + META_LOC + str(type) + '.meta', xbmc.LOGERROR)
-            # return False
+        try:
+            metafile = open(META_LOC + str(type) + ".meta", "r")
+        except:
+            self.Error('Unable to open the meta file ' + META_LOC + str(type) + '.meta', xbmc.LOGERROR)
+            return False
 
-        # for file in metafile:
-            # # filter by channel name
-            # bumperMeta = []
-            # bumperMeta = file.split('|')
-            # thepath = bumperMeta[0]
-            # basepath = os.path.dirname(thepath)
-            # chfolder = os.path.split(basepath)[1]
-            # # bumpers are channel specific
-            # if chfolder == chname:
-                # bumpersList.append(file)
+        for file in metafile:
+            # filter by channel name
+            bumperMeta = []
+            bumperMeta = file.split('|')
+            thepath = bumperMeta[0]
+            basepath = os.path.dirname(thepath)
+            chfolder = os.path.split(basepath)[1]
+            # bumpers are channel specific
+            if chfolder == chname:
+                bumpersList.append(file)
 
-        # metafile.close()
+        metafile.close()
 
-        # return bumpersList
-
-
-
-    # def getCommercialsList(self, channel):
-        # self.log("getCommercialsList")
-        # commercialsList = []
-        # chname = ADDON_SETTINGS.getSetting("Channel_" + str(channel) + "_rule_1_opt_1")
-        # type = "commercials"
-        # channelOnlyCommercials = False
-
-        # try:
-            # metafile = open(META_LOC + str(type) + ".meta", "r")
-        # except:
-            # self.Error('Unable to open the meta file ' + META_LOC + str(type) + '.meta', xbmc.LOGERROR)
-            # return False
-
-        # for file in metafile:
-            # # filter by channel name
-            # commercialMeta = []
-            # commercialMeta = file.split('|')
-            # thepath = commercialMeta[0]
-            # basepath = os.path.dirname(thepath)
-            # chfolder = os.path.split(basepath)[1]
-            # if chfolder == chname:
-                # if channelOnlyCommercials:
-                    # # channel specific trailers are in effect
-                    # commercialsList.append(file)
-                # else:
-                    # # reset list to only contain channel specific trailers
-                    # channelOnlyCommercials = True
-                    # commercialsList = []
-                    # commercialsList.append(file)
-            # else:
-                # if not channelOnlyCommercials:
-                    # commercialsList.append(file)
-
-        # metafile.close()
-
-        # return commercialsList
+        return bumpersList
 
 
-    # def getTrailersList(self, channel):
-        # self.log("getTrailersList")
-        # trailersList = []
-        # chname = ADDON_SETTINGS.getSetting("Channel_" + str(channel) + "_rule_1_opt_1")
-        # type = "trailers"
-        # channelOnlyTrailers = False
 
-        # try:
-            # metafile = open(META_LOC + str(type) + ".meta", "r")
-        # except:
-            # self.log('Unable to open the meta file ' + META_LOC + str(type) + '.meta')
-            # return False
+    def getCommercialsList(self, channel):
+        self.log("getCommercialsList")
+        commercialsList = []
+        chname = ADDON_SETTINGS.getSetting("Channel_" + str(channel) + "_rule_1_opt_1")
+        type = "commercials"
+        channelOnlyCommercials = False
 
-        # for file in metafile:
-            # # filter by channel name
-            # trailerMeta = []
-            # trailerMeta = file.split('|')
-            # thepath = trailerMeta[0]
-            # basepath = os.path.dirname(thepath)
-            # chfolder = os.path.split(basepath)[1]
-            # if chfolder == chname:
-                # if channelOnlyTrailers:
-                    # # channel specific trailers are in effect
-                    # trailersList.append(file)
-                # else:
-                    # # reset list to only contain channel specific trailers
-                    # channelOnlyTrailers = True
-                    # trailersList = []
-                    # trailersList.append(file)
-            # else:
-                # if not channelOnlyTrailers:
-                    # trailersList.append(file)
+        try:
+            metafile = open(META_LOC + str(type) + ".meta", "r")
+        except:
+            self.Error('Unable to open the meta file ' + META_LOC + str(type) + '.meta', xbmc.LOGERROR)
+            return False
 
-        # metafile.close()
+        for file in metafile:
+            # filter by channel name
+            commercialMeta = []
+            commercialMeta = file.split('|')
+            thepath = commercialMeta[0]
+            basepath = os.path.dirname(thepath)
+            chfolder = os.path.split(basepath)[1]
+            if chfolder == chname:
+                if channelOnlyCommercials:
+                    # channel specific trailers are in effect
+                    commercialsList.append(file)
+                else:
+                    # reset list to only contain channel specific trailers
+                    channelOnlyCommercials = True
+                    commercialsList = []
+                    commercialsList.append(file)
+            else:
+                if not channelOnlyCommercials:
+                    commercialsList.append(file)
 
-        # return trailersList
+        metafile.close()
+
+        return commercialsList
 
 
-    # def convertMetaToFile(self, metaFileStr):
-        # # parse file meta data
-        # metaFile = []
-        # metaFile = metaFileStr.split('|')
-        # thepath = metaFile[0]
-        # dur = metaFile[1]
-        # title = metaFile[2]
-        # showtitle = metaFile[3]
-        # theplot = metaFile[4]
-        # # format to file list structure
-        # tmpstr = str(dur) + ','
-        # tmpstr += showtitle + "//" + title + "//" + theplot
-        # tmpstr = tmpstr[:600]
-        # tmpstr = tmpstr.replace("\\n", " ").replace("\n", " ").replace("\r", " ").replace("\\r", " ").replace("\\\"", "\"")
-        # tmpstr = tmpstr + '\n' + thepath.replace("\\\\", "\\")
-        # return tmpstr
+    def getTrailersList(self, channel):
+        self.log("getTrailersList")
+        trailersList = []
+        chname = ADDON_SETTINGS.getSetting("Channel_" + str(channel) + "_rule_1_opt_1")
+        type = "trailers"
+        channelOnlyTrailers = False
+
+        try:
+            metafile = open(META_LOC + str(type) + ".meta", "r")
+        except:
+            self.log('Unable to open the meta file ' + META_LOC + str(type) + '.meta')
+            return False
+
+        for file in metafile:
+            # filter by channel name
+            trailerMeta = []
+            trailerMeta = file.split('|')
+            thepath = trailerMeta[0]
+            basepath = os.path.dirname(thepath)
+            chfolder = os.path.split(basepath)[1]
+            if chfolder == chname:
+                if channelOnlyTrailers:
+                    # channel specific trailers are in effect
+                    trailersList.append(file)
+                else:
+                    # reset list to only contain channel specific trailers
+                    channelOnlyTrailers = True
+                    trailersList = []
+                    trailersList.append(file)
+            else:
+                if not channelOnlyTrailers:
+                    trailersList.append(file)
+
+        metafile.close()
+
+        return trailersList
+
+
+    def convertMetaToFile(self, metaFileStr):
+        # parse file meta data
+        metaFile = []
+        metaFile = metaFileStr.split('|')
+        thepath = metaFile[0]
+        dur = metaFile[1]
+        title = metaFile[2]
+        showtitle = metaFile[3]
+        theplot = metaFile[4]
+        # format to file list structure
+        tmpstr = str(dur) + ','
+        tmpstr += showtitle + "//" + title + "//" + theplot
+        tmpstr = tmpstr[:600]
+        tmpstr = tmpstr.replace("\\n", " ").replace("\n", " ").replace("\r", " ").replace("\\r", " ").replace("\\\"", "\"")
+        tmpstr = tmpstr + '\n' + thepath.replace("\\\\", "\\")
+        return tmpstr
     
 
-    # def insertFiles(self, channel, fileList, commercials, bumpers, trailers, cinterval, binterval, tinterval, cnum, bnum, tnum):
-        # newFileList = []
+    def insertFiles(self, channel, fileList, commercials, bumpers, trailers, cinterval, binterval, tinterval, cnum, bnum, tnum):
+        newFileList = []
         
-        # if bumpers:
-            # bumpersList = []
-            # bumpersList = self.getBumpersList(channel)
+        if bumpers:
+            bumpersList = []
+            bumpersList = self.getBumpersList(channel)
             
-        # if commercials:
-            # commercialsList = []
-            # commercialsList = self.getCommercialsList(channel)
+        if commercials:
+            commercialsList = []
+            commercialsList = self.getCommercialsList(channel)
         
-        # if trailers:
-            # trailersList = []
-            # trailersList = self.getTrailersList(channel)
+        if trailers:
+            trailersList = []
+            trailersList = self.getTrailersList(channel)
         
-        # for i in range(len(fileList)):
-            # newFileList.append(fileList[i])
-            # if commercials:
-                # self.line3 = "Inserting Commercials"
-                # self.updateDialog(self.progress,self.line1,self.line2,self.line3)
-                # if len(commercialsList) > 0:
-                    # if (i+1) % cinterval == 0:
-                        # for n in range(int(cnum)):
-                            # commercialFile = random.choice(commercialsList)
-                            # if len(commercialFile) > 0:
-                                # newFileList.append(self.convertMetaToFile(commercialFile))
-                            # else:
-                                # self.log('insertFiles: Unable to get commercial')                                        
-                # else:
-                    # self.log("No valid commercials available")
+        for i in range(len(fileList)):
+            newFileList.append(fileList[i])
+            if commercials:
+                self.line3 = "Inserting Commercials"
+                self.updateDialog(self.progress,self.line1,self.line2,self.line3)
+                if len(commercialsList) > 0:
+                    if (i+1) % cinterval == 0:
+                        for n in range(int(cnum)):
+                            commercialFile = random.choice(commercialsList)
+                            if len(commercialFile) > 0:
+                                newFileList.append(self.convertMetaToFile(commercialFile))
+                            else:
+                                self.log('insertFiles: Unable to get commercial')                                        
+                else:
+                    self.log("No valid commercials available")
 
-            # if bumpers:
-                # self.line3 = "Inserting Bumpers"
-                # self.updateDialog(self.progress,self.line1,self.line2,self.line3)
-                # if len(bumpersList) > 0:
-                    # # mix in bumpers
-                    # if (i+1) % binterval == 0:
-                        # for n in range(int(bnum)):
-                            # bumperFile = random.choice(bumpersList)
-                            # if len(bumperFile) > 0:
-                                # newFileList.append(self.convertMetaToFile(bumperFile))
-                            # else:
-                                # self.log('insertFiles: Unable to get bumper')                                                                
-                # else:
-                    # self.log("No valid bumpers available")
+            if bumpers:
+                self.line3 = "Inserting Bumpers"
+                self.updateDialog(self.progress,self.line1,self.line2,self.line3)
+                if len(bumpersList) > 0:
+                    # mix in bumpers
+                    if (i+1) % binterval == 0:
+                        for n in range(int(bnum)):
+                            bumperFile = random.choice(bumpersList)
+                            if len(bumperFile) > 0:
+                                newFileList.append(self.convertMetaToFile(bumperFile))
+                            else:
+                                self.log('insertFiles: Unable to get bumper')                                                                
+                else:
+                    self.log("No valid bumpers available")
 
-            # if trailers:
-                # self.line3 = "Inserting Trailers"
-                # self.updateDialog(self.progress,self.line1,self.line2,self.line3)
-                # if len(trailersList) > 0:
-                    # # mix in trailers
-                    # if (i+1) % tinterval == 0:
-                        # for n in range(int(tnum)):
-                            # trailerFile = random.choice(trailersList)
-                            # if len(trailerFile) > 0:
-                                # newFileList.append(self.convertMetaToFile(trailerFile))
-                            # else:
-                                # self.log('insertFiles: Unable to get trailer')
+            if trailers:
+                self.line3 = "Inserting Trailers"
+                self.updateDialog(self.progress,self.line1,self.line2,self.line3)
+                if len(trailersList) > 0:
+                    # mix in trailers
+                    if (i+1) % tinterval == 0:
+                        for n in range(int(tnum)):
+                            trailerFile = random.choice(trailersList)
+                            if len(trailerFile) > 0:
+                                newFileList.append(self.convertMetaToFile(trailerFile))
+                            else:
+                                self.log('insertFiles: Unable to get trailer')
                 
-        # fileList = newFileList    
+        fileList = newFileList    
 
-        # return fileList
+        return fileList
     
     def strm_ok(self, setting2):
         self.log("strm_ok, " + str(setting2))
@@ -3379,7 +3378,7 @@ class ChannelList:
         
     def plugin_ok(self, plugin):
         self.PluginFound = False
-        self.PlugInvalid = False
+        self.Pluginvalid = False
         stream = plugin
         self.log("plugin stream = " + stream)
         id = plugin.split("/?")[0]
@@ -3388,33 +3387,29 @@ class ChannelList:
         try:
             xbmcaddon.Addon(id)
             self.PluginFound = True
-        except Exception:
+        except:
             self.PluginFound = False 
         return self.PluginFound
         
-        # self.log("PluginFound = " + str(self.PluginFound))
-        
-        # if self.PluginFound == True:
-            # # try:
-            # json_query = uni('{"jsonrpc":"2.0","method":"Files.GetDirectory","params":{"directory":"%s""}, "id": 1}' % (self.escapeDirJSON(stream)))
-            # json_folder_detail = self.sendJSON(json_query)
-            # file_detail = re.compile( "{(.*?)}", re.DOTALL ).findall(json_folder_detail)
-            # self.log('json_folder_detail = ' + str(json_folder_detail))
-            # self.log('file_detail = ' + str(file_detail))
-            # self.PlugInvalid = True        
-            # # except Exception:
-                # # self.PlugInvalid = False
-            
-            # xbmc.executeJSONRPC('{"jsonrpc": "2.0", "method": "Files.GetDirectory", "id": 1, "params": {"directory": "plugin://plugin.video.youtube"}}')    
-     
-    
+        self.log("PluginFound = " + str(self.PluginFound))
+        if self.PluginFound == True:
+            try:
+                json_query = uni('{"jsonrpc": "2.0", "method": "Files.GetDirectory", "id": 1, "params": {"directory": "%s"}}' % (self.escapeDirJSON(stream)))
+                json_folder_detail = self.sendJSON(json_query)
+                file_detail = re.compile( "{(.*?)}", re.DOTALL ).findall(json_folder_detail)
+                self.log('json_folder_detail = ' + str(json_folder_detail))
+                self.log('file_detail = ' + str(file_detail))
+                self.Pluginvalid = True        
+            except:
+                self.Pluginvalid = False
+                
     def trim(self, content, limit, suffix):
         if len(content) <= limit:
             return content
         else:
             return content[:limit].rsplit(' ', 1)[0]+suffix
             
-    
+    ## Common Cache ##
     def pi_count(self):
         def arccot(x, unity):
             sum = xpower = unity // x
@@ -3435,8 +3430,9 @@ class ChannelList:
         pi = 4 * (4*arccot(5, unity) - arccot(239, unity))
         return pi // 10**10
          
-     # result = cache.cacheFunction(pi_count) # This will call the pi_count function, save the result in the cache, and return the result.
-     # time.sleep(300)
-     # result = cache.cacheFunction(pi_count) # This will return the cached result
-     # time.sleep(3600)
-     # result = cache.cacheFunction(pi_count) # This will again call pi_count since the result is now considered stale.
+    # result = cache.cacheFunction(pi_count) # This will call the pi_count function, save the result in the cache, and return the result.
+    # time.sleep(300)
+    # result = cache.cacheFunction(pi_count) # This will return the cached result
+    # time.sleep(3600)
+    # result = cache.cacheFunction(pi_count) # This will again call pi_count since the result is now considered stale.
+    ################

@@ -80,38 +80,20 @@
       	<setting id="Warning2" type="bool" subsetting="true" label="30100" visible="eq(-1,true)" default="false" action="RunScript($CWD/restore.py)"/> />
     </category>
 <!--BCTs-->   
-    <category label="30998">
-        <setting label="30999" type="lsep"/>
-        <setting label="30101" type="lsep"/>
-        <setting label="30102" type="text" enable="true"/>
-        <setting label="30103" id="bumpers" type="bool" default="false" />
-        <setting label="30104" type="text" visible="eq(-1,true)" enable="true"/>
-        <setting label="30105" id="bumpersfolder" type="folder" visible="eq(-2,true)" default="" />
-        <setting label="30106" type="text" visible="eq(-3,true) + !eq(-1,)" enable="true"/>
-        <setting label="30107" id="numbumpers" type="enum" visible="eq(-4,true) + !eq(-2,)" values="Auto|1|2|3|4|5" default="0"/>
-        <setting label="30108" type="text" visible="eq(-5,true) + !eq(-3,) + eq(-1,0)" enable="true"/>
-        <setting label="30109" id="maxbumpers" type="enum" visible="eq(-6,true) + !eq(-4,) + eq(-2,0)" values="1|2|3|4|5" default="0"/>
-        <setting label="30110" type="text" visible="eq(-8,true)" enable="true"/>
-        <setting label="30111" type="text" visible="eq(-9,true)" enable="true"/>
-        <setting label="30112" type="text" visible="eq(-10,true)" enable="true"/>        
-        <setting label="30201" type="lsep"/>
-        <setting label="30202" type="text" enable="true"/>
-        <setting label="30203" id="commercials" type="bool" default="false" />
-        <setting label="30204" type="text" visible="eq(-1,true)" enable="true"/>
-        <setting label="30205" id="commercialsfolder" type="folder" visible="eq(-2,true)" default="" />
-        <setting label="30206" type="text" visible="eq(-3,true) + !eq(-1,)" enable="true"/>
-        <setting label="30207" id="numcommercials" type="enum" visible="eq(-4,true) + !eq(-2,)" values="Auto|1|2|3|4|5" default="0"/>
-        <setting label="30208" type="text" visible="eq(-5,true) + !eq(-3,) + eq(-1,0)" enable="true"/>
-        <setting label="30209" id="maxcommercials" type="enum" visible="eq(-6,true) + !eq(-4,) + eq(-2,0)" values="1|2|3|4|5" default="0"/>
-        <setting label="30301" type="lsep"/>
-        <setting label="30302" type="text" enable="true"/>
-        <setting id="trailers" type="bool" label="30303" default="false" />
-        <setting label="30304" type="text" visible="eq(-1,true)" enable="true"/>
-        <setting id="trailersfolder" type="folder" visible="eq(-2,true)" label="30305" default="" />
-        <setting label="30306" type="text" visible="eq(-3,true) + !eq(-1,)" enable="true"/>
-        <setting id="numtrailers" type="enum" label="30307" visible="eq(-4,true) + !eq(-2,)" values="Auto|1|2|3|4|5" default="0"/>
-        <setting label="30308" type="text" visible="eq(-5,true) + !eq(-3,) + eq(-1,0)" enable="true"/>
-        <setting id="maxtrailers" type="enum" label="30309" visible="eq(-6,true) + !eq(-4,) + eq(-2,0)" values="1|2|3|4|5" default="0"/>
+    <category label="30500">
+        <setting label="30501" id="bumpers" type="bool" default="false" />
+        <setting label="30502" id="bumpersfolder" type="folder" visible="eq(-1,true)" default="" />
+        <setting label="30503" id="numbumpers" type="enum" visible="eq(-2,true)" values="Auto|1|2|3|4|5" default="1"/>
+        <setting label="30504" id="maxbumpers" type="enum" visible="eq(-3,true) + eq(-1,0)" values="1|2|3|4|5" default="0"/>
+        <setting label="30505" id="commercials" type="bool" default="false" />
+        <setting label="30506" id="commercialsfolder" type="folder" visible="eq(-1,true)" default="" />
+        <setting label="30507" id="numcommercials" type="enum" visible="eq(-2,true)" values="Auto|1|2|3|4|5" default="1"/>
+        <setting label="30508" id="maxcommercials" type="enum" visible="eq(-3,true) + eq(-1,0)" values="1|2|3|4|5" default="0"/>
+        <setting label="30509" id="trailers" type="bool" default="false" />
+        <setting label="30510" id="trailersfolder" type="folder" visible="eq(-1,true)" default="" />
+        <setting label="30511" id="numtrailers" type="enum" visible="eq(-2,true)" values="Auto|1|2|3|4|5" default="1"/>
+        <setting label="30512" id="maxtrailers" type="enum" visible="eq(-3,true) + eq(-1,0)" values="1|2|3|4|5" default="0"/>
+        <setting label="30513" id="Movietrailers" type="bool" default="false" />
     </category>
     <!--APIs-->
     <category label="30700">  

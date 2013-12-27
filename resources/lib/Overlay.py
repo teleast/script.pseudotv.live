@@ -103,11 +103,15 @@ class TVOverlay(xbmcgui.WindowXMLDialog):
         self.channelDelay = 0
         # Channelbugcolor = '0xC0C0C0C0'  
         Channelbugcolor = '0xFF0297eb'    
-        # # try:
-        # Channelbugcolor = str(self.getControl(520).getLabel())
-        # self.logDebug('Channelbugcolor = ' + str(Channelbugcolor))
-        # # except:
-            # # pass
+        try:
+            Channelbugcolor = int(self.getControl(100).getLabel(), 16)
+            if Channelbugcolor > 0:
+                Channelbugcolor = hex(Channelbugcolor)[2:]
+            self.logDebug('Channelbugcolor = ' + str(Channelbugcolor))
+        except: 
+            Channelbugcolor = '0xFF0297eb'   
+            pass
+        
         for i in range(3):       
 
             # self.channelLabel.append(xbmcgui.ControlImage(50 + (50 * i), 50, 50, 50, IMAGES_LOC + 'solid.png', colorDiffuse=''))
@@ -1033,7 +1037,6 @@ class TVOverlay(xbmcgui.WindowXMLDialog):
         if self.showChannelBug == True:
             try:
                 self.getControl(103).setImage(self.channelLogos + ascii(self.channels[self.currentChannel - 1].name) + '.png')
-                # add label for color channel bug
                 # self.getControl(10?).setImage(self.channelLogos + ascii(self.channels[self.currentChannel - 1].name) + '_c.png')
                 self.getControl(300).setLabel(self.channels[self.currentChannel - 1].name)##Channel name label
             except:

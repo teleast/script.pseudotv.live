@@ -46,7 +46,6 @@
                 <height>125</height>
                 <align>center</align>
                 <aspectratio>keep</aspectratio>
-                <visible>false</visible>
             </control>
             <!--Movie.landscape Now Playing-->
             <control type="image">
@@ -77,7 +76,7 @@
                 <height>125</height>
                 <align>center</align>
                 <aspectratio>keep</aspectratio>
-                <texture>EPG.Hulu</texture>
+                <texture>EPG.Hulu.png</texture>
                 <visible>[substring(Player.FilenameAndPath,hulu) + IsEmpty(Player.Art(tvshow.landscape))]</visible>
             </control>     
             <control type="button" id="507">
@@ -93,14 +92,14 @@
                 <align>center</align>
                 <aspectratio>keep</aspectratio>
             </control>
-            <control type="image" id="512">
-                <description>Unaired NEW Icon</description>            
-                <posx>989</posx>
-                <posy>568</posy>
-                <width>100</width>
-                <height>100</height>
-                <aspectratio>keep</aspectratio>
-            </control>
+        </control>
+        <control type="image" id="512">
+            <description>Unaired NEW Icon</description>            
+            <posx>989</posx>
+            <posy>568</posy>
+            <width>100</width>
+            <height>100</height>
+            <aspectratio>keep</aspectratio>
         </control>
 <!--LEFT/RIGHT art-->
         <control type="image">
@@ -129,8 +128,7 @@
             <width>284</width>
             <height>51</height>
             <colordiffuse>FFFFFFFF</colordiffuse>
-            <aspectratio>keep</aspectratio>
-            <!-- <texture>pstvButtonNoFocus1.png</texture> -->
+            <texture>pstvButtonNoFocus.png</texture>
         </control>
         <control type="image">
             <description>Channel Overlay</description>
@@ -139,8 +137,7 @@
             <width>284</width>
             <height>51</height>
             <colordiffuse>FFFFFFFF</colordiffuse>
-            <aspectratio>keep</aspectratio>
-            <!-- <texture>pstvButtonNoFocus1.png</texture> -->
+            <texture>pstvButtonNoFocus.png</texture>
         </control>
         <control type="image">
             <description>Channel Overlay</description>
@@ -149,8 +146,7 @@
             <width>284</width>
             <height>51</height>
             <colordiffuse>FFFFFFFF</colordiffuse>
-            <aspectratio>keep</aspectratio>
-            <!-- <texture>pstvButtonNoFocus1.png</texture> -->
+            <texture>pstvButtonNoFocus.png</texture>
         </control>    
         <control type="image">
             <description>Channel Overlay</description>
@@ -159,8 +155,7 @@
             <width>284</width>
             <height>51</height>
             <colordiffuse>FFFFFFFF</colordiffuse>
-            <aspectratio>keep</aspectratio>
-            <!-- <texture>pstvButtonNoFocus1.png</texture> -->
+            <texture>pstvButtonNoFocus.png</texture>
         </control>
         <control type="image">
             <description>Channel Overlay</description>
@@ -169,8 +164,7 @@
             <width>284</width>
             <height>51</height>
             <colordiffuse>FFFFFFFF</colordiffuse>
-            <aspectratio>keep</aspectratio>
-            <!-- <texture>pstvButtonNoFocus1.png</texture> -->
+            <texture>pstvButtonNoFocus.png</texture>
         </control>
         <control type="image">
             <description>Channel Overlay</description>
@@ -179,10 +173,9 @@
             <width>284</width>
             <height>51</height>
             <colordiffuse>FFFFFFFF</colordiffuse>
-            <aspectratio>keep</aspectratio>
-            <!-- <texture>pstvButtonNoFocus1.png</texture> -->
+            <texture>pstvButtonNoFocus.png</texture>
         </control>
-<!--Time/Weather-->    
+        <!--Time/Weather-->    
         <control type="label">
             <description>Time</description>
             <posx>50</posx>
@@ -203,7 +196,7 @@
             <aspectratio align="center">keep</aspectratio>
             <info>Window(weather).Property(Current.ConditionIcon)</info>
         </control>
-        <control type="label" id="513">
+        <control type="label">
             <description>Weather</description>
             <posx>180</posx>
             <posy>60</posy>
@@ -214,38 +207,44 @@
             <align>center</align>
             <textcolor>FFFFFFFF</textcolor>
 			<visible>!Control.IsVisible(800)</visible>
-        </control>-->
+        </control>
         <control type="grouplist">
             <posx>68</posx>
-            <posy>520</posy>
+            <posy>525</posy>
             <width>1000</width>
             <height>40</height>
             <align>left</align>
-            <aligny>bottom</aligny>
+            <aligny>center</aligny>
             <orientation>horizontal</orientation>
             <itemgap>5</itemgap>
             <control type="label" id="500">
                 <description>Show Name Label</description>
                 <width min="5" max="840">auto</width>
-                 <height>40</height>
+                <height>40</height>
                 <label>Show Name</label>
                 <font>Font_Bold34</font>
+                <align>left</align>
+                <aligny>center</aligny>
                 <textcolor>FF00b4db</textcolor>
             </control>
             <control type="label">
                 <description>Show Name Label</description>
-                <width>40</width>
+                <width>10</width>
                 <height>40</height>
                 <label>•</label>
                 <font>font12</font>
+                <align>left</align>
+                <aligny>center</aligny>
                 <textcolor>FF00b4db</textcolor>
             </control>
             <control type="label" id="501">
                 <description>Show Title Label</description>
-                <width min="-5" max="840">auto</width>
+                <width>740</width>
                 <height>40</height>
                 <label>Show Title</label>
-                <font>Font_Reg28</font>
+                <font>font12</font>
+                <align>left</align>
+                <aligny>center</aligny>
                 <textcolor>FFFFFFFF</textcolor>
             </control>        
         </control>
@@ -264,7 +263,7 @@
             <width>835</width>
             <height>100</height>
             <label>Show Description</label>
-            <font>font20</font>
+            <font>font12</font>
             <align>left</align>
             <aligny>top</aligny>
             <textcolor>FFFFFFFF</textcolor>
@@ -278,8 +277,13 @@
             <height>1</height>
             <aspectratio>keep</aspectratio>
             <aligny>top</aligny>
-        </control>                
-        <control type="label" id="101">
+        </control>                 
+        <control type="button" id="100">  
+            <label>FFFFFFFF</label><!--textcolor-->
+            <label2>FF7d7d7d</label2><!--focusedcolor-->
+            <visible>false</visible>
+        </control>
+        <control type="label" id="101">  
             <description>Time Left Label</description>
             <posx>400</posx>
             <posy>152</posy>
@@ -327,6 +331,10 @@
             <align>left</align>
             <aligny>center</aligny>
             <textcolor>FFFFFFFF</textcolor>
+        </control>            
+        <control type="button" id="105">  
+            <label>font14</label><!--textfont-->
+            <visible>false</visible>
         </control>
         <!--SHOW LISTINGS-->
 		<control type="group" id="111">
@@ -365,7 +373,7 @@
             <width>880</width>
             <height>51</height>
         </control>
-        <control type="image" id="120">
+        <control type="group" id="120">
             <posx>360</posx>
             <posy>180</posy>
             <width>20</width>
