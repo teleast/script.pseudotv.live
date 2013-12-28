@@ -30,12 +30,12 @@ import feedparser
 import tvdb_api
 import tmdbsimple
 import shutil
-try:
-    import StorageServer
-except:
-   import storageserverdummy as StorageServer
-
-   cache = StorageServer.StorageServer(ADDON_ID, 24) # (Your plugin name, Cache time in hours)
+#try:
+#    import StorageServer
+#except:
+#   import storageserverdummy as StorageServer
+#
+#   cache = StorageServer.StorageServer(ADDON_ID, 24) # (Your plugin name, Cache time in hours)
 
 
 from urllib import unquote
