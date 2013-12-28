@@ -3146,68 +3146,68 @@ class ChannelList:
         return tmpstr
     
 
-    def insertFiles(self, channel, fileList, commercials, bumpers, trailers, cinterval, binterval, tinterval, cnum, bnum, tnum):
-        newFileList = []
+    # def insertFiles(self, channel, fileList, commercials, bumpers, trailers, cinterval, binterval, tinterval, cnum, bnum, tnum):
+        # newFileList = []
         
-        if bumpers:
-            bumpersList = []
-            bumpersList = self.getBumpersList(channel)
+        # if bumpers:
+            # bumpersList = []
+            # bumpersList = self.getBumpersList(channel)
             
-        if commercials:
-            commercialsList = []
-            commercialsList = self.getCommercialsList(channel)
+        # if commercials:
+            # commercialsList = []
+            # commercialsList = self.getCommercialsList(channel)
         
-        if trailers:
-            trailersList = []
-            trailersList = self.getTrailersList(channel)
+        # if trailers:
+            # trailersList = []
+            # trailersList = self.getTrailersList(channel)
         
-        for i in range(len(fileList)):
-            newFileList.append(fileList[i])
-            if commercials:
-                self.line3 = "Inserting Commercials"
-                self.updateDialog(self.progress,self.line1,self.line2,self.line3)
-                if len(commercialsList) > 0:
-                    if (i+1) % cinterval == 0:
-                        for n in range(int(cnum)):
-                            commercialFile = random.choice(commercialsList)
-                            if len(commercialFile) > 0:
-                                newFileList.append(self.convertMetaToFile(commercialFile))
-                            else:
-                                self.log('insertFiles: Unable to get commercial')                                        
-                else:
-                    self.log("No valid commercials available")
+        # for i in range(len(fileList)):
+            # newFileList.append(fileList[i])
+            # if commercials:
+                # self.line3 = "Inserting Commercials"
+                # self.updateDialog(self.progress,self.line1,self.line2,self.line3)
+                # if len(commercialsList) > 0:
+                    # if (i+1) % cinterval == 0:
+                        # for n in range(int(cnum)):
+                            # commercialFile = random.choice(commercialsList)
+                            # if len(commercialFile) > 0:
+                                # newFileList.append(self.convertMetaToFile(commercialFile))
+                            # else:
+                                # self.log('insertFiles: Unable to get commercial')                                        
+                # else:
+                    # self.log("No valid commercials available")
 
-            if bumpers:
-                self.line3 = "Inserting Bumpers"
-                self.updateDialog(self.progress,self.line1,self.line2,self.line3)
-                if len(bumpersList) > 0:
-                    # mix in bumpers
-                    if (i+1) % binterval == 0:
-                        for n in range(int(bnum)):
-                            bumperFile = random.choice(bumpersList)
-                            if len(bumperFile) > 0:
-                                newFileList.append(self.convertMetaToFile(bumperFile))
-                            else:
-                                self.log('insertFiles: Unable to get bumper')                                                                
-                else:
-                    self.log("No valid bumpers available")
+            # if bumpers:
+                # self.line3 = "Inserting Bumpers"
+                # self.updateDialog(self.progress,self.line1,self.line2,self.line3)
+                # if len(bumpersList) > 0:
+                    # # mix in bumpers
+                    # if (i+1) % binterval == 0:
+                        # for n in range(int(bnum)):
+                            # bumperFile = random.choice(bumpersList)
+                            # if len(bumperFile) > 0:
+                                # newFileList.append(self.convertMetaToFile(bumperFile))
+                            # else:
+                                # self.log('insertFiles: Unable to get bumper')                                                                
+                # else:
+                    # self.log("No valid bumpers available")
 
-            if trailers:
-                self.line3 = "Inserting Trailers"
-                self.updateDialog(self.progress,self.line1,self.line2,self.line3)
-                if len(trailersList) > 0:
-                    # mix in trailers
-                    if (i+1) % tinterval == 0:
-                        for n in range(int(tnum)):
-                            trailerFile = random.choice(trailersList)
-                            if len(trailerFile) > 0:
-                                newFileList.append(self.convertMetaToFile(trailerFile))
-                            else:
-                                self.log('insertFiles: Unable to get trailer')
+            # if trailers:
+                # self.line3 = "Inserting Trailers"
+                # self.updateDialog(self.progress,self.line1,self.line2,self.line3)
+                # if len(trailersList) > 0:
+                    # # mix in trailers
+                    # if (i+1) % tinterval == 0:
+                        # for n in range(int(tnum)):
+                            # trailerFile = random.choice(trailersList)
+                            # if len(trailerFile) > 0:
+                                # newFileList.append(self.convertMetaToFile(trailerFile))
+                            # else:
+                                # self.log('insertFiles: Unable to get trailer')
                 
-        fileList = newFileList    
+        # fileList = newFileList    
 
-        return fileList
+        # return fileList
     
     def strm_ok(self, setting2):
         self.log("strm_ok, " + str(setting2))
