@@ -30,22 +30,12 @@ import feedparser
 import tvdb_api
 import tmdbsimple
 import shutil
-<<<<<<< HEAD
 try:
     import StorageServer
 except:
    import storageserverdummy as StorageServer
 
    cache = StorageServer.StorageServer("script.pseudotv.live", 24) # (Your plugin name, Cache time in hours)
-=======
-#try:
-#    import StorageServer
-#except:
-#   import storageserverdummy as StorageServer
-#
-#   cache = StorageServer.StorageServer(ADDON_ID, 24) # (Your plugin name, Cache time in hours)
-
->>>>>>> da74e28af828d4dde5826b365aee2b8618784963
 
 from urllib import unquote
 from urllib import urlopen
@@ -3146,7 +3136,6 @@ class ChannelList:
             return content[:limit].rsplit(' ', 1)[0]+suffix
 
             
-<<<<<<< HEAD
     def insertFiles(self, channel, fileList, type):
         self.log("insertFiles")
         self.logDebug("insertFiles, channel = " + str(channel))
@@ -3836,32 +3825,3 @@ class ChannelList:
                     # recursively scan all subfolders
                     video += self.walk(os.path.join(folder,item))
         return video
-=======
-    ## Common Cache ##
-    def pi_count(self):
-        def arccot(x, unity):
-            sum = xpower = unity // x
-            n = 3
-            sign = -1
-            while 1:
-                xpower = xpower // (x*x)
-                term = xpower // n
-                if not term:
-                       break
-                sum += sign * term
-                sign = -sign
-                n += 2
-            return sum
-
-        digits = 40
-        unity = 10**(digits + 10)
-        pi = 4 * (4*arccot(5, unity) - arccot(239, unity))
-        return pi // 10**10
-         
-    # result = cache.cacheFunction(pi_count) # This will call the pi_count function, save the result in the cache, and return the result.
-    # time.sleep(300)
-    # result = cache.cacheFunction(pi_count) # This will return the cached result
-    # time.sleep(3600)
-    # result = cache.cacheFunction(pi_count) # This will again call pi_count since the result is now considered stale.
-    ################
->>>>>>> da74e28af828d4dde5826b365aee2b8618784963
