@@ -35,9 +35,9 @@
         <setting id="notify" type="bool" label="30046" subsetting="true" visible="eq(-2,true)" default="false"/>
         <setting id="ChannelDelay" type="enum" label="30041" default="0" values="None|0.25|0.5|0.75|1.0|1.25|1.5|1.75|2.0"/>
         <setting id="ClockMode" type="enum" label="30207" default="0" values="12 Hour|24 Hour"/>
-    	<setting id="HideClips" type="bool" label="30209" default="true"/>
-    	<setting id="ClipLength" type="enum" subsetting="true" label="30210" visible="eq(-1,true)" values="15|30|60|90|120|180|240|300|360" default="2"/>
     	<setting id="EnableDown" type="bool" label="30049" default="false"/>
+    	<setting id="HideClips" type="bool" label="30209" default="true"/>
+    	<setting id="ClipLength" type="enum" subsetting="true" label="30210" visible="eq(-1,true)" values="15|30|60|90|120|180|240|300|360|420|460" default="2"/>
     	<setting id="TVFileSys" type="enum" subsetting="true" label="30050" visible="eq(-1,true)" values="\Title\Season\Media.ext|\Title\Media.ext" default="0"/>
     	<setting id="MovieFileSys" type="enum" subsetting="true" label="30051" visible="eq(-2,true)" values="\Movies\Title\Media.ext|\Movies\Media.ext" default="0"/>
     </category>
@@ -55,28 +55,27 @@
       	<setting id="Warning1" type="bool" label="30072" subsetting="true" visible="eq(-1,true)" default="false"/>
         <setting type="lsep" label="30073" visible="eq(-1,true)"/>
       	<setting id="autoFindLivePVR" type="bool" label="30075" subsetting="true" visible="eq(-2,true)" default="false"/>
-      	<setting id="autoFindLiveUSTVnow" type="bool" label="30074" subsetting="true" visible="eq(-3,true)" default="false"/>
         <setting type="lsep" label="30076" visible="eq(-4,true)"/>
-      	<setting id="autoFindCustom" type="bool" label="30077" subsetting="true" visible="eq(-5,true)" default="false"/>
-        <setting id="autoFindNetworks" type="bool" label="30078" subsetting="true" visible="eq(-6,true)" default="false"/>
-      	<setting id="autoFindStudios" type="bool" label="30079" subsetting="true" visible="eq(-7,true)" default="false"/>
-      	<setting id="autoFindTVGenres" type="bool" label="30080" subsetting="true" visible="eq(-8,true)" default="false"/>
-      	<setting id="autoFindMovieGenres" type="bool" label="30081" subsetting="true" visible="eq(-9,true)" default="false"/>
-      	<setting id="autoFindMixGenres" type="bool" label="30082" subsetting="true" visible="eq(-10,true)" default="false"/>
-      	<setting type="lsep" label="30083" visible="eq(-11,true)"/>
-        <setting id="autoFindMusicGenres" type="bool" label="30084" subsetting="true" visible="eq(-12,true)" default="false"/>
-      	<setting id="autoFindMusicVideosYoutube" type="bool" label="30085" subsetting="true" visible="eq(-13,true)" default="false"/>
-      	<setting id="autoFindMusicVideosVevoTV" type="bool" label="30086" subsetting="true" visible="eq(-14,true)" default="false"/>
-      	<setting id="autoFindMusicVideosLastFM" type="bool" label="30087" subsetting="true" visible="eq(-15,true)" default="false"/>
+      	<setting id="autoFindCustom" type="bool" label="30077" subsetting="true" visible="eq(-4,true)" default="false"/>
+        <setting id="autoFindNetworks" type="bool" label="30078" subsetting="true" visible="eq(-5,true)" default="false"/>
+      	<setting id="autoFindStudios" type="bool" label="30079" subsetting="true" visible="eq(-6,true)" default="false"/>
+      	<setting id="autoFindTVGenres" type="bool" label="30080" subsetting="true" visible="eq(-7,true)" default="false"/>
+      	<setting id="autoFindMovieGenres" type="bool" label="30081" subsetting="true" visible="eq(-8,true)" default="false"/>
+      	<setting id="autoFindMixGenres" type="bool" label="30082" subsetting="true" visible="eq(-9,true)" default="false"/>
+      	<setting type="lsep" label="30083" visible="eq(-10,true)"/>
+        <setting id="autoFindMusicGenres" type="bool" label="30084" subsetting="true" visible="eq(-11,true)" default="false"/>
+      	<setting id="autoFindMusicVideosYoutube" type="bool" label="30085" subsetting="true" visible="eq(-12,true)" default="false"/>
+      	<setting id="autoFindMusicVideosVevoTV" type="bool" label="30086" subsetting="true" visible="eq(-13,true)" default="false"/>
+      	<setting id="autoFindMusicVideosLastFM" type="bool" label="30087" subsetting="true" visible="eq(-14,true)" default="false"/>
         <setting id="autoFindMusicVideosLastFMuser" subsetting="true" label="30088" visible="eq(-1,true)" type="text" default=""/>
-      	<setting id="autoFindMusicVideosLocal" type="folder" source="auto" label="30089" subsetting="true" visible="eq(-17,true)" default=""/>
-      	<setting type="lsep" label="30090" visible="eq(-18,true)"/>
-        <setting id="autoFindInternetStrms" type="bool" label="30091" subsetting="true" visible="eq(-19,true)" default="false"/>
-        <setting id="autoFindInternetLiveStream" type="bool" label="30092" subsetting="true" visible="eq(-20,true)" default="false"/>
+      	<setting id="autoFindMusicVideosLocal" type="folder" source="auto" label="30089" subsetting="true" visible="eq(-16,true)" default=""/>
+      	<setting type="lsep" label="30090" visible="eq(-17,true)"/>
+        <setting id="autoFindInternetStrms" type="bool" label="30091" subsetting="true" visible="eq(-18,true)" default="false"/>
+        <setting id="autoFindInternetLiveStream" type="bool" label="30092" subsetting="true" visible="eq(-19,true)" default="false"/>
         <setting id="autoFindInternetLiveStreamDir" type="folder" source="auto" label="30093" subsetting="true" visible="eq(-1,true)" default=""/>
-      	<setting type="lsep" label="30097" visible="eq(-22,true)"/>
-        <setting id="ATLimit" label="30406" subsetting="true" type="enum" values="25|50|100|250|500|1000|Unlimited" visible="eq(-23,true)" default="0"/>
-        <setting id="ATRestore" type="bool" label="30099" visible="eq(-25,false) "default="false"/>
+      	<setting type="lsep" label="30097" visible="eq(-21,true)"/>
+        <setting id="ATLimit" label="30406" subsetting="true" type="enum" values="25|50|100|250|500|1000|Unlimited" visible="eq(-22,true)" default="0"/>
+        <setting id="ATRestore" type="bool" label="30099" visible="eq(-24,false) "default="false"/>
       	<setting id="Warning2" type="bool" subsetting="true" label="30100" visible="eq(-1,true)" default="false" action="RunScript($CWD/restore.py)"/> />
     </category>
 <!--BCTs-->   
@@ -84,16 +83,21 @@
         <setting label="30501" id="bumpers" type="bool" default="false" />
         <setting label="30502" id="bumpersfolder" type="folder" visible="eq(-1,true)" default="" />
         <setting label="30503" id="numbumpers" type="enum" visible="eq(-2,true)" values="Auto|1|2|3|4|5" default="1"/>
-        <setting label="30504" id="maxbumpers" type="enum" visible="eq(-3,true) + eq(-1,0)" values="1|2|3|4|5" default="0"/>
-        <setting label="30505" id="commercials" type="bool" default="false" />
-        <setting label="30506" id="commercialsfolder" type="folder" visible="eq(-1,true)" default="" />
-        <setting label="30507" id="numcommercials" type="enum" visible="eq(-2,true)" values="Auto|1|2|3|4|5" default="1"/>
-        <setting label="30508" id="maxcommercials" type="enum" visible="eq(-3,true) + eq(-1,0)" values="1|2|3|4|5" default="0"/>
-        <setting label="30509" id="trailers" type="bool" default="false" />
-        <setting label="30510" id="trailersfolder" type="folder" visible="eq(-1,true)" default="" />
-        <setting label="30511" id="numtrailers" type="enum" visible="eq(-2,true)" values="Auto|1|2|3|4|5" default="1"/>
-        <setting label="30512" id="maxtrailers" type="enum" visible="eq(-3,true) + eq(-1,0)" values="1|2|3|4|5" default="0"/>
-        <setting label="30513" id="Movietrailers" type="bool" default="false" />
+        <setting label="30504" id="commercials" type="enum" values="Disabled|Local|Internet*|Youtube|All" default="0"/>
+        <setting label="30505" id="commercialsfolder" type="folder" visible="eq(-1,1) | eq(-1,4)" default="" />
+        <setting label="30506" id="commercialsconfig" type="text" visible="eq(-2,2) | eq(-2,4)" default="United States,All" />
+        <setting label="30517" id="commercialsResolution" type="enum" visible="eq(-3,2) | eq(-3,4)" values="360p|480p|720p" default="0"/>
+        <setting label="30507" id="commercialschannel" type="text" visible="eq(-4,3) | eq(-4,4)" default="PLlwhS0wsCzbRNwJ4Epac4rHJJ_6m1JaBm,2,50" />
+        <setting label="30508" id="numcommercials" type="enum" visible="!eq(-5,0)" values="Auto|1|2|3|4|5" default="1"/>
+        <setting label="30509" id="trailers" type="enum" values="Disabled|Local|Internet|Youtube|All" default="0"/>
+        <setting label="30510" id="trailersfolder" type="folder" visible="eq(-1,1) | eq(-1,4)" default="" />
+        <setting label="30511" id="trailersgenre" type="bool" visible="eq(-2,2)" default="false" />
+        <setting label="30512" id="trailerschannel" type="text" visible="eq(-3,3) | eq(-3,4)" default="MovieclipsCOMINGSOON,1,50" /> 
+        <setting label="30513" id="Movietrailers" type="bool" visible="!eq(-4,0)" default="false" />
+        <setting label="30514" id="numtrailers" type="enum" visible="!eq(-5,0)" values="Auto|1|2|3|4|5" default="1"/>
+    	<setting id="HideClips" type="bool" label="30209" default="true"/>
+    	<setting id="ClipLength" type="enum" subsetting="true" label="30210" visible="eq(-1,true)" values="15|30|60|90|120|180|240|300|360|420|460" default="2"/>
+        <setting label="30516" type="lsep"/>
     </category>
     <!--APIs-->
     <category label="30700">  
@@ -109,6 +113,7 @@
         <setting id="couchpotato.enabled" label="30711" type="bool" default="false" />
         <setting id="couchpotato.baseurl" subsetting="true" label="30709" visible="eq(-1,true)" type="text" default="http://localhost:5050"/>
         <setting id="couchpotato.apikey" subsetting="true" label="30710" visible="eq(-2,true)" type="text" default="Enter API KEY"/>
+        <setting label="30712" type="lsep"/>
     </category> 
     <!--MISC-->
     <category label="30900">
