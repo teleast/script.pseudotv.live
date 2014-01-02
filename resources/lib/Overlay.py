@@ -228,11 +228,7 @@ class TVOverlay(xbmcgui.WindowXMLDialog):
             if dlg.yesno("No Channels Configured", "Would you like PseudoTV Live to Auto Tune LiveTV PVR Backend\nchannels the next time it loads?"):
                 REAL_SETTINGS.setSetting("autoFindLivePVR","true")
                 autoTune = True
-            
-            if dlg.yesno("No Channels Configured", "Would you like PseudoTV Live to Auto Tune LiveTV USTVnow\nchannels the next time it loads?"):
-                REAL_SETTINGS.setSetting("autoFindLiveUSTVnow","true")
-                autoTune = True
-            
+
             if dlg.yesno("No Channels Configured", "Would you like PseudoTV Live to Auto Tune Custom Playlists\nchannels the next time it loads?"):
                 REAL_SETTINGS.setSetting("autoFindCustom","true")
                 autoTune = True
@@ -540,6 +536,8 @@ class TVOverlay(xbmcgui.WindowXMLDialog):
                     self.channels[self.currentChannel - 1].setShowTime(0)
                     self.log('while loop')
 
+            # if REAL_SETTINGS.getSetting('trailers') != '0':
+                # self.Player.ignoreNextStop = True
         # # First, check to see if the video is a...
         # if self.channels[self.currentChannel - 1].getItemFilename(self.channels[self.currentChannel - 1].playlistPosition)[-4:].lower() == 'strm':
             # self.log("Ignoring a stop because of a strm")

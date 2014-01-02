@@ -52,7 +52,7 @@ class VideoParser:
 
     def finish(self):
         if self.mountedFS == True:
-            pipe = os.popen("umount \"" + xbmc.translatePath('special://profile/addon_data/script.pseudotv/mountpnt') + "\"")
+            pipe = os.popen("umount \"" + xbmc.translatePath('special://profile/addon_data/script.pseudotv.live/mountpnt') + "\"")
             self.mountedFS = False
 
 
@@ -105,16 +105,16 @@ class VideoParser:
 
 
     def mountPosixSMB(self, filename):
-        if not os.path.exists(xbmc.translatePath('special://profile/addon_data/script.pseudotv/mountpnt/')):
-            os.makedirs(xbmc.translatePath('special://profile/addon_data/script.pseudotv/mountpnt/'))
+        if not os.path.exists(xbmc.translatePath('special://profile/addon_data/script.pseudotv.live/mountpnt/')):
+            os.makedirs(xbmc.translatePath('special://profile/addon_data/script.pseudotv.live/mountpnt/'))
 
         if self.mountedFS == True:
-            newfilename = xbmc.translatePath('special://profile/addon_data/script.pseudotv/mountpnt/') + os.path.split(filename)[1]
+            newfilename = xbmc.translatePath('special://profile/addon_data/script.pseudotv.live/mountpnt/') + os.path.split(filename)[1]
 
             if os.path.exists(newfilename):
                 return newfilename
 
-            pipe = os.popen("umount \"" + xbmc.translatePath('special://profile/addon_data/script.pseudotv/mountpnt') + "\"")
+            pipe = os.popen("umount \"" + xbmc.translatePath('special://profile/addon_data/script.pseudotv.live/mountpnt') + "\"")
             self.mountedFS = False
 
         newfilename = self.mountFs(filename, 'cifs')
@@ -134,8 +134,8 @@ class VideoParser:
 
     def mountFs(self, filename, fstype):
         dirpart, filename = os.path.split(filename)
-        pipe = os.popen("mount -t " + fstype + " \"" + dirpart + "\" \"" + xbmc.translatePath('special://profile/addon_data/script.pseudotv/mountpnt') + "\"")
-        newfilename = xbmc.translatePath('special://profile/addon_data/script.pseudotv/mountpnt/') + filename
+        pipe = os.popen("mount -t " + fstype + " \"" + dirpart + "\" \"" + xbmc.translatePath('special://profile/addon_data/script.pseudotv.live/mountpnt') + "\"")
+        newfilename = xbmc.translatePath('special://profile/addon_data/script.pseudotv.live/mountpnt/') + filename
 
         if os.path.exists(newfilename):
             return newfilename
@@ -143,7 +143,7 @@ class VideoParser:
         # Only try adding "Guest" if there is no username already there
         if dirpart.find('@') == -1:
             dirpart = "//Guest:@" + dirpart[2:]
-            pipe = os.popen("mount -t " + fstype + " \"" + dirpart + "\" \"" + xbmc.translatePath('special://profile/addon_data/script.pseudotv/mountpnt') + "\"")
+            pipe = os.popen("mount -t " + fstype + " \"" + dirpart + "\" \"" + xbmc.translatePath('special://profile/addon_data/script.pseudotv.live/mountpnt') + "\"")
 
             if os.path.exists(newfilename):
                 return newfilename
@@ -152,5 +152,5 @@ class VideoParser:
         username = dirpart[2:dirpart.find(':')]
         password = dirpart[dirpart.find(':') + 1:dirpart.find('@')]
         dirpart = '//' + dirpart[dirpart.find('@') + 1:]
-        pipe = os.popen("mount -t cifs \"" + dirpart + "\" \"" + xbmc.translatePath('special://profile/addon_data/script.pseudotv/mountpnt') + "\" -o username=" + username + ",password=" + password)
+        pipe = os.popen("mount -t cifs \"" + dirpart + "\" \"" + xbmc.translatePath('special://profile/addon_data/script.pseudotv.live/mountpnt') + "\" -o username=" + username + ",password=" + password)
         return newfilename
