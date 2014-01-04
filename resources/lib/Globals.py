@@ -48,7 +48,7 @@ ADDON_ID = 'script.pseudotv.live'
 REAL_SETTINGS = xbmcaddon.Addon(id=ADDON_ID)
 ADDON_INFO = REAL_SETTINGS.getAddonInfo('path')
 ##
-VERSION = "0.2.5"
+VERSION = "0.2.4"
 ##
 TIMEOUT = 15 * 1000
 TOTAL_FILL_CHANNELS = 20
@@ -71,6 +71,7 @@ CHANNEL_SHARING = False
 LOCK_LOC = xbmc.translatePath(os.path.join(SETTINGS_LOC, 'cache')) + '/'   
 META_LOC = os.path.join(LOCK_LOC, 'meta') + '/' 
 ART_LOC = os.path.join(LOCK_LOC, 'artwork') + '/'
+BCT_LOC = os.path.join(LOCK_LOC, 'bct') + '/'
    
 
 if REAL_SETTINGS.getSetting('ChannelSharing') == "true":

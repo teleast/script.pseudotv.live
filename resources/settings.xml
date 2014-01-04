@@ -83,16 +83,16 @@
         <setting label="30501" id="bumpers" type="bool" default="false" />
         <setting label="30502" id="bumpersfolder" type="folder" visible="eq(-1,true)" default="" />
         <setting label="30503" id="numbumpers" type="enum" visible="eq(-2,true)" values="Auto|1|2|3|4|5" default="1"/>
-        <setting label="30504" id="commercials" type="enum" values="Disabled|Local|Internet*|Youtube|All" default="0"/>
-        <setting label="30505" id="commercialsfolder" type="folder" visible="eq(-1,1) | eq(-1,4)" default="" />
-        <setting label="30506" id="commercialsconfig" type="text" visible="eq(-2,2) | eq(-2,4)" default="United States,All" />
-        <setting label="30517" id="commercialsResolution" type="enum" visible="eq(-3,2) | eq(-3,4)" values="360p|480p|720p" default="0"/>
-        <setting label="30507" id="commercialschannel" type="text" visible="eq(-4,3) | eq(-4,4)" default="Info,Type,Limit" />
+        <setting label="30504" id="commercials" type="enum" values="Disabled|Local|Internet*|Youtube" default="0"/>
+        <setting label="30505" id="commercialsfolder" type="folder" visible="eq(-1,1)" default="" />
+        <setting label="30506" id="commercialsconfig" type="text" visible="eq(-2,2)" default="United States,All" />
+        <setting label="30517" id="commercialsResolution" type="enum" visible="eq(-3,2)" values="360p|480p|720p" default="0"/>
+        <setting label="30507" id="commercialschannel" type="text" visible="eq(-4,3)" default="PLlwhS0wsCzbRNwJ4Epac4rHJJ_6m1JaBm,2,50" />
         <setting label="30508" id="numcommercials" type="enum" visible="!eq(-5,0)" values="Auto|1|2|3|4|5" default="1"/>
-        <setting label="30509" id="trailers" type="enum" values="Disabled|Local|Internet|Youtube|All" default="0"/>
-        <setting label="30510" id="trailersfolder" type="folder" visible="eq(-1,1) | eq(-1,4)" default="" />
+        <setting label="30509" id="trailers" type="enum" values="Disabled|Local|Internet|Youtube" default="0"/>
+        <setting label="30510" id="trailersfolder" type="folder" visible="eq(-1,1)" default="" />
         <setting label="30511" id="trailersgenre" type="bool" visible="eq(-2,2)" default="false" />
-        <setting label="30512" id="trailerschannel" type="text" visible="eq(-3,3) | eq(-3,4)" default="MovieclipsCOMINGSOON,1,50" /> 
+        <setting label="30512" id="trailerschannel" type="text" visible="eq(-3,3)" default="MovieclipsCOMINGSOON,1,50" /> 
         <setting label="30513" id="Movietrailers" type="bool" visible="!eq(-4,0)" default="false" />
         <setting label="30514" id="numtrailers" type="enum" visible="!eq(-5,0)" values="Auto|1|2|3|4|5" default="1"/>
     	<setting id="HideClips" type="bool" label="30209" default="true"/>

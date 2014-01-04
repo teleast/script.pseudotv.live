@@ -43,7 +43,6 @@ from xml.etree import ElementTree as ET
 from xml.dom.minidom import parse, parseString
 from subprocess import Popen, PIPE, STDOUT
 from BeautifulSoup import BeautifulSoup
-
 from Playlist import Playlist
 from Globals import *
 from Channel import Channel
@@ -78,9 +77,6 @@ class ChannelList:
         self.cached_json_detailed_TV = []
         self.cached_json_detailed_Movie = []
         self.cached_json_detailed_trailers = []
-        self.cached_BumperLST = []
-        self.cached_CommercialLST = []
-        self.cached_TrailerLST = []
         
 
     def readConfig(self):
@@ -763,7 +759,7 @@ class ChannelList:
 
             if self.getSmartPlaylistType(dom) == 'mixed':
                 if REAL_SETTINGS.getSetting('commercials') != "0" or REAL_SETTINGS.getSetting('trailers') != "0":
-                    self.log("makeChannelList, adding BCTs to mixed...")
+                    self.log("makeChannelList, adding CTs to mixed...")
                     PrefileList = self.buildMixedFileList(dom, channel)
                     fileList = self.insertFiles(channel, PrefileList, 'mixed')
                 else:
@@ -3150,7 +3146,7 @@ class ChannelList:
         BumperNum = 0
         CommercialNum = 0
         TrailerNum = 0
-        chtype = int(ADDON_SETTINGS.getSetting('Channel_' + str(channel) + '_type'))
+        chtype = (ADDON_SETTINGS.getSetting('Channel_' + str(channel) + '_type'))
         numbumpers = int(REAL_SETTINGS.getSetting("numbumpers"))#number of Bumpers between shows
         numcommercials = int(REAL_SETTINGS.getSetting("numcommercials"))#number of Commercial between shows
         numTrailers = int(REAL_SETTINGS.getSetting("numtrailers"))#number of trailers between shows
@@ -3159,39 +3155,20 @@ class ChannelList:
         self.logDebug("insertFiles, fileList count = " + str(len(fileList)))
 
         #Bumpers
-        if REAL_SETTINGS.getSetting('bumpers') == "true" and type != 'movies':
-            # if chtype == '0' or chtype == '1': # Bumpers not disabled,and is custom or network playlist.
-            if not BumperLST:
-                BumperLST = self.GetBumperList(channel, fileList)#build full Bumper list
-                self.cached_BumperLST = BumperLST
-                self.logDebug('insertFiles, Bumper creating cache')
-            else:
-                BumperLST = self.cached_BumperLST
-                self.logDebug('insertFiles, Bumper using cache')
+        if (REAL_SETTINGS.getSetting('bumpers') == "true" and type != 'movies') and (chtype == '0' or chtype == '1'): # Bumpers not disabled,and is custom or network playlist.
+            BumperLST = self.GetBumperList(channel, fileList)#build full Bumper list
             BumperNum = len(BumperLST)#number of Bumpers items in full list
             self.logDebug("insertFiles, Bumpers.numbumpers = " + str(numbumpers))
             
         #Commercial
         if REAL_SETTINGS.getSetting('commercials') != '0' and type != 'movies': # commercials not disabled, and not a movie
-            if not CommercialLST:
-                CommercialLST = self.GetCommercialList(channel, fileList)#build full Commercial list
-                self.cached_CommercialLST = CommercialLST
-                self.logDebug('insertFiles, Commercial creating cache')
-            else:
-                CommercialLST = self.cached_CommercialLST
-                self.logDebug('insertFiles, Commercial using cache')
+            CommercialLST = self.GetCommercialList(channel, fileList)#build full Commercial list
             CommercialNum = len(CommercialLST)#number of Commercial items in full list
             self.logDebug("insertFiles, Commercial.numcommercials = " + str(numcommercials))
         
         #Trailers
-        if REAL_SETTINGS.getSetting('trailers') != '0' and type != 'movies': # trailers not disabled, and not a movie
-            if not TrailerLST:
-                TrailerLST = self.GetTrailerList(channel, fileList)#build full trailer list
-                self.cached_TrailerLST = TrailerLST
-                self.logDebug('insertFiles, trailers creating cache')
-            else:
-                TrailerLST = self.cached_TrailerLST
-                self.logDebug('insertFiles, trailers using cache')
+        if REAL_SETTINGS.getSetting('trailers') != '0': # trailers not disabled, and not a movie
+            TrailerLST = self.GetTrailerList(channel, fileList)
             TrailerNum = len(TrailerLST)#number of trailer items in full list
             self.logDebug("insertFiles, trailers.numTrailers = " + str(numTrailers))    
 
@@ -3209,7 +3186,6 @@ class ChannelList:
                 bctFileList = []
                 File = fileList[i]
                 File = File + '\n'
-                self.logDebug("insertFiles, Bumper.File = " + uni(File))
                 
                 if BumperNum > 0:
                     for n in range(numbumpers):
@@ -3221,7 +3197,6 @@ class ChannelList:
                         self.logDebug("insertFiles, Bumper.BumperMedia = " + uni(BumperMedia))
                         BumperMedia = ('#EXTINF:' + str(BumperDur) + ',//////Bumper////\n' + BumperMedia)
                         BumperMediaLST.append(BumperMedia)
-                    self.logDebug("insertFiles, Bumper.BumperMediaLST = " + str(BumperMediaLST))
                 
                 if CommercialNum > 0:
                     for n in range(numcommercials):
@@ -3233,7 +3208,6 @@ class ChannelList:
                         self.logDebug("insertFiles, Commercial.CommercialMedia = " + uni(CommercialMedia))
                         CommercialMedia = ('#EXTINF:' + str(CommercialDur) + ',//////Commercial////\n' + CommercialMedia)
                         CommercialMediaLST.append(CommercialMedia)
-                    self.logDebug("insertFiles, Commercial.CommercialMediaLST = " + str(CommercialMediaLST))
 
                 if TrailerNum > 0:
                     for n in range(numTrailers):
@@ -3245,17 +3219,12 @@ class ChannelList:
                         self.logDebug("insertFiles, trailers.trailerMedia = " + uni(trailerMedia))
                         trailerMedia = ('#EXTINF:' + str(trailerDur) + ',//////Trailer////\n' + trailerMedia)
                         trailerMediaLST.append(trailerMedia)
-                    self.logDebug("insertFiles, trailers.trailerMediaLST = " + str(trailerMediaLST))
                                                     
                 bctFileList.extend(BumperMediaLST)
                 bctFileList.extend(CommercialMediaLST)
                 bctFileList.extend(trailerMediaLST)
                 random.shuffle(bctFileList)
-                # bctFileList = bctFileList.split(', ')
-                # bctFileList = random.shuffle(bctFileList)
-                self.logDebug("insertFiles, BCT.bctFileList = " + str(bctFileList))
                 File = File + '\n'.join(bctFileList)
-                self.logDebug("insertFiles, BCT.File = " + uni(File))
                 newFileList.append(File)
 
         # else: #Auto BCT, Is Hide enabled? enable get length or set it. Limit fill to under cliplength
@@ -3343,7 +3312,8 @@ class ChannelList:
             
     def GetBumperList (self, channel, fileList):
         self.log("GetBumperList")
-        chtype = int(ADDON_SETTINGS.getSetting('Channel_' + str(channel) + '_type'))
+        BumperCachePath = xbmc.translatePath(os.path.join(BCT_LOC, 'bumpers')) + '/'  
+        chtype = (ADDON_SETTINGS.getSetting('Channel_' + str(channel) + '_type'))
         
         if chtype == '0':
             setting1 = str(ADDON_SETTINGS.getSetting('Channel_' + str(channel) + '_1'))
@@ -3365,30 +3335,38 @@ class ChannelList:
         self.logDebug("GetBumperList, fileList count = " + str(len(fileList)))
         
         #Local
-        if FileAccess.exists(PATH) and REAL_SETTINGS.getSetting('bumpers') == "true":
-            LocalFLE = ''
-            LocalBumper = ''
-            LocalLST = xbmcvfs.listdir(PATH)[1]
-            self.logDebug("GetBumperList, Local.LocalLST = " + str(LocalLST))
-            for i in range(len(LocalLST)):
-                LocalFLE = LocalLST[i]
-                self.logDebug("GetBumperList, Local.LocalFLE = " + str(LocalFLE))
-                filename = (PATH + '/' + LocalFLE)
-                duration = self.videoParser.getVideoLength(filename)
-                self.logDebug("GetBumperList, Local.duration = " + str(duration))
-                if duration > 0:
-                    LocalBumper = (str(duration) + ',' + filename)
-                    LocalBumperLST.append(LocalBumper)
-            BumperLST.extend(LocalBumperLST)
-            self.logDebug("GetBumperList, Local.LocalBumperLST = " + str(LocalBumperLST) + ',' + str(len(LocalBumperLST)))
-              
-        self.logDebug("GetBumperList, BumperLST = " + chname + ',' + str(BumperLST) + ',' + str(len(BumperLST)))     
-        return (BumperLST)    
+        if FileAccess.exists(PATH) and REAL_SETTINGS.getSetting('bumpers') == "true":            
+            BumperLocalCache = 'Bumper_Local_Cache_' + chname +'.xml'
+            self.logDebug("GetBumperList,  BumperCachePath = " + str(BumperCachePath) + str(BumperLocalCache))
+            CacheExpired = self.Cache_ok(BumperCachePath, BumperLocalCache) 
+
+            if CacheExpired == False:
+                BumperLST = self.readCache(BumperCachePath, BumperLocalCache)
+                
+            elif CacheExpired == True or self.forceReset == True: 
+                LocalFLE = ''
+                LocalBumper = ''
+                LocalLST = xbmcvfs.listdir(PATH)[1]
+                self.logDebug("GetBumperList, Local.LocalLST = " + str(LocalLST))
+                for i in range(len(LocalLST)):
+                    LocalFLE = LocalLST[i]
+                    self.logDebug("GetBumperList, Local.LocalFLE = " + str(LocalFLE))
+                    filename = (PATH + '/' + LocalFLE)
+                    duration = self.videoParser.getVideoLength(filename)
+                    self.logDebug("GetBumperList, Local.duration = " + str(duration))
+                    if duration > 0:
+                        LocalBumper = (str(duration) + ',' + filename)
+                        LocalBumperLST.append(LocalBumper)#Put all bumpers found into one List
+                BumperLST.extend(LocalBumperLST)#Put local bumper list into master bumper list.                
+                self.writeCache(BumperLST, BumperCachePath, BumperLocalCache)
+         
+        return (BumperLST)        
         
     
     def GetCommercialList (self, channel, fileList):
         self.log("GetCommercialList")
-        chtype = int(ADDON_SETTINGS.getSetting('Channel_' + str(channel) + '_type'))
+        CommercialCachePath = xbmc.translatePath(os.path.join(BCT_LOC, 'commercials')) + '/'   
+        chtype = ADDON_SETTINGS.getSetting('Channel_' + str(channel) + '_type')
         
         if chtype == '0':
             setting1 = str(ADDON_SETTINGS.getSetting('Channel_' + str(channel) + '_1'))
@@ -3399,7 +3377,6 @@ class ChannelList:
             chname = ADDON_SETTINGS.getSetting("Channel_" + str(channel) + "_1")  
             
         PATH = REAL_SETTINGS.getSetting('commercialsfolder')
-        baseurl='http://www.advertolog.com'
         LocalCommercialLST = []
         InternetCommercialLST = []
         YoutubeCommercialLST = []
@@ -3410,212 +3387,221 @@ class ChannelList:
         self.logDebug("GetCommercialList, fileList count = " + str(len(fileList)))
         
         #Local
-        if FileAccess.exists(PATH) and (REAL_SETTINGS.getSetting('commercials') == '1' or REAL_SETTINGS.getSetting('commercials') == '4'): 
-            self.logDebug("GetCommercialList, Local.PATH = " + str(PATH))
-            LocalFLE = ''
-            LocalCommercial = ''
-            LocalLST = xbmcvfs.listdir(PATH)[1]
-            self.logDebug("GetCommercialList, Local.LocalLST = " + str(LocalLST))
-            for i in range(len(LocalLST)):
-                LocalFLE = LocalLST[i]
-                self.logDebug("GetCommercialList, Local.LocalFLE = " + str(LocalFLE))
-                filename = (PATH + '/' + LocalFLE)
-                duration = self.videoParser.getVideoLength(filename)
-                self.logDebug("GetCommercialList, Local.duration = " + str(duration))
-                if duration > 0:
-                    LocalCommercial = (str(duration) + ',' + filename)
-                    LocalCommercialLST.append(LocalCommercial)
-            CommercialLST.extend(LocalCommercialLST)
-            self.logDebug("GetCommercialList, Local.LocalCommercialLST = " + str(LocalCommercialLST) + ',' + str(len(LocalCommercialLST)))
+        if FileAccess.exists(PATH) and REAL_SETTINGS.getSetting('commercials') == '1':
+            CommercialLocalCache = 'Commercial_Local_Cache.xml'
+            self.logDebug("GetCommercialList,  CommercialCachePath = " + str(CommercialCachePath) + str(CommercialLocalCache))
+            CacheExpired = self.Cache_ok(CommercialCachePath, CommercialLocalCache) 
+
+            if CacheExpired == False:
+                CommercialLST = self.readCache(CommercialCachePath, CommercialLocalCache)
+                
+            elif CacheExpired == True or self.forceReset == True: 
+                self.logDebug("GetCommercialList, Local.PATH = " + str(PATH))
+                LocalFLE = ''
+                LocalCommercial = ''
+                LocalLST = xbmcvfs.listdir(PATH)[1]
+                for i in range(len(LocalLST)):
+                    LocalFLE = LocalLST[i]
+                    self.logDebug("GetCommercialList, Local.LocalFLE = " + str(LocalFLE))
+                    filename = (PATH + '/' + LocalFLE)
+                    duration = self.videoParser.getVideoLength(filename)
+                    self.logDebug("GetCommercialList, Local.duration = " + str(duration))
+                    if duration > 0:
+                        LocalCommercial = (str(duration) + ',' + filename)
+                        LocalCommercialLST.append(LocalCommercial)
+                CommercialLST.extend(LocalCommercialLST)                
+                self.writeCache(CommercialLST, CommercialCachePath, CommercialLocalCache)
         
-        #Internet (advertolog.com)
-        # if REAL_SETTINGS.getSetting('commercials') == '2' or REAL_SETTINGS.getSetting('commercials') == '4':
-            # #sample-url = 'http://www.advertolog.com/countries/usa%2Cmedia-adverts%2Cyear-2013/page1/'
-            # InternetCommercial = REAL_SETTINGS.getSetting('commercialsconfig') # Region,Year
-            # self.logDebug("GetCommercialList, Internet.InternetCommercial = " + str(InternetCommercial))
-            # InternetCommercial = InternetCommercial.split(',')
-            # Region = InternetCommercial[0]
-            # Year = InternetCommercial[1]
-            # AdResNum = {}
-            # AdResNum['0'] = '360p' 
-            # AdResNum['1'] = '480p' 
-            # AdResNum['2'] = '720p'      
-            # AdRes = (AdResNum[REAL_SETTINGS.getSetting('commercialsResolution')])    
+        
+        # #Internet (advertolog.com)
+        # # if REAL_SETTINGS.getSetting('commercials') == '2' or REAL_SETTINGS.getSetting('commercials') == '4':
+                # baseurl='http://www.advertolog.com'
+            # # #sample-url = 'http://www.advertolog.com/countries/usa%2Cmedia-adverts%2Cyear-2013/page1/'
+            # # InternetCommercial = REAL_SETTINGS.getSetting('commercialsconfig') # Region,Year
+            # # self.logDebug("GetCommercialList, Internet.InternetCommercial = " + str(InternetCommercial))
+            # # InternetCommercial = InternetCommercial.split(',')
+            # # Region = InternetCommercial[0]
+            # # Year = InternetCommercial[1]
+            # # AdResNum = {}
+            # # AdResNum['0'] = '360p' 
+            # # AdResNum['1'] = '480p' 
+            # # AdResNum['2'] = '720p'      
+            # # AdRes = (AdResNum[REAL_SETTINGS.getSetting('commercialsResolution')])    
             
-            # # try:
-            # #LISTCOUNTRIES
-            # url = 'http://www.advertolog.com/countries/'
-            # req = urllib2.Request(url)
-            # req.add_header('User-Agent', 'Mozilla/5.0 (Windows; U; Windows NT 5.1; en-GB; rv:1.9.0.3) Gecko/2008092417 Firefox/3.0.3')
-            # response = urllib2.urlopen(req)
-            # link=response.read()
-            # response.close()
-            # countries=re.compile('<a href="/countries/(.+?)">(.+?)</a>').findall(link)
-            # RegionLST = []
-            # for url,country in countries:
-                # RegionElem = (country,'http://www.advertolog.com/countries/'+url)
-                # RegionLST.append(RegionElem)
-            # self.logDebug("GetCommercialList, Internet.LISTCOUNTRIES.RegionLST = " + str(RegionLST))
-            # match = str([s for s in RegionLST if Region in s])
-            # match = match.split("', '")
-            # self.logDebug("GetCommercialList, Internet.LISTCOUNTRIES.RegionLST.match = " + Region + ', match = ' + str(match))
-            # MatchRegionURL = match[1]
-            # MatchRegionURL = MatchRegionURL.split("/')]")[0]
-            # MatchRegionURLPage = '/page' + str(random.randint(1, 100))
-            # MatchRegionURLcat = '%2Cmedia-adverts'
-            # MatchRegionURLP = MatchRegionURL + MatchRegionURLPage
-            # MatchRegionURLC = MatchRegionURL + MatchRegionURLcat + MatchRegionURLPage
-            # self.logDebug("GetCommercialList, Internet.LISTCOUNTRIES.MatchRegionURLP = " + str(MatchRegionURLP))    
-            # self.logDebug("GetCommercialList, Internet.LISTCOUNTRIES.MatchRegionURLC = " + str(MatchRegionURLC))    
+            # # # try:
+            # # #LISTCOUNTRIES
+            # # url = 'http://www.advertolog.com/countries/'
+            # # req = urllib2.Request(url)
+            # # req.add_header('User-Agent', 'Mozilla/5.0 (Windows; U; Windows NT 5.1; en-GB; rv:1.9.0.3) Gecko/2008092417 Firefox/3.0.3')
+            # # response = urllib2.urlopen(req)
+            # # link=response.read()
+            # # response.close()
+            # # countries=re.compile('<a href="/countries/(.+?)">(.+?)</a>').findall(link)
+            # # RegionLST = []
+            # # for url,country in countries:
+                # # RegionElem = (country,'http://www.advertolog.com/countries/'+url)
+                # # RegionLST.append(RegionElem)
+            # # self.logDebug("GetCommercialList, Internet.LISTCOUNTRIES.RegionLST = " + str(RegionLST))
+            # # match = str([s for s in RegionLST if Region in s])
+            # # match = match.split("', '")
+            # # self.logDebug("GetCommercialList, Internet.LISTCOUNTRIES.RegionLST.match = " + Region + ', match = ' + str(match))
+            # # MatchRegionURL = match[1]
+            # # MatchRegionURL = MatchRegionURL.split("/')]")[0]
+            # # MatchRegionURLPage = '/page' + str(random.randint(1, 100))
+            # # MatchRegionURLcat = '%2Cmedia-adverts'
+            # # MatchRegionURLP = MatchRegionURL + MatchRegionURLPage
+            # # MatchRegionURLC = MatchRegionURL + MatchRegionURLcat + MatchRegionURLPage
+            # # self.logDebug("GetCommercialList, Internet.LISTCOUNTRIES.MatchRegionURLP = " + str(MatchRegionURLP))    
+            # # self.logDebug("GetCommercialList, Internet.LISTCOUNTRIES.MatchRegionURLC = " + str(MatchRegionURLC))    
 
-            # #BRANDORCOUNTRYPAGE
-            # req = urllib2.Request(MatchRegionURL)
-            # req.add_header('User-Agent', 'Mozilla/5.0 (Windows; U; Windows NT 5.1; en-GB; rv:1.9.0.3) Gecko/2008092417 Firefox/3.0.3')
-            # response = urllib2.urlopen(req)
-            # link = response.read()
-            # response.close()
-            # link = link.decode('utf-8')
-            # soup = BeautifulSoup(link,convertEntities=BeautifulSoup.HTML_ENTITIES)
-            # catlink = re.compile('<a href="(.+?)" >TV & Cinema</a>').findall(link)
-            # if catlink:
-                    # url = baseurl+catlink[0]
-                    # # url = url + MatchRegionURLPage
-                    # # self.logDebug("GetCommercialList, Internet.BRANDORCOUNTRYPAGE.url = " + str(url))  
-                    # req = urllib2.Request(url)
-                    # req.add_header('User-Agent', 'Mozilla/5.0 (Windows; U; Windows NT 5.1; en-GB; rv:1.9.0.3) Gecko/2008092417 Firefox/3.0.3')
-                    # response = urllib2.urlopen(req)
-                    # link = response.read()
-                    # response.close()
-                    # soup = BeautifulSoup(link)
-            # if Year != 'All':        
-                # #find the year links, if any
-                # yearlink = soup.find(text='Year:')
-                # if yearlink:
-                        # yearlink = soup.find(text='Year:').findNext('div').findAll('a')
-                        # years = []
-                        # for links in yearlink:
-                            # temp = re.compile('<a href="(.+?)">(.+?)</a>').findall(str(links))
-                            # years.append(temp[0])
-                        # YearLST = []
-                        # for yearurl, name in years:
-                            # YearElem = (name,baseurl+yearurl)
-                            # YearLST.append(YearElem) 
-                        # self.logDebug("GetCommercialList, Internet.BRANDORCOUNTRYPAGE.YearLST = " + str(YearLST))
-                        # match = str([s for s in YearLST if Year in s])
-                        # match = match.split("', '")
-                        # self.logDebug("GetCommercialList, Internet.BRANDORCOUNTRYPAGE.YearLST.match = " + Year + ', match = ' + str(match))
-                        # MatchYearURL = match[1]
-                        # MatchYearURL = MatchYearURL.split("/')]")[0] 
-                        # print 'MatchYearURL', MatchYearURL
-            # else:
-                # #find the adverts, if any                    
-                # if soup.find('ul', "col-media-list"):
-                    # adverts=soup.find('ul', "col-media-list").findAll('li')
-                    # AdLST = []
-                    # for ad in adverts:
-                        # if ad.find(text="  TV & Cinema"):
-                            # name = ad.a.img["alt"].encode('UTF-8')
-                            # adurl = ad.a["href"]
-                            # thumbnail = ad.a.img["src"]
-                            # AdElem = (uni(name) + ', ' + uni(baseurl) + uni(adurl))
-                            # self.logDebug("GetCommercialList, Internet.BRANDORCOUNTRYPAGE.AdElem = " + uni(AdElem))
-                            # AdLST.append(AdElem) 
-                    # self.logDebug("GetCommercialList, Internet.BRANDORCOUNTRYPAGE.AdLST = " + str(AdLST))
-                    # for i in range(len(AdLST)):
-                        # AdInfo = AdLST[i]
-                        # self.logDebug("GetCommercialList, Internet.BRANDORCOUNTRYPAGE.AdInfo = " + str(AdInfo))
-                        # AdInfo = str(AdInfo)
-                        # AdInfo1 = AdInfo.split(', ')
-                        # self.logDebug("GetCommercialList, Internet.BRANDORCOUNTRYPAGE.AdInfo1 = " + str(AdInfo1))
+            # # #BRANDORCOUNTRYPAGE
+            # # req = urllib2.Request(MatchRegionURL)
+            # # req.add_header('User-Agent', 'Mozilla/5.0 (Windows; U; Windows NT 5.1; en-GB; rv:1.9.0.3) Gecko/2008092417 Firefox/3.0.3')
+            # # response = urllib2.urlopen(req)
+            # # link = response.read()
+            # # response.close()
+            # # link = link.decode('utf-8')
+            # # soup = BeautifulSoup(link,convertEntities=BeautifulSoup.HTML_ENTITIES)
+            # # catlink = re.compile('<a href="(.+?)" >TV & Cinema</a>').findall(link)
+            # # if catlink:
+                    # # url = baseurl+catlink[0]
+                    # # # url = url + MatchRegionURLPage
+                    # # # self.logDebug("GetCommercialList, Internet.BRANDORCOUNTRYPAGE.url = " + str(url))  
+                    # # req = urllib2.Request(url)
+                    # # req.add_header('User-Agent', 'Mozilla/5.0 (Windows; U; Windows NT 5.1; en-GB; rv:1.9.0.3) Gecko/2008092417 Firefox/3.0.3')
+                    # # response = urllib2.urlopen(req)
+                    # # link = response.read()
+                    # # response.close()
+                    # # soup = BeautifulSoup(link)
+            # # if Year != 'All':        
+                # # #find the year links, if any
+                # # yearlink = soup.find(text='Year:')
+                # # if yearlink:
+                        # # yearlink = soup.find(text='Year:').findNext('div').findAll('a')
+                        # # years = []
+                        # # for links in yearlink:
+                            # # temp = re.compile('<a href="(.+?)">(.+?)</a>').findall(str(links))
+                            # # years.append(temp[0])
+                        # # YearLST = []
+                        # # for yearurl, name in years:
+                            # # YearElem = (name,baseurl+yearurl)
+                            # # YearLST.append(YearElem) 
+                        # # self.logDebug("GetCommercialList, Internet.BRANDORCOUNTRYPAGE.YearLST = " + str(YearLST))
+                        # # match = str([s for s in YearLST if Year in s])
+                        # # match = match.split("', '")
+                        # # self.logDebug("GetCommercialList, Internet.BRANDORCOUNTRYPAGE.YearLST.match = " + Year + ', match = ' + str(match))
+                        # # MatchYearURL = match[1]
+                        # # MatchYearURL = MatchYearURL.split("/')]")[0] 
+                        # # print 'MatchYearURL', MatchYearURL
+            # # else:
+                # # #find the adverts, if any                    
+                # # if soup.find('ul', "col-media-list"):
+                    # # adverts=soup.find('ul', "col-media-list").findAll('li')
+                    # # AdLST = []
+                    # # for ad in adverts:
+                        # # if ad.find(text="  TV & Cinema"):
+                            # # name = ad.a.img["alt"].encode('UTF-8')
+                            # # adurl = ad.a["href"]
+                            # # thumbnail = ad.a.img["src"]
+                            # # AdElem = (uni(name) + ', ' + uni(baseurl) + uni(adurl))
+                            # # self.logDebug("GetCommercialList, Internet.BRANDORCOUNTRYPAGE.AdElem = " + uni(AdElem))
+                            # # AdLST.append(AdElem) 
+                    # # self.logDebug("GetCommercialList, Internet.BRANDORCOUNTRYPAGE.AdLST = " + str(AdLST))
+                    # # for i in range(len(AdLST)):
+                        # # AdInfo = AdLST[i]
+                        # # self.logDebug("GetCommercialList, Internet.BRANDORCOUNTRYPAGE.AdInfo = " + str(AdInfo))
+                        # # AdInfo = str(AdInfo)
+                        # # AdInfo1 = AdInfo.split(', ')
+                        # # self.logDebug("GetCommercialList, Internet.BRANDORCOUNTRYPAGE.AdInfo1 = " + str(AdInfo1))
                         
-                        # # if 'http' in AdInfo1:
-                            # # AdInfoURL = AdInfo1[1]
-                        # # else:
-                            # # AdInfo2 = AdInfo.rsplit(', ', 1)[-1]
-                            # # self.logDebug("GetCommercialList, Internet.BRANDORCOUNTRYPAGE.AdInfo2 = " + str(AdInfo2))
-                            # # AdInfoURL = AdInfo2[0]
+                        # # # if 'http' in AdInfo1:
+                            # # # AdInfoURL = AdInfo1[1]
+                        # # # else:
+                            # # # AdInfo2 = AdInfo.rsplit(', ', 1)[-1]
+                            # # # self.logDebug("GetCommercialList, Internet.BRANDORCOUNTRYPAGE.AdInfo2 = " + str(AdInfo2))
+                            # # # AdInfoURL = AdInfo2[0]
                             
-                        # AdInfoURL = AdInfoURL.split("/')")[0] 
-                        # self.logDebug("GetCommercialList, Internet.BRANDORCOUNTRYPAGE.AdInfoURL = " + str(AdInfoURL))
+                        # # AdInfoURL = AdInfoURL.split("/')")[0] 
+                        # # self.logDebug("GetCommercialList, Internet.BRANDORCOUNTRYPAGE.AdInfoURL = " + str(AdInfoURL))
                     
-                        # # #Get the "Next Page" link, if any
-                        # # if soup.find(text=re.compile("Next \xbb\xbb")):
-                            # # if soup.find(text = re.compile("Next \xbb\xbb")).findPrevious('span').findAll('a'):
-                                # # nextpage = soup.find(text=re.compile("Next \xbb\xbb")).findPrevious('span').findAll('a')
-                                # # nextpage = re.compile('\[<a href="(.+?)">Next').findall(str(nextpage))
-                                # # nextpage = baseurl+nextpage[0]
-                                # # self.logDebug("GetCommercialList, Internet.BRANDORCOUNTRYPAGE.nextpage = " + str(nextpage))
+                        # # # #Get the "Next Page" link, if any
+                        # # # if soup.find(text=re.compile("Next \xbb\xbb")):
+                            # # # if soup.find(text = re.compile("Next \xbb\xbb")).findPrevious('span').findAll('a'):
+                                # # # nextpage = soup.find(text=re.compile("Next \xbb\xbb")).findPrevious('span').findAll('a')
+                                # # # nextpage = re.compile('\[<a href="(.+?)">Next').findall(str(nextpage))
+                                # # # nextpage = baseurl+nextpage[0]
+                                # # # self.logDebug("GetCommercialList, Internet.BRANDORCOUNTRYPAGE.nextpage = " + str(nextpage))
 
-                        # #VIDEOLINKS
-                        # req = urllib2.Request(AdInfoURL)
-                        # req.add_header('User-Agent', 'Mozilla/5.0 (Windows; U; Windows NT 5.1; en-GB; rv:1.9.0.3) Gecko/2008092417 Firefox/3.0.3')
-                        # response = urllib2.urlopen(req)
-                        # link = response.read()
-                        # response.close()
-                        # soup = BeautifulSoup(link)
-                        # #GET THE VIDEO LINKS FROM THE PAGE, IF ANY
-                        # #get the image
-                        # image = re.compile('meta property="og:image" content="(.+?)" />').findall(link)
-                        # if image:
-                                # image[0] = self.replaceXmlEntities(image[0])
-                        # else:
-                                # image = ''
+                        # # #VIDEOLINKS
+                        # # req = urllib2.Request(AdInfoURL)
+                        # # req.add_header('User-Agent', 'Mozilla/5.0 (Windows; U; Windows NT 5.1; en-GB; rv:1.9.0.3) Gecko/2008092417 Firefox/3.0.3')
+                        # # response = urllib2.urlopen(req)
+                        # # link = response.read()
+                        # # response.close()
+                        # # soup = BeautifulSoup(link)
+                        # # #GET THE VIDEO LINKS FROM THE PAGE, IF ANY
+                        # # #get the image
+                        # # image = re.compile('meta property="og:image" content="(.+?)" />').findall(link)
+                        # # if image:
+                                # # image[0] = self.replaceXmlEntities(image[0])
+                        # # else:
+                                # # image = ''
                         
-                        # #get the default video link (most are hidden due to subscription, but the low res video link is hidden in the header tag    
-                        # vid=re.compile('meta property="og:video" content="(.+?)" />').findall(link)
+                        # # #get the default video link (most are hidden due to subscription, but the low res video link is hidden in the header tag    
+                        # # vid=re.compile('meta property="og:video" content="(.+?)" />').findall(link)
                         
-                        # if vid:
-                                # vid[0] = self.replaceXmlEntities(vid[0])
-                                # vid[0] = re.sub('http.*?clip":{"url":','/',vid[0])
-                                # vid[0] = re.search('h.*?.mp4', vid[0]).group()
-                        # #get alternate high res links if any
-                        # vids = soup.find('ul',"resolutions")
-                        # AdResURLLST = []
-                        # AdHD = False
-                        # if vids:
-                            # vids = soup.find('ul',"resolutions").findAll('a')
-                            # vid = []
-                            # if vids:
-                                # vids = soup.find('ul',"resolutions").findAll('a')
-                                # for url in vids:
-                                    # AdResURL = (url.string + ', ' + url['name'])
-                                    # AdHD = True
-                                    # self.logDebug("GetCommercialList, Internet.VIDEOLINKS.AdHD = " + str(AdHD))
-                                    # AdResURLLST.append(AdResURL)
-                        # else:
-                            # vid = vid[0]
-                            # vid = vid.replace('hive/flowplayer.commercial-3.2.2.swf?config={"clip":{"url":"', "")
-                            # AdResURL = ('360p, ' + str(vid))
-                            # AdHD = False
-                            # AdResURLLST.append(AdResURL)  
-                        # self.logDebug("GetCommercialList, Internet.VIDEOLINKS.AdResURLLST = " + str(AdResURLLST))
+                        # # if vid:
+                                # # vid[0] = self.replaceXmlEntities(vid[0])
+                                # # vid[0] = re.sub('http.*?clip":{"url":','/',vid[0])
+                                # # vid[0] = re.search('h.*?.mp4', vid[0]).group()
+                        # # #get alternate high res links if any
+                        # # vids = soup.find('ul',"resolutions")
+                        # # AdResURLLST = []
+                        # # AdHD = False
+                        # # if vids:
+                            # # vids = soup.find('ul',"resolutions").findAll('a')
+                            # # vid = []
+                            # # if vids:
+                                # # vids = soup.find('ul',"resolutions").findAll('a')
+                                # # for url in vids:
+                                    # # AdResURL = (url.string + ', ' + url['name'])
+                                    # # AdHD = True
+                                    # # self.logDebug("GetCommercialList, Internet.VIDEOLINKS.AdHD = " + str(AdHD))
+                                    # # AdResURLLST.append(AdResURL)
+                        # # else:
+                            # # vid = vid[0]
+                            # # vid = vid.replace('hive/flowplayer.commercial-3.2.2.swf?config={"clip":{"url":"', "")
+                            # # AdResURL = ('360p, ' + str(vid))
+                            # # AdHD = False
+                            # # AdResURLLST.append(AdResURL)  
+                        # # self.logDebug("GetCommercialList, Internet.VIDEOLINKS.AdResURLLST = " + str(AdResURLLST))
                         
-                        # if AdResNum != '0' and AdHD == True:
-                            # match = ([s for s in AdResURLLST if AdRes in s])
-                            # self.logDebug("GetCommercialList, Internet.VIDEOLINKS.AdRes.match = " + str(match))
-                            # match = match[0]
-                            # self.logDebug("GetCommercialList, Internet.VIDEOLINKS.AdRes.match.1 = " + str(match))
-                            # match = (match.split(", "))
-                            # self.logDebug("GetCommercialList, Internet.VIDEOLINKS.AdRes.match.2 = " + str(match))
-                            # MatchResURL = match[1]
-                            # self.logDebug("GetCommercialList, Internet.VIDEOLINKS.AdRes.MatchResURL = " + str(MatchResURL))
-                        # else:
-                            # AdResURLLST = AdResURLLST[0]
-                            # self.logDebug("GetCommercialList, Internet.VIDEOLINKS.AdRes.AdResURLLST = " + str(AdResURLLST))
-                            # AdResURLLST = AdResURLLST.split(', ')
-                            # self.logDebug("GetCommercialList, Internet.VIDEOLINKS.AdRes.AdResURLLST = " + str(AdResURLLST))
-                            # MatchResURL = AdResURLLST[1]
-                            # self.logDebug("GetCommercialList, Internet.VIDEOLINKS.AdRes.MatchResURL = " + str(MatchResURL))                        
+                        # # if AdResNum != '0' and AdHD == True:
+                            # # match = ([s for s in AdResURLLST if AdRes in s])
+                            # # self.logDebug("GetCommercialList, Internet.VIDEOLINKS.AdRes.match = " + str(match))
+                            # # match = match[0]
+                            # # self.logDebug("GetCommercialList, Internet.VIDEOLINKS.AdRes.match.1 = " + str(match))
+                            # # match = (match.split(", "))
+                            # # self.logDebug("GetCommercialList, Internet.VIDEOLINKS.AdRes.match.2 = " + str(match))
+                            # # MatchResURL = match[1]
+                            # # self.logDebug("GetCommercialList, Internet.VIDEOLINKS.AdRes.MatchResURL = " + str(MatchResURL))
+                        # # else:
+                            # # AdResURLLST = AdResURLLST[0]
+                            # # self.logDebug("GetCommercialList, Internet.VIDEOLINKS.AdRes.AdResURLLST = " + str(AdResURLLST))
+                            # # AdResURLLST = AdResURLLST.split(', ')
+                            # # self.logDebug("GetCommercialList, Internet.VIDEOLINKS.AdRes.AdResURLLST = " + str(AdResURLLST))
+                            # # MatchResURL = AdResURLLST[1]
+                            # # self.logDebug("GetCommercialList, Internet.VIDEOLINKS.AdRes.MatchResURL = " + str(MatchResURL))                        
                         
-                        # duration = 30
-                        # InternetCommercial = (str(duration) + ',' + str(MatchResURL))
-                        # self.logDebug("GetCommercialList, Internet.InternetCommercial = " + str(InternetCommercial))
-                        # InternetCommercialLST.append(InternetCommercial)
-                        # CommercialLST.extend(InternetCommercialLST)
-                        # self.logDebug("GetCommercialList, Internet.CommercialLST = " + str(InternetCommercialLST) + ',' + str(len(InternetCommercialLST)))
+                        # # duration = 30
+                        # # InternetCommercial = (str(duration) + ',' + str(MatchResURL))
+                        # # self.logDebug("GetCommercialList, Internet.InternetCommercial = " + str(InternetCommercial))
+                        # # InternetCommercialLST.append(InternetCommercial)
+                        # # CommercialLST.extend(InternetCommercialLST)
+                        # # self.logDebug("GetCommercialList, Internet.CommercialLST = " + str(InternetCommercialLST) + ',' + str(len(InternetCommercialLST)))
                     
-            # # except:
-                # # pass
+            # # # except:
+                # # # pass
                     
         #Youtube
         if REAL_SETTINGS.getSetting('commercials') == '3' or REAL_SETTINGS.getSetting('commercials') == '4':
@@ -3623,14 +3609,9 @@ class ChannelList:
             YoutubeCommercial = YoutubeCommercial.split(',')
             setting1 = YoutubeCommercial[0]
             setting2 = YoutubeCommercial[1]
-            
-            if REAL_SETTINGS.getSetting('commercials') == '4':
-                setting3 = '25'
-            else:
-                setting3 = YoutubeCommercial[2]
+            setting3 = YoutubeCommercial[2]
             
             YoutubeLST = self.createYoutubeFilelist(setting1, setting2, setting3, channel)
-            self.logDebug("GetCommercialList, Youtube.YoutubeLST = " + str(YoutubeLST))
             for i in range(len(YoutubeLST)):
                 Youtube = YoutubeLST[i]
                 duration = Youtube.split(',')[0]
@@ -3641,9 +3622,7 @@ class ChannelList:
                     YoutubeCommercial = (str(duration) + ',' + Commercial)
                     YoutubeCommercialLST.append(YoutubeCommercial)
             CommercialLST.extend(YoutubeCommercialLST)
-            self.logDebug("GetCommercialList, YoutubeCommercialLST = " + chname + ',' + str(YoutubeCommercialLST) + ',' + str(len(YoutubeCommercialLST)))
-        
-        self.logDebug("GetCommercialList, CommercialLST = " + chname + ',' + str(CommercialLST) + ',' + str(len(CommercialLST)))     
+
         return (CommercialLST)    
     
     
@@ -3658,7 +3637,8 @@ class ChannelList:
     
     def GetTrailerList (self, channel, fileList):
         self.log("GetTrailerList")
-        chtype = int(ADDON_SETTINGS.getSetting('Channel_' + str(channel) + '_type'))
+        TrailerCachePath = xbmc.translatePath(os.path.join(BCT_LOC, 'trailers')) + '/'   
+        chtype = (ADDON_SETTINGS.getSetting('Channel_' + str(channel) + '_type'))
         
         if chtype == '0':
             setting1 = str(ADDON_SETTINGS.getSetting('Channel_' + str(channel) + '_1'))
@@ -3668,10 +3648,13 @@ class ChannelList:
         else:
             chname = ADDON_SETTINGS.getSetting("Channel_" + str(channel) + "_1")  
             
-        PATH = REAL_SETTINGS.getSetting('trailersfolder')
+        if chtype == '3' or chtype == '4' or chtype == '5':
+            GenreChtype = True
+        else:
+            GenreChtype = False
         
-        # if PATH[0:6].lower() == 'smb://':
-            # PATH = self.videoParser.handleSMB(PATH)
+        self.log("GetTrailerList, GenreChtype = " + str(GenreChtype))
+        PATH = REAL_SETTINGS.getSetting('trailersfolder')
             
         LocalTrailerLST = []
         JsonTrailerLST = []
@@ -3685,105 +3668,117 @@ class ChannelList:
         self.logDebug("GetTrailerList, fileList count = " + str(len(fileList)))
         
         #Local
-        if FileAccess.exists(PATH) and (REAL_SETTINGS.getSetting('trailers') == '1' or REAL_SETTINGS.getSetting('trailers') == '4'): 
-            self.logDebug("GetTrailerList, Local.PATH = " + str(PATH))
-            LocalFLE = ''
-            LocalTrailer = ''
-            # LocalLST = xbmcvfs.listdir(PATH)[1]
-            # LocalLST = xbmcvfs.listdir[os.path.join(dp, f)) for dp, dn, filenames in os.walk(PATH) for f in filenames if '-trailer' in f]
-            LocalLST = self.walk(PATH)
-            LocalLST = str(LocalLST)
-            LocalLST = LocalLST.split("', ''], ['")
-            self.logDebug("GetTrailerList, Local.LocalLST = " + str(LocalLST))
-            for i in range(len(LocalLST)):
-                LocalFLE = LocalLST[i]
-                if '-trailer' in LocalFLE:
-                    LocalFLE = LocalFLE.replace("', '']]", "")
-                    self.logDebug("GetTrailerList, Local.LocalFLE = " + str(LocalFLE))
-                    duration = self.videoParser.getVideoLength(LocalFLE)
-                    self.logDebug("GetTrailerList, Local.duration = " + str(duration))
-                    if duration > 0:
-                        LocalTrailer = (str(duration) + ',' + LocalFLE)
-                        LocalTrailerLST.append(LocalTrailer)
-            TrailerLST.extend(LocalTrailerLST)
-            self.logDebug("GetTrailerList, Local.LocalTrailerLST = " + str(LocalTrailerLST) + ',' + str(len(LocalTrailerLST)))
+        if (FileAccess.exists(PATH) and REAL_SETTINGS.getSetting('trailers') == '1'): 
+            TrailerLocalCache = 'Trailer_Local_Cache.xml'
+            self.logDebug("GetTrailerList,  TrailerCachePath = " + str(TrailerCachePath) + str(TrailerLocalCache))
+            CacheExpired = self.Cache_ok(TrailerCachePath, TrailerLocalCache) 
+
+            if CacheExpired == False:
+                TrailerLST = self.readCache(TrailerCachePath, TrailerLocalCache)
+                
+            elif CacheExpired == True or self.forceReset == True: 
+                self.logDebug("GetTrailerList, Local.PATH = " + str(PATH))
+                LocalFLE = ''
+                LocalTrailer = ''
+                LocalLST = self.walk(PATH)
+                LocalLST = str(LocalLST)
+                LocalLST = LocalLST.split("', ''], ['")
+                for i in range(len(LocalLST)):
+                    LocalFLE = LocalLST[i]
+                    if '-trailer' in LocalFLE:
+                        LocalFLE = LocalFLE.replace("', '']]", "")
+                        self.logDebug("GetTrailerList, Local.LocalFLE = " + str(LocalFLE))
+                        duration = self.videoParser.getVideoLength(LocalFLE)
+                        self.logDebug("GetTrailerList, Local.duration = " + str(duration))
+                        if duration > 0:
+                            LocalTrailer = (str(duration) + ',' + LocalFLE)
+                            LocalTrailerLST.append(LocalTrailer)
+                TrailerLST.extend(LocalTrailerLST)                
+                self.writeCache(TrailerLST, TrailerCachePath, TrailerLocalCache)
         
-        #Internet - Local Json ## add videoparser open url for duration function todo
-        if (REAL_SETTINGS.getSetting('trailers') == '2' or REAL_SETTINGS.getSetting('trailers') == '4'):
+        #Internet - Local Json
+        if (REAL_SETTINGS.getSetting('trailers') == '2'):
             json_query = uni('{"jsonrpc":"2.0","method":"VideoLibrary.GetMovies","params":{"properties":["genre","trailer","runtime"]}, "id": 1}')
-            if not self.cached_json_detailed_trailers:
-                self.logDebug('GetTrailerList, json_detail creating cache')
-                self.cached_json_detailed_trailers = self.sendJSON(json_query)   
-                json_detail = self.cached_json_detailed_trailers.encode('utf-8')   
-            else:
-                json_detail = self.cached_json_detailed_trailers.encode('utf-8')   
-                self.logDebug('GetTrailerList, json_detail using cache')
+            genre = chname
             
-            if (REAL_SETTINGS.getSetting('trailersgenre') == 'true' and REAL_SETTINGS.getSetting('trailers') != '4') and (chtype == '3' or chtype == '4' or chtype == '5'):          
-                JsonLST = json_detail.split("},{")
-                self.logDebug("GetTrailerList, Json.Genre.JsonLST = " + str(JsonLST))
-                genre = chname
-                match = [s for s in JsonLST if genre in s]
-                self.logDebug("GetTrailerList, Json.Genre.match.count = " + genre + ', matches = ' + str(len(match)))
-
-                for i in range(len(match)):
-                    duration = 120
-                    json = match[i]
-                    self.logDebug("GetTrailerList, Json.Genre.json = " + str(json) + ', loopcount = ' + str(i))
-                    trailer = json.split(',"trailer":"',1)[-1]
-                    self.logDebug("GetTrailerList, Json.Genre.trailer.1 = " + str(trailer))
-                    if ')"' in trailer:
-                        trailer = trailer.split(')"')[0]
-                    else:
-                        trailer = trailer[:-1]
-                    self.logDebug("GetTrailerList, Json.Genre.trailer.2 = " + str(trailer))
-                    if trailer != '' or trailer != None or trailer != '"}]}':
-                        if 'http://www.youtube.com/watch?hd=1&v=' in trailer:
-                            trailer = trailer.replace("http://www.youtube.com/watch?hd=1&v=", "plugin://plugin.video.youtube/?action=play_video&videoid=")     
-                        JsonTrailer = (str(duration) + ',' + trailer)
-                        if JsonTrailer != '120,':
-                            JsonTrailerLST.append(JsonTrailer)
-                TrailerLST.extend(JsonTrailerLST)
-                self.logDebug("GetTrailerList, Json.Genre.JsonTrailerLST = " + genre + ',' + str(JsonTrailerLST) + ',' + str(len(JsonTrailerLST)))
+            if REAL_SETTINGS.getSetting('trailersgenre') == 'true' and GenreChtype == True:
+                TrailerInternetCache = 'Trailer_Internet_Cache_' + genre + '.xml'
             else:
-                JsonLST = json_detail.split("},{")
-                self.logDebug("GetTrailerList, Json.Genre.JsonLST = " + str(JsonLST))
-                match = [s for s in JsonLST if 'trailer' in s]
-                self.logDebug("GetTrailerList, Json.match.count = " + chname + ', matches = ' + str(len(match)))
-
-                for i in range(len(match)):
-                    duration = 120
-                    json = match[i]
-                    self.logDebug("GetTrailerList, Json.json = " + str(json) + ', loopcount = ' + str(i))
-                    trailer = json.split(',"trailer":"',1)[-1]
-                    self.logDebug("GetTrailerList, Json.trailer.1 = " + str(trailer))
-                    if ')"' in trailer:
-                        trailer = trailer.split(')"')[0]
-                    else:
-                        trailer = trailer[:-1]
-                    self.logDebug("GetTrailerList, Json.trailer.2 = " + str(trailer))
-                    if trailer != '' or trailer != None or trailer != '"}]}':
-                        if 'http://www.youtube.com/watch?hd=1&v=' in trailer:
-                            trailer = trailer.replace("http://www.youtube.com/watch?hd=1&v=", "plugin://plugin.video.youtube/?action=play_video&videoid=")     
-                        JsonTrailer = (str(duration) + ',' + trailer)
-                        if JsonTrailer != '120,':
-                            JsonTrailerLST.append(JsonTrailer)
-                TrailerLST.extend(JsonTrailerLST)
-                self.logDebug("GetTrailerList, Json.JsonTrailerLST = " + chname + ',' + str(JsonTrailerLST) + ',' + str(len(JsonTrailerLST)))
+                TrailerInternetCache = 'Trailer_Internet_Cache.xml'
             
+            self.logDebug("GetTrailerList,  TrailerCachePath = " + str(TrailerCachePath) + str(TrailerInternetCache))
+            CacheExpired = self.Cache_ok(TrailerCachePath, TrailerInternetCache) 
+
+            if CacheExpired == False:
+                TrailerLST = self.readCache(TrailerCachePath, TrailerInternetCache)
+                
+            elif CacheExpired == True:
+            
+                if not self.cached_json_detailed_trailers:
+                    self.logDebug('GetTrailerList, json_detail creating cache')
+                    self.cached_json_detailed_trailers = self.sendJSON(json_query)   
+                    json_detail = self.cached_json_detailed_trailers.encode('utf-8')   
+                else:
+                    json_detail = self.cached_json_detailed_trailers.encode('utf-8')   
+                    self.logDebug('GetTrailerList, json_detail using cache')
+                
+                if REAL_SETTINGS.getSetting('trailersgenre') == 'true' and GenreChtype == True:
+                    JsonLST = json_detail.split("},{")
+                    match = [s for s in JsonLST if genre in s]
+                    self.logDebug("GetTrailerList, Json.Genre.match.count = " + genre + ', matches = ' + str(len(match)))
+                    for i in range(len(match)):
+                        duration = 120
+                        json = match[i]
+                        trailer = json.split(',"trailer":"',1)[-1]
+                        self.logDebug("GetTrailerList, Json.Genre.trailer.1 = " + str(trailer))
+                        if ')"' in trailer:
+                            trailer = trailer.split(')"')[0]
+                        else:
+                            trailer = trailer[:-1]
+                        self.logDebug("GetTrailerList, Json.Genre.trailer.2 = " + str(trailer))
+                        if trailer != '' or trailer != None or trailer != '"}]}':
+                            if 'http://www.youtube.com/watch?hd=1&v=' in trailer:
+                                trailer = trailer.replace("http://www.youtube.com/watch?hd=1&v=", "plugin://plugin.video.youtube/?action=play_video&videoid=")     
+                            JsonTrailer = (str(duration) + ',' + trailer)
+                            if JsonTrailer != '120,':
+                                JsonTrailerLST.append(JsonTrailer)
+                    TrailerLST.extend(JsonTrailerLST)
+                    self.writeCache(TrailerLST, TrailerCachePath, TrailerInternetCache)
+                else:
+                    JsonLST = json_detail.split("},{")
+                    self.logDebug("GetTrailerList, Json.Genre.JsonLST = " + str(JsonLST))
+                    match = [s for s in JsonLST if 'trailer' in s]
+                    self.logDebug("GetTrailerList, Json.match.count = " + chname + ', matches = ' + str(len(match)))
+
+                    for i in range(len(match)):
+                        duration = 120
+                        json = match[i]
+                        self.logDebug("GetTrailerList, Json.json = " + str(json) + ', loopcount = ' + str(i))
+                        trailer = json.split(',"trailer":"',1)[-1]
+                        self.logDebug("GetTrailerList, Json.trailer.1 = " + str(trailer))
+                        if ')"' in trailer:
+                            trailer = trailer.split(')"')[0]
+                        else:
+                            trailer = trailer[:-1]
+                        self.logDebug("GetTrailerList, Json.trailer.2 = " + str(trailer))
+                        if trailer != '' or trailer != None or trailer != '"}]}':
+                            if 'http://www.youtube.com/watch?hd=1&v=' in trailer:
+                                trailer = trailer.replace("http://www.youtube.com/watch?hd=1&v=", "plugin://plugin.video.youtube/?action=play_video&videoid=")     
+                            JsonTrailer = (str(duration) + ',' + trailer)
+                            if JsonTrailer != '120,':
+                                JsonTrailerLST.append(JsonTrailer)
+                    TrailerLST.extend(JsonTrailerLST) 
+                    self.writeCache(TrailerLST, TrailerCachePath, TrailerInternetCache)
+                
         #Youtube
         if REAL_SETTINGS.getSetting('trailers') == '3' or REAL_SETTINGS.getSetting('trailers') == '4':
             YoutubeTrailers = REAL_SETTINGS.getSetting('trailerschannel') # info,type,limit
             YoutubeTrailers = YoutubeTrailers.split(',')
             setting1 = YoutubeTrailers[0]
             setting2 = YoutubeTrailers[1]
-            if REAL_SETTINGS.getSetting('trailers') == '4':
-                setting3 = '25'
-            else:
-                setting3 = YoutubeTrailers[2]
+            setting3 = YoutubeTrailers[2]
             
             YoutubeLST = self.createYoutubeFilelist(setting1, setting2, setting3, channel)
-            self.logDebug("GetTrailerList, Youtube.YoutubeLST = " + str(YoutubeLST))
             for i in range(len(YoutubeLST)):
                 Youtube = YoutubeLST[i]
                 duration = Youtube.split(',')[0]
@@ -3794,9 +3789,7 @@ class ChannelList:
                     YoutubeTrailer = (str(duration) + ',' + trailer)
                     YoutubeTrailerLST.append(YoutubeTrailer)
             TrailerLST.extend(YoutubeTrailerLST)
-            self.log("GetTrailerList, YoutubeTrailerLST = " + chname + ', Youtube.trailer.Count = ' + str(len(YoutubeTrailerLST)))
           
-        self.logDebug("GetTrailerList, TrailerLST = " + chname + ',' + str(TrailerLST) + ',' + str(len(TrailerLST)))     
         return (TrailerLST)
 
         
@@ -3825,3 +3818,64 @@ class ChannelList:
                     # recursively scan all subfolders
                     video += self.walk(os.path.join(folder,item))
         return video
+        
+    
+    def writeCache(self, thelist, thepath, thefile):
+        self.log("writeCache")  
+        now = str(datetime.datetime.today())
+
+        if not os.path.exists(os.path.join(thepath)):
+            os.makedirs(os.path.join(thepath))
+        
+        thefile = thepath + thefile
+        self.log("writeCache, thefile = " + str(thefile))  
+        
+        fle = FileAccess.open(thefile, "w")
+        fle.write("%s\n" % now)
+        for item in thelist:
+            fle.write("%s\n" % item)
+        
+    def readCache(self, thepath, thefile):
+        self.log("readCache")   
+        thefile = thepath + thefile
+        fle = FileAccess.open(thefile, "r")
+        thelist = []
+        thelist = fle.readlines()
+        print thelist
+        LastItem = len(thelist) - 1
+        print LastItem
+        thelist.pop(LastItem)#remove last line (empty line)
+        thelist.pop(0)#remove first line (datetime)
+        self.logDebug("readCache, thelist.count = " + str(len(thelist)))
+        fle.close()
+        print thelist
+        return thelist
+    
+    
+    def Cache_ok(self, thepath, thefile):
+        self.log("Cache_ok")   
+        CacheExpired = False
+        thefile = thepath + thefile
+        now = datetime.datetime.today()
+        self.logDebug("Cache_ok, now = " + str(now))
+        if REAL_SETTINGS.getSetting('ForceChannelReset') == "true":
+            CacheExpired = True
+        else:
+            try:
+                fle = FileAccess.open(thefile, "r")
+                cacheDate = str(fle.readlines()[0])
+                cacheDate = datetime.datetime.strptime(cacheDate, '%Y-%m-%d') 
+                cacheDateEXP = (cacheDate + datetime.timedelta(days=30))
+                fle.close()
+                self.logDebug("readCache, cacheDate = " + str(cacheDate))
+                self.logDebug("readCache, cacheDateEXP = " + str(cacheDateEXP))
+                
+                if now >= cacheDateEXP:
+                    CacheExpired = True            
+            except:
+                CacheExpired = True
+        
+        self.log("Cache_ok, CacheExpired = " + str(CacheExpired))
+        return CacheExpired
+
+    
