@@ -65,9 +65,7 @@
     <string id="30089">Find Music Videos using Local Directory</string>
     <string id="30090">InternetTV:</string>  
     <string id="30091">Find InternetTV using Strm Collections *</string>
-    <string id="30092">Find InternetTV using theStreamdb (Coming Soon)</string>
-    <string id="30093">theStreamdb location</string>
-    <string id="30097">Options:</string>  
+    <string id="30098">Autotune Media Limit Per Channel</string>
     <string id="30099">Restore Pre-Autotune Configuration (Coming Soon)</string>
     <string id="30100">Warning!! this will delete the current channels</string>
 <string id="30500">BCTs</string> 
@@ -86,7 +84,6 @@
     <string id="30512">Youtube Trailer Configuration (info,type,limit)</string>
     <string id="30513">Enable Trailers in Movie Channels</string>
     <string id="30514">Number of Trailers Between Shows</string>
-    <string id="30516">Changes take effect after channel reset, * = Donor's Only</string>
 <string id="30700">APIs</string>
     <string id="30702">Enable TVDB</string>
     <string id="30703">TVDB API KEY</string>
@@ -105,6 +102,7 @@
     <string id="30903">* = Enhanced Content, Thanks for your support!</string>
     <string id="30990">DEBUGGING: (Use with Caution!)</string>
     <string id="30991">Override Stream Validation</string>
+    <string id="30994">Plugin Validation Level</string>
     <string id="30992">Disable Goggle Analytic's</string>
     <string id="30993">Enable Debugging</string>
     <string id="30999">Optimize Configurations (Coming Soon)</string>

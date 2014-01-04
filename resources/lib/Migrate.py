@@ -477,20 +477,41 @@ class Migrate:
             self.updateDialog.update(self.updateDialogProgress,"Auto Tune","Adding VevoTV Music Videos","")
             if channelNum == 0:
                 channelNum = 1
+
             for i in range(1):
                 # add VevoTV presets
                 Globals.ADDON_SETTINGS.setSetting("Channel_" + str(channelNum) + "_type", "9")
                 Globals.ADDON_SETTINGS.setSetting("Channel_" + str(channelNum) + "_time", "0")
                 Globals.ADDON_SETTINGS.setSetting("Channel_" + str(channelNum) + "_1", "5400")
-                Globals.ADDON_SETTINGS.setSetting("Channel_" + str(channelNum) + "_2", "rtmp://vevohp2livefs.fplive.net:1935/vevohp2live-live/ playpath=stream2272000 swfUrl=http://cache.vevo.com/livepassdl.conviva.com/ver/2.64.0.68610/LivePassModuleMain_osmf.swf")
-                Globals.ADDON_SETTINGS.setSetting("Channel_" + str(channelNum) + "_3", "VevoTV")
+                Globals.ADDON_SETTINGS.setSetting("Channel_" + str(channelNum) + "_2", "http://vevoplaylist-live.hls.adaptive.level3.net/vevo/ch1/06/prog_index.m3u8")
+                Globals.ADDON_SETTINGS.setSetting("Channel_" + str(channelNum) + "_3", "VEVO TV (US: Hits)")
                 Globals.ADDON_SETTINGS.setSetting("Channel_" + str(channelNum) + "_4", "Sit back and enjoy a 24/7 stream of music videos on VEVO TV.")
                 Globals.ADDON_SETTINGS.setSetting("Channel_" + str(channelNum) + "_rulecount", "1")
                 Globals.ADDON_SETTINGS.setSetting("Channel_" + str(channelNum) + "_rule_1_id", "1")
-                Globals.ADDON_SETTINGS.setSetting("Channel_" + str(channelNum) + "_rule_1_opt_1", "VevoTV")  
+                Globals.ADDON_SETTINGS.setSetting("Channel_" + str(channelNum) + "_rule_1_opt_1", "VevoTV - Hits")  
                 Globals.ADDON_SETTINGS.setSetting("Channel_" + str(channelNum) + "_changed", "true")
+                Globals.ADDON_SETTINGS.setSetting("Channel_" + str(channelNum + 1) + "_type", "9")
+                Globals.ADDON_SETTINGS.setSetting("Channel_" + str(channelNum + 1) + "_time", "0")
+                Globals.ADDON_SETTINGS.setSetting("Channel_" + str(channelNum + 1) + "_1", "5400")
+                Globals.ADDON_SETTINGS.setSetting("Channel_" + str(channelNum + 1) + "_2", "http://vevoplaylist-live.hls.adaptive.level3.net/vevo/ch2/06/prog_index.m3u8")
+                Globals.ADDON_SETTINGS.setSetting("Channel_" + str(channelNum + 1) + "_3", "VEVO TV (US: Flow)")
+                Globals.ADDON_SETTINGS.setSetting("Channel_" + str(channelNum + 1) + "_4", "Sit back and enjoy a 24/7 stream of music videos on VEVO TV.")
+                Globals.ADDON_SETTINGS.setSetting("Channel_" + str(channelNum + 1) + "_rulecount", "1")
+                Globals.ADDON_SETTINGS.setSetting("Channel_" + str(channelNum + 1) + "_rule_1_id", "1")
+                Globals.ADDON_SETTINGS.setSetting("Channel_" + str(channelNum + 1) + "_rule_1_opt_1", "VevoTV - Flow")  
+                Globals.ADDON_SETTINGS.setSetting("Channel_" + str(channelNum + 1) + "_changed", "true")
+                Globals.ADDON_SETTINGS.setSetting("Channel_" + str(channelNum + 2) + "_type", "9")
+                Globals.ADDON_SETTINGS.setSetting("Channel_" + str(channelNum + 2) + "_time", "0")
+                Globals.ADDON_SETTINGS.setSetting("Channel_" + str(channelNum + 2) + "_1", "5400")
+                Globals.ADDON_SETTINGS.setSetting("Channel_" + str(channelNum + 2) + "_2", "http://vevoplaylist-live.hls.adaptive.level3.net/vevo/ch3/06/prog_index.m3u8")
+                Globals.ADDON_SETTINGS.setSetting("Channel_" + str(channelNum + 2) + "_3", "VEVO TV (Nashville)")
+                Globals.ADDON_SETTINGS.setSetting("Channel_" + str(channelNum + 2) + "_4", "Sit back and enjoy a 24/7 stream of music videos on VEVO TV.")
+                Globals.ADDON_SETTINGS.setSetting("Channel_" + str(channelNum + 2) + "_rulecount", "1")
+                Globals.ADDON_SETTINGS.setSetting("Channel_" + str(channelNum + 2) + "_rule_1_id", "1")
+                Globals.ADDON_SETTINGS.setSetting("Channel_" + str(channelNum + 2) + "_rule_1_opt_1", "VevoTV - Nashville")  
+                Globals.ADDON_SETTINGS.setSetting("Channel_" + str(channelNum + 2) + "_changed", "true")
 
-            channelNum = channelNum + 1
+            channelNum = channelNum + 3
             self.logDebug('channelNum = ' + str(channelNum))
         
         #Music Videos - Local
@@ -544,7 +565,7 @@ class Migrate:
             try:
                 xbmcaddon.Addon(id)
                 installed = True
-            except Exception:
+            except:
                 installed = False
 
             if installed == True:

@@ -55,7 +55,7 @@
       	<setting id="Warning1" type="bool" label="30072" subsetting="true" visible="eq(-1,true)" default="false"/>
         <setting type="lsep" label="30073" visible="eq(-1,true)"/>
       	<setting id="autoFindLivePVR" type="bool" label="30075" subsetting="true" visible="eq(-2,true)" default="false"/>
-        <setting type="lsep" label="30076" visible="eq(-4,true)"/>
+        <setting type="lsep" label="30076" visible="eq(-3,true)"/>
       	<setting id="autoFindCustom" type="bool" label="30077" subsetting="true" visible="eq(-4,true)" default="false"/>
         <setting id="autoFindNetworks" type="bool" label="30078" subsetting="true" visible="eq(-5,true)" default="false"/>
       	<setting id="autoFindStudios" type="bool" label="30079" subsetting="true" visible="eq(-6,true)" default="false"/>
@@ -71,12 +71,11 @@
       	<setting id="autoFindMusicVideosLocal" type="folder" source="auto" label="30089" subsetting="true" visible="eq(-16,true)" default=""/>
       	<setting type="lsep" label="30090" visible="eq(-17,true)"/>
         <setting id="autoFindInternetStrms" type="bool" label="30091" subsetting="true" visible="eq(-18,true)" default="false"/>
-        <setting id="autoFindInternetLiveStream" type="bool" label="30092" subsetting="true" visible="eq(-19,true)" default="false"/>
-        <setting id="autoFindInternetLiveStreamDir" type="folder" source="auto" label="30093" subsetting="true" visible="eq(-1,true)" default=""/>
       	<setting type="lsep" label="30097" visible="eq(-21,true)"/>
-        <setting id="ATLimit" label="30406" subsetting="true" type="enum" values="25|50|100|250|500|1000|Unlimited" visible="eq(-22,true)" default="0"/>
+        <setting id="ATLimit" label="30098" subsetting="true" type="enum" values="25|50|100|250|500|1000|Unlimited" visible="eq(-22,true)" default="0"/>
         <setting id="ATRestore" type="bool" label="30099" visible="eq(-24,false) "default="false"/>
-      	<setting id="Warning2" type="bool" subsetting="true" label="30100" visible="eq(-1,true)" default="false" action="RunScript($CWD/restore.py)"/> />
+      	<setting id="Warning2" type="bool" subsetting="true" label="30100" visible="eq(-1,true)" default="false" action="RunScript($CWD/restore.py)"/>
+        <setting label="30903" type="lsep" visible="eq(-23,true)"/>
     </category>
 <!--BCTs-->   
     <category label="30500">
@@ -97,7 +96,8 @@
         <setting label="30514" id="numtrailers" type="enum" visible="!eq(-5,0)" values="Auto|1|2|3|4|5" default="1"/>
     	<setting id="HideClips" type="bool" label="30209" default="true"/>
     	<setting id="ClipLength" type="enum" subsetting="true" label="30210" visible="eq(-1,true)" values="15|30|60|90|120|180|240|300|360|420|460" default="2"/>
-        <setting label="30516" type="lsep"/>
+        <setting label="30712" type="lsep"/>
+        <setting label="30903" type="lsep"/>
     </category>
     <!--APIs-->
     <category label="30700">  
@@ -122,6 +122,7 @@
         <setting label="30903" visible="eq(-2,true)" type="lsep" default="" /> 
         <setting label="30990" type="lsep"/>
         <setting id="Override_ok" type="bool" label="30991" default="false"/>
+        <setting id="plugin_ok_level" type="enum" label="30994" values="Low|High" default="0"/>
         <setting id="ga_disable" type="bool" label="30992" default="false"/>
         <setting id="enable_Debug" type="bool" label="30993" default="false"/>
         <setting type="action" label="30999" action="RunScript($CWD/defrag.py)"/>

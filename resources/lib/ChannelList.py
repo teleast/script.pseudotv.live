@@ -658,7 +658,7 @@ class ChannelList:
                 
                     elif setting2[0:6] == 'plugin':#plugin check    
                         self.plugin_ok(setting2)
-                        if self.PluginFound == True:
+                        if self.Pluginvalid == True:
                             fileList = self.buildLiveTVFileList(setting1, setting2, setting3, channel)    
                         else:
                             self.log('makeChannelList, CHANNEL: ' + str(channel) + ', CHTYPE: ' + str(chtype), 'PLUGIN invalid: ' + str(setting2))
@@ -695,7 +695,7 @@ class ChannelList:
                 
                 elif setting2[0:6] == 'plugin':#plugin check                
                     self.plugin_ok(setting2)
-                    if self.PluginFound == True:
+                    if self.Pluginvalid == True:
                         fileList = self.buildInternetTVFileList(setting1, setting2, setting3, setting4, channel)
                     else:
                         self.log('makeChannelList, CHANNEL: ' + str(channel) + ', CHTYPE: ' + str(chtype), 'PLUGIN invalid: ' + str(setting2))
@@ -3111,20 +3111,29 @@ class ChannelList:
             self.PluginFound = True
         except:
             self.PluginFound = False 
-        return self.PluginFound
-        
         self.log("PluginFound = " + str(self.PluginFound))
+        
         if self.PluginFound == True:
-            try:
-                json_query = uni('{"jsonrpc": "2.0", "method": "Files.GetDirectory", "id": 1, "params": {"directory": "%s"}}' % (self.escapeDirJSON(stream)))
-                json_folder_detail = self.sendJSON(json_query)
-                file_detail = re.compile( "{(.*?)}", re.DOTALL ).findall(json_folder_detail)
-                self.log('json_folder_detail = ' + str(json_folder_detail))
-                self.log('file_detail = ' + str(file_detail))
-                self.Pluginvalid = True        
-            except:
-                self.Pluginvalid = False
+            if REAL_SETTINGS.getSetting("plugin_ok_level") == "0":#Low Check
+                self.Pluginvalid = True     
+                return self.Pluginvalid
+            elif REAL_SETTINGS.getSetting("plugin_ok_level") == "1":#High Check todo
+                try:
+                    json_query = uni('{"jsonrpc": "2.0", "method": "Files.GetDirectory","params":{"directory":"%s"}, "id": 1}' % (self.escapeDirJSON(stream)))
+                    json_folder_detail = self.sendJSON(json_query)
+                    file_detail = re.compile( "{(.*?)}", re.DOTALL ).findall(json_folder_detail)
+                    self.log('json_folder_detail = ' + str(json_folder_detail))
+                    self.log('file_detail = ' + str(file_detail))
+                    self.Pluginvalid = True        
+                except:
+                    self.Pluginvalid = False
+        else:
+            self.Pluginvalid = False     
+        
+        self.log("Pluginvalid = " + str(self.Pluginvalid))
+        return self.Pluginvalid
                 
+    
     def trim(self, content, limit, suffix):
         if len(content) <= limit:
             return content
