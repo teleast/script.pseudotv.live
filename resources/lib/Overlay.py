@@ -1353,10 +1353,59 @@ class TVOverlay(xbmcgui.WindowXMLDialog):
                         while nextshow != self.notificationLastShow:
                             if self.channels[self.currentChannel - 1].getItemDuration(nextshow) >= self.shortItemLength:
                                 break
-
                             nextshow = self.channels[self.currentChannel - 1].fixPlaylistIndex(nextshow + 1)
+                            print nextshow
+                            print '####################################'
+                            mediapath = uni(self.channels[self.currentChannel - 1].getItemFilename(nextshow))                            
+                            self.mediaPath =  xbmc.translatePath(os.path.join(ADDON_INFO, 'resources', 'skins', 'default', 'media')) + '/'
+                            self.logDebug('notification.mediapath.1 = ' + str(mediapath))    
+                            title = 'Coming Up Next'    
 
-                    xbmc.executebuiltin("Notification(Coming Up Next, " + self.channels[self.currentChannel - 1].getItemTitle(nextshow).replace(',', '') + ", " + str(NOTIFICATION_DISPLAY_TIME * 1000) + ")")
+                            type = {}
+                            type['0'] = 'poster'
+                            type['1'] = 'fanart' 
+                            type['2'] = 'landscape'        
+                            type['3'] = 'logo'       
+                            type['4'] = 'clearart'             
+                            
+                            type = type[REAL_SETTINGS.getSetting('ComingUpArtwork')]
+                            self.logDebug('notification.type = ' + str(type))    
+                            jpg = ['banner', 'fanart', 'folder', 'landscape', 'poster']
+                            png = ['character', 'clearart', 'logo']    
+                            
+                            if type in jpg:
+                                type1EXT = (type + '.jpg')
+                            else:
+                                type1EXT = (type + '.png')
+                            self.logDebug('notification.type.ext = ' + str(type1EXT))  
+
+                            mediapathSeason, filename = os.path.split(mediapath)
+                            self.logDebug('notification.mediapath.2 = ' + uni(mediapathSeason))                            
+                            mediapathSeries = os.path.dirname(mediapathSeason)
+                            self.logDebug('notification.mediapath.3 = ' + uni(mediapathSeries))
+                            mediapathSeries1 = (mediapathSeries + '/' + type1EXT)
+                            mediapathSeason1 = (mediapathSeason + '/' + type1EXT)   
+
+                            if FileAccess.exists(mediapathSeries1):
+                                thumb = mediapathSeries1
+                            elif FileAccess.exists(mediapathSeason1):
+                                thumb = mediapathSeason1
+                            else: 
+                                thumb = (self.mediaPath + type + '.png')
+
+                            # if mediapathSeason[0:6] == 'plugin':
+                                # id = mediapathSeason
+                                # id = id.replace("/?path=/root", "")
+                                # id = id.split('plugin://', 1)[-1]
+                                # id = 'special://home/addons/'+ id + '/icon.png'
+                                # self.log("notification.plugin.id = " + id)
+                                # thumb = id
+                            
+                            # videoTitle = xbmc.getInfoLabel('VideoPlayer.Title')
+                            # thumb = xbmc.getInfoImage('VideoPlayer.Cover')
+                            
+                            xbmc.executebuiltin('XBMC.Notification(%s, %s, %s, %s)' % (title, self.channels[self.currentChannel - 1].getItemTitle(nextshow).replace(',', ''), str(NOTIFICATION_DISPLAY_TIME * 1000), thumb))
+                    # xbmc.executebuiltin("Notification(Coming Up Next, " + self.channels[self.currentChannel - 1].getItemTitle(nextshow).replace(',', '') + ", " + str(NOTIFICATION_DISPLAY_TIME * 1000) + ")")
                     self.notificationShowedNotif = True
 
         self.startNotificationTimer()

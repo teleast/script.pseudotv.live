@@ -16,6 +16,7 @@
 <!--Visual-->
     <category label="30200">
     	<setting id="EnableComingUp" type="bool" label="30208" default="true"/>
+    	<setting id="ComingUpArtwork" subsetting="true" visible="eq(-1,true)" type="enum" label="30216" values="Poster|Fanart|Landscape|Logo|Clearart" default="2" />
         <setting id="InfoOnChange" type="bool" label="30201" default="true"/>
         <setting id="InfoTimer" subsetting="true" visible="eq(-1,true)" type="enum" label="30202" values="5|10|15|20|25" default="0"/>
         <setting id="ShowSeEp" type="bool" label="30203" default="true"/>
