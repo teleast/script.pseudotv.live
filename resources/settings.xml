@@ -4,7 +4,7 @@
     	<setting label="300001" type="lsep"/>
     	<setting type="action" label="30002" action="RunScript($CWD/config.py)"/>
     	<setting label="30003" type="lsep"/>
-        <setting id="AutoOff" type="enum" label="30004" values="Disable|30|60|90|120|150|180|210|240" default="6"/>
+        <setting id="AutoOff" type="enum" label="30004" values="Disable|30|60|90|120|150|180|210|240" default="0"/>
         <setting id="ForceChannelReset" type="bool" label="30005" default="false"/>
         <setting id="ChannelResetSetting" type="enum" label="30006" values="Automatic|Daily|Weekly|Monthly|Never|Every Time" default="0"/>
     	<setting id="StartMode" type="enum" label="30007" values="Resume|Real Time|Random" default="1" />
@@ -21,8 +21,8 @@
         <setting id="InfoTimer" subsetting="true" visible="eq(-1,true)" type="enum" label="30202" values="5|10|15|20|25" default="0"/>
         <setting id="ShowSeEp" type="bool" label="30203" default="true"/>
         <setting id="EPGcolor_enabled" label="30213" type="enum" values="Disabled|Genre Type|Channel Type" default="0" />
-        <setting id="EPGcolor_MovieGenre" subsetting="true" type="bool" label="30215" default="true" visible="eq(-1,1)" />
-        <setting id="art.enable" label="30214" type="bool" default="false" /> 
+        <setting id="EPGcolor_MovieGenre" subsetting="true" type="bool" label="30215" default="false" visible="eq(-1,1)" />
+        <setting id="art.enable" label="30214" type="bool" default="true" /> 
         <setting id="ShowChannelBug" type="bool" label="30204" default="true"/>
     	<setting id="ColorOverlay" type="bool" label="30205" default="false"/>
     	<setting id="ChannelLogoFolder" type="folder" source="auto" label="30206" default="special://home/addons/script.pseudotv.live/resources/skins/default/images/"/>
@@ -36,10 +36,10 @@
         <setting id="notify" type="bool" label="30046" subsetting="true" visible="eq(-2,true)" default="false"/>
         <setting id="ChannelDelay" type="enum" label="30041" default="0" values="None|0.25|0.5|0.75|1.0|1.25|1.5|1.75|2.0"/>
         <setting id="ClockMode" type="enum" label="30207" default="0" values="12 Hour|24 Hour"/>
-    	<setting id="EnableDown" type="bool" label="30049" default="false"/>
     	<setting id="HideClips" type="bool" label="30209" default="true"/>
     	<setting id="ClipLength" type="enum" subsetting="true" label="30210" visible="eq(-1,true)" values="15|30|60|90|120|180|240|300|360|420|460" default="2"/>
-    	<setting id="TVFileSys" type="enum" subsetting="true" label="30050" visible="eq(-1,true)" values="\Title\Season\Media.ext|\Title\Media.ext" default="0"/>
+    	<setting id="EnableDown" type="bool" label="30049" default="false"/>
+        <setting id="TVFileSys" type="enum" subsetting="true" label="30050" visible="eq(-1,true)" values="\Title\Season\Media.ext|\Title\Media.ext" default="0"/>
     	<setting id="MovieFileSys" type="enum" subsetting="true" label="30051" visible="eq(-2,true)" values="\Movies\Title\Media.ext|\Movies\Media.ext" default="0"/>
     </category>
 <!--Live Features-->
