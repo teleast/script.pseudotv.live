@@ -542,7 +542,7 @@ class Migrate:
             self.updateDialog.update(self.updateDialogProgress,"Auto Tune","Adding InternetTV Strms","")
             if channelNum == 0:
                 channelNum = 1
-            InternetStrms = str('http://whufclee.googlecode.com/svn/whufclee_public/TVGuides/DixieDean/Streams/')
+            InternetStrms = str('')
             for i in range(1):
                 # add InternetTV
                 Globals.ADDON_SETTINGS.setSetting("Channel_" + str(channelNum + 1) + "_type", "7")
