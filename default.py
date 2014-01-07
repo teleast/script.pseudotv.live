@@ -62,7 +62,7 @@ if xbmcgui.Window(10000).getProperty("PseudoTVRunning") != "True":
         if REAL_SETTINGS.getSetting("Donor_Enabled") == "true" and REAL_SETTINGS.getSetting("Donor_Update") == "true":   
             try:
                 UserPass = REAL_SETTINGS.getSetting('Donor_UP')
-                flename = 'Donor.pyo'
+                flename = 'Donor.py'
                 URL = ('http://'+UserPass+'@ptvl.comeze.com/strms/')
                 Path1 = (xbmc.translatePath(os.path.join('special://home/addons/script.pseudotv.live/resources/lib/')))
                 Path2 = (xbmc.translatePath(os.path.join('special://home/addons/script.pseudotv.live-master/resources/lib/')))
