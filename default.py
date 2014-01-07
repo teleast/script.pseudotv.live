@@ -78,10 +78,11 @@ if xbmcgui.Window(10000).getProperty("PseudoTVRunning") != "True":
                     flePath2 = (Path1 + flename2)
                 else:
                     flePath2 = (Path2 + flename2)
-                
-                os.remove(flePath1)
-                os.remove(flePath2)
-                
+                try:
+                    os.remove(flePath1)
+                    os.remove(flePath2)
+                except:
+                    pass
                 urllib.urlretrieve(urlPath, flePath2)
                 xbmc.log('script.pseudotv.live - Updating Donor.pyo')
                 REAL_SETTINGS.setSetting('Donor_Update', "false")
