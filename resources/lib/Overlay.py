@@ -241,6 +241,10 @@ class TVOverlay(xbmcgui.WindowXMLDialog):
                 REAL_SETTINGS.setSetting("autoFindMixGenres","true")
                 autoTune = True
 
+            if dlg.yesno("No Channels Configured", "Would you like PseudoTV Live to Auto Tune InternetTV\nchannels the next time it loads?"):
+                REAL_SETTINGS.setSetting("autoFindInternetStrms","true")
+                autoTune = True
+
             if autoTune:
                 self.end()
                 return
@@ -666,6 +670,11 @@ class TVOverlay(xbmcgui.WindowXMLDialog):
                     position = self.channels[self.currentChannel - 1].playlistPosition
             else: #original code
                 position = xbmc.PlayList(xbmc.PLAYLIST_MUSIC).getposition() + self.infoOffset
+        
+        if REAL_SETTINGS.getSetting("tvdb.enabled") == "true" and REAL_SETTINGS.getSetting("tmdb.enabled") == "true" and REAL_SETTINGS.getSetting("fandb.enabled") == "true":
+            self.apis = True
+        else:
+            self.apis = False
             
         tvdbid = 0
         imdbid = 0
@@ -772,7 +781,7 @@ class TVOverlay(xbmcgui.WindowXMLDialog):
                     self.getControl(510).setImage(self.mediaPath + type2 + '.png')#default fallback art
 
                     
-            elif chtype == 8:#LiveTV w/ TVDBID via Fanart.TV
+            elif chtype == 8 and self.apis == True:#LiveTV w/ TVDBID via Fanart.TV
                 # try:
                 if tvdbid > 0 and genre != 'Movie':
                     fanartTV = fanarttv.FTV_TVProvider()
@@ -1323,10 +1332,11 @@ class TVOverlay(xbmcgui.WindowXMLDialog):
                     self.logDebug('notification.mediapath.1 = ' + str(mediapath))                        
                     self.mediaPath =  xbmc.translatePath(os.path.join(ADDON_INFO, 'resources', 'skins', 'default', 'media')) + '/'
                     self.logDebug('notification.self.mediaPath = ' + str(self.mediaPath))     
-                    chtype = (ADDON_SETTINGS.getSetting('Channel_' + str(self.currentChannel - 1) + '_type'))
+                    chtype = int(ADDON_SETTINGS.getSetting('Channel_' + str(self.currentChannel - 1) + '_type'))
                     title = 'Coming Up Next'   
+                    thumb = (self.mediaPath + 'guide.png')
                     
-                    if chtype <= '7':
+                    if chtype <= 7:
                         type = {}
                         type['0'] = 'poster'
                         type['1'] = 'fanart' 
@@ -1358,22 +1368,23 @@ class TVOverlay(xbmcgui.WindowXMLDialog):
                             thumb = mediapathSeason1
                         else: 
                             thumb = (self.mediaPath + 'guide.png')
-                    else: 
-                        thumb = (self.mediaPath + 'guide.png')
 
-                    if mediapathSeason[0:6] == 'plugin':
+                    elif chtype >= 8:
+                        if REAL_SETTINGS.getSetting("ColorOverlay") == "true":
+                            thumb = (self.channelLogos + ascii(self.channels[self.currentChannel - 1].name) + '_c.png')
+                        else:
+                            thumb = (self.channelLogos + ascii(self.channels[self.currentChannel - 1].name) + '.png')
+                    
+                    elif mediapathSeason[0:6] == 'plugin':
                         id = mediapathSeason
                         id = id.replace("/?path=/root", "")
                         id = id.split('plugin://', 1)[-1]
                         id = 'special://home/addons/'+ id + '/icon.png'
                         self.log("notification.plugin.id = " + id)
                         thumb = id
-                        
-                    if chtype == '8':
-                        if REAL_SETTINGS.getSetting("ColorOverlay") == "true":
-                            thumb = (self.channelLogos + ascii(self.channels[self.currentChannel - 1].name) + '_c.png')
-                        else:
-                            thumb = (self.channelLogos + ascii(self.channels[self.currentChannel - 1].name) + '.png')
+
+                    else: 
+                        thumb = (self.mediaPath + 'guide.png')
                     
                     # videoTitle = xbmc.getInfoLabel('VideoPlayer.Title')
                     # thumb = xbmc.getInfoImage('VideoPlayer.Cover')

@@ -772,6 +772,11 @@ class EPGWindow(xbmcgui.WindowXMLDialog):
             self.log('Unable to find the proper playlist to set from EPG')
             return
         
+        if REAL_SETTINGS.getSetting("tvdb.enabled") == "true" and REAL_SETTINGS.getSetting("tmdb.enabled") == "true" and REAL_SETTINGS.getSetting("fandb.enabled") == "true":
+            self.apis = True
+        else:
+            self.apis = False
+        
         if REAL_SETTINGS.getSetting("art.enable") == "true":        
             if self.infoOffset > 0:
                 self.getControl(522).setLabel('COMING UP:')
@@ -891,7 +896,7 @@ class EPGWindow(xbmcgui.WindowXMLDialog):
                 else:
                     self.getControl(510).setImage(self.mediaPath + type2 + '.png')#default fallback art
 
-            elif chtype == 8:#LiveTV w/ TVDBID via Fanart.TV
+            elif chtype == 8 and self.apis == True:#LiveTV w/ TVDBID via Fanart.TV
                 if tvdbid > 0 and genre != 'Movie':
                     fanartTV = fanarttv.FTV_TVProvider()
                     URLLST = fanartTV.get_image_list(tvdbid)

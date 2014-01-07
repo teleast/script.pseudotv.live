@@ -3205,7 +3205,7 @@ class ChannelList:
                         self.logDebug("insertFiles, Bumper.BumperDur = " + str(BumperDur))
                         BumperMedia = Bumper.split(',', 1)[-1] #link of Bumper
                         self.logDebug("insertFiles, Bumper.BumperMedia = " + uni(BumperMedia))
-                        BumperMedia = ('#EXTINF:' + str(BumperDur) + ',//////Bumper////\n' + BumperMedia)
+                        BumperMedia = ('#EXTINF:' + str(BumperDur) + ',//////Bumper////LIVEID|\n' + BumperMedia)
                         BumperMediaLST.append(BumperMedia)
                 
                 if CommercialNum > 0:
@@ -3216,7 +3216,7 @@ class ChannelList:
                         self.logDebug("insertFiles, Commercial.CommercialDur = " + str(CommercialDur))
                         CommercialMedia = Commercial.split(',', 1)[-1] #link of Commercial
                         self.logDebug("insertFiles, Commercial.CommercialMedia = " + uni(CommercialMedia))
-                        CommercialMedia = ('#EXTINF:' + str(CommercialDur) + ',//////Commercial////\n' + CommercialMedia)
+                        CommercialMedia = ('#EXTINF:' + str(CommercialDur) + ',//////Commercial////LIVEID|\n' + CommercialMedia)
                         CommercialMediaLST.append(CommercialMedia)
 
                 if TrailerNum > 0:
@@ -3227,9 +3227,8 @@ class ChannelList:
                         self.logDebug("insertFiles, trailers.trailerDur = " + str(trailerDur))
                         trailerMedia = trailer.split(',', 1)[-1] #link of trailer
                         self.logDebug("insertFiles, trailers.trailerMedia = " + uni(trailerMedia))
-                        trailerMedia = ('#EXTINF:' + str(trailerDur) + ',//////Trailer////\n' + trailerMedia)
-                        trailerMediaLST.append(trailerMedia)
-                                                    
+                        trailerMedia = ('#EXTINF:' + str(trailerDur) + ',//////Trailer////LIVEID|\n' + trailerMedia)
+                        trailerMediaLST.append(trailerMedia)                       
                 bctFileList.extend(BumperMediaLST)
                 bctFileList.extend(CommercialMediaLST)
                 bctFileList.extend(trailerMediaLST)
