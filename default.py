@@ -62,19 +62,28 @@ if xbmcgui.Window(10000).getProperty("PseudoTVRunning") != "True":
         if REAL_SETTINGS.getSetting("Donor_Enabled") == "true" and REAL_SETTINGS.getSetting("Donor_Update") == "true":   
             try:
                 UserPass = REAL_SETTINGS.getSetting('Donor_UP')
-                flename = 'Donor.py'
+                flename1 = 'Donor.py'
+                flename2 = 'Donor.pyo'
                 URL = ('http://'+UserPass+'@ptvl.comeze.com/strms/')
                 Path1 = (xbmc.translatePath(os.path.join('special://home/addons/script.pseudotv.live/resources/lib/')))
                 Path2 = (xbmc.translatePath(os.path.join('special://home/addons/script.pseudotv.live-master/resources/lib/')))
-                urlPath = (URL + flename)
+                urlPath = (URL + flename2)
                 
                 if os.path.exists(Path1):
-                    flePath = (Path1 + flename)
+                    flePath1 = (Path1 + flename1)
                 else:
-                    flePath = (Path2 + flename)
+                    flePath1 = (Path2 + flename1)
                 
-                urllib.urlretrieve(urlPath, flePath)
-                xbmc.log('script.pseudotv.live - Updating Donor.py')
+                if os.path.exists(Path1):
+                    flePath2 = (Path1 + flename2)
+                else:
+                    flePath2 = (Path2 + flename2)
+                
+                os.remove(flePath1)
+                os.remove(flePath2)
+                
+                urllib.urlretrieve(urlPath, flePath2)
+                xbmc.log('script.pseudotv.live - Updating Donor.pyo')
                 REAL_SETTINGS.setSetting('Donor_Update', "false")
                 xbmc.executebuiltin('RunScript("' + __cwd__ + '/pseudotv.py' + '")')
             except:
