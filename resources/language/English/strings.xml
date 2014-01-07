@@ -65,7 +65,7 @@
 	<string id="30086">Find Music Videos using VevoTV (US Only)</string>
     <string id="30089">Find Music Videos using Local Directory</string>
     <string id="30090">InternetTV:</string>  
-    <string id="30091">Create InternetTV,Youtube,RSS Example Channels</string>
+    <string id="30091">Build Example and plugin Channels*</string>
     <string id="30098">Autotune Media Limit Per Channel</string>
     <string id="30099">Restore Pre-Autotune Configuration (Coming Soon)</string>
     <string id="30100">Warning!! this will delete the current channels</string>
