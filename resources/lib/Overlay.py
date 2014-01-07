@@ -750,6 +750,7 @@ class TVOverlay(xbmcgui.WindowXMLDialog):
                 self.logDebug('Overlay.mediapath.2 = ' + uni(mediapathSeason))  
                 mediapathSeries = os.path.dirname(mediapathSeason)
                 self.logDebug('Overlay.mediapath.3 = ' + uni(mediapathSeries))
+                
                 mediapathSeries1 = (mediapathSeries + '/' + type1EXT)
                 mediapathSeason1 = (mediapathSeason + '/' + type1EXT) 
 
@@ -997,19 +998,19 @@ class TVOverlay(xbmcgui.WindowXMLDialog):
             if chtype == '8':
                 self.getControl(103).setImage('')
             else:
-                try:
-                    if REAL_SETTINGS.getSetting("ColorOverlay") == "true":
-                        self.getControl(103).setImage(self.channelLogos + ascii(self.channels[self.currentChannel - 1].name) + '_c.png')
-                    else:
-                        self.getControl(103).setImage(self.channelLogos + ascii(self.channels[self.currentChannel - 1].name) + '.png')
-                    self.getControl(300).setLabel(self.channels[self.currentChannel - 1].name)##Channel name label
-                except:
-                    pass
+                if REAL_SETTINGS.getSetting("ColorOverlay") == "true":
+                    self.getControl(103).setImage(self.channelLogos + ascii(self.channels[self.currentChannel - 1].name) + '_c.png')
+                else:
+                    self.getControl(103).setImage(self.channelLogos + ascii(self.channels[self.currentChannel - 1].name) + '.png')
         else:
             try:
                 self.getControl(103).setImage('')
             except:
                 pass
+        try:
+            self.getControl(300).setLabel(self.channels[self.currentChannel - 1].name)##Channel name label
+        except:
+            pass
 
         if xbmc.getCondVisibility('Player.ShowInfo'):
             if USING_FRODO:
@@ -1367,11 +1368,16 @@ class TVOverlay(xbmcgui.WindowXMLDialog):
                         id = 'special://home/addons/'+ id + '/icon.png'
                         self.log("notification.plugin.id = " + id)
                         thumb = id
+                        
+                    if chtype == '8':
+                        if REAL_SETTINGS.getSetting("ColorOverlay") == "true":
+                            thumb = (self.channelLogos + ascii(self.channels[self.currentChannel - 1].name) + '_c.png')
+                        else:
+                            thumb = (self.channelLogos + ascii(self.channels[self.currentChannel - 1].name) + '.png')
                     
                     # videoTitle = xbmc.getInfoLabel('VideoPlayer.Title')
                     # thumb = xbmc.getInfoImage('VideoPlayer.Cover')
                             
-                    # xbmc.executebuiltin("Notification(Coming Up Next, " + self.channels[self.currentChannel - 1].getItemTitle(nextshow).replace(',', '') + ", " + str(NOTIFICATION_DISPLAY_TIME * 1000) + ")")
                     xbmc.executebuiltin('XBMC.Notification(%s, %s, %s, %s)' % (title, self.channels[self.currentChannel - 1].getItemTitle(nextshow).replace(',', ''), str(NOTIFICATION_DISPLAY_TIME * 1000), thumb))
                     self.notificationShowedNotif = True
 

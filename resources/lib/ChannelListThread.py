@@ -38,7 +38,6 @@ class ChannelListThread(threading.Thread):
         self.paused = False
         self.fullUpdating = True
 
-
     def log(self, msg, level = xbmc.LOGDEBUG):
         log('ChannelListThread: ' + msg, level)
 
@@ -48,6 +47,8 @@ class ChannelListThread(threading.Thread):
         self.chanlist.exitThread = False
         self.chanlist.readConfig()
         self.chanlist.sleepTime = 0.1
+        self.mediaPath =  xbmc.translatePath(os.path.join(ADDON_INFO, 'resources', 'skins', 'default', 'media')) + '/'
+        thumb = (self.mediaPath + 'guide.png')
 
         if self.myOverlay == None:
             self.log("Overlay not defined. Exiting.")
@@ -62,11 +63,12 @@ class ChannelListThread(threading.Thread):
 
             if self.myOverlay.channels[i].isValid:
                 validchannels += 1
-
+                
         # Don't load invalid channels if minimum threading mode is on
         if self.fullUpdating and self.myOverlay.isMaster:
             if validchannels < self.chanlist.enteredChannelCount:
-                xbmc.executebuiltin("Notification(PseudoTV Live, Background Loading..., 4000)")
+                title = "Notification(PseudoTV Live, Background Loading..."
+                xbmc.executebuiltin('XBMC.Notification(%s, %s, %s)' % (title, 4000, thumb))
 
             for i in range(self.myOverlay.maxChannels):
                 if self.myOverlay.channels[i].isValid == False:
@@ -94,7 +96,8 @@ class ChannelListThread(threading.Thread):
                             self.myOverlay.channels[i] = self.chanlist.channels[i]
 
                             if self.myOverlay.channels[i].isValid == True:
-                                xbmc.executebuiltin("Notification(PseudoTV Live, Channel " + str(i + 1) + " Added, 4000)")
+                                title = "PseudoTV Live, Channel " + str(i + 1) + " Added"
+                                xbmc.executebuiltin('XBMC.Notification(%s, %s, %s)' % (title, 4000, thumb))
                     except:
                         self.log("Unknown Channel Creation Exception", xbmc.LOGERROR)
                         self.log(traceback.format_exc(), xbmc.LOGERROR)

@@ -16,9 +16,16 @@
 # You should have received a copy of the GNU General Public License
 # along with PseudoTV.  If not, see <http://www.gnu.org/licenses/>.
 
-
+import os
 import xbmc, xbmcgui
 import xbmcaddon
+import httplib
+import urllib
+import urllib2 
+import sys, re
+
+from resources.lib.Globals import *
+from urllib import urlopen
 
 # Script constants
 __scriptname__ = "PseudoTV Live"
@@ -52,6 +59,28 @@ if xbmcgui.Window(10000).getProperty("PseudoTVRunning") != "True":
 #                shouldrestart = True
 
     if shouldrestart == False:
-        xbmc.executebuiltin('RunScript("' + __cwd__ + '/pseudotv.py' + '")')
-else:
-    xbmc.log('script.pseudotv.live - Already running, exiting', xbmc.LOGERROR)
+        if REAL_SETTINGS.getSetting("Donor_Enabled") == "true" and REAL_SETTINGS.getSetting("Donor_Update") == "true":   
+            try:
+                UserPass = REAL_SETTINGS.getSetting('Donor_UP')
+                flename = 'Donor.pyo'
+                URL = ('http://'+UserPass+'@ptvl.comeze.com/strms/')
+                Path1 = (xbmc.translatePath(os.path.join('special://home/addons/script.pseudotv.live/resources/lib/')))
+                Path2 = (xbmc.translatePath(os.path.join('special://home/addons/script.pseudotv.live-master/resources/lib/')))
+                urlPath = (URL + flename)
+                
+                if os.path.exists(Path1):
+                    flePath = (Path1 + flename)
+                else:
+                    flePath = (Path2 + flename)
+                
+                urllib.urlretrieve(urlPath, flePath)
+                xbmc.log('script.pseudotv.live - Updating Donor.py')
+                REAL_SETTINGS.setSetting('Donor_Update', "false")
+                xbmc.executebuiltin('RunScript("' + __cwd__ + '/pseudotv.py' + '")')
+            except:
+                xbmc.executebuiltin('RunScript("' + __cwd__ + '/pseudotv.py' + '")')
+                xbmc.log('script.pseudotv.live - Updating Donor.py - ::EXCEPTION::', xbmc.LOGERROR)
+        else:
+            xbmc.executebuiltin('RunScript("' + __cwd__ + '/pseudotv.py' + '")')
+    else:
+        xbmc.log('script.pseudotv.live - Already running, exiting', xbmc.LOGERROR)

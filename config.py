@@ -31,7 +31,7 @@ from resources.lib.FileAccess import FileAccess
 from resources.lib.Migrate import Migrate
 
 
-NUMBER_CHANNEL_TYPES = 8
+NUMBER_CHANNEL_TYPES = 13
 
 
 
@@ -632,7 +632,9 @@ class ConfigWindow(xbmcgui.WindowXMLDialog):
             elif chantype == 11:
                 newlabel = channame + " - RSS"            
             elif chantype == 12:
-                newlabel = chansetting1 + " - Music"
+                newlabel = channame + " - Music"
+            elif chantype == 13:
+                newlabel = channame + " - Last.FM"
             elif chantype == 7:
                 if chansetting1[-1] == '/' or chansetting1[-1] == '\\':
                     newlabel = os.path.split(chansetting1[:-1])[1]

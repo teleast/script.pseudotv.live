@@ -84,21 +84,20 @@
         <setting label="30502" id="bumpersfolder" type="folder" visible="eq(-1,true)" default="" />
         <setting label="30503" id="numbumpers" type="enum" visible="eq(-2,true)" values="Auto|1|2|3|4|5" default="1"/>
         <setting label="30504" id="commercials" type="enum" values="Disabled|Local|Internet*|Youtube" default="0"/>
-        <setting label="30505" id="commercialsfolder" type="folder" visible="eq(-1,1)" default="" />
-        <setting label="30506" id="commercialsconfig" type="text" visible="eq(-2,2)" default="United States,All" />
-        <setting label="30517" id="commercialsResolution" type="enum" visible="eq(-3,2)" values="360p|480p|720p" default="0"/>
-        <setting label="30507" id="commercialschannel" type="text" visible="eq(-4,3)" default="PLlwhS0wsCzbRNwJ4Epac4rHJJ_6m1JaBm,2,50" />
-        <setting label="30508" id="numcommercials" type="enum" visible="!eq(-5,0)" values="Auto|1|2|3|4|5" default="1"/>
+        <setting label="30505" id="commercialsfolder" type="folder" visible="eq(-1,1)" default=""/>
+        <setting label="30515" type="lsep" visible="eq(-2,2)"/>
+        <setting label="30506" id="commercialsconfig" type="text" visible="eq(-3,2)" default="United States,All"/>
+        <setting label="30517" id="commercialsResolution" type="enum" visible="eq(-4,2)" values="360p|480p|720p" default="0"/>
+        <setting label="30516" type="lsep" visible="eq(-5,2)"/>
+        <setting label="30518" id="commercialsispot" visible="eq(-6,2)" type="bool" default="false"/>
+        <setting label="30507" id="commercialschannel" type="text" visible="eq(-7,3)" default="PLlwhS0wsCzbRNwJ4Epac4rHJJ_6m1JaBm,2,50"/>
+        <setting label="30508" id="numcommercials" type="enum" visible="!eq(-8,0)" values="Auto|1|2|3|4|5" default="1"/>
         <setting label="30509" id="trailers" type="enum" values="Disabled|Local|Internet|Youtube" default="0"/>
         <setting label="30510" id="trailersfolder" type="folder" visible="eq(-1,1)" default="" />
         <setting label="30511" id="trailersgenre" type="bool" visible="eq(-2,2)" default="false" />
         <setting label="30512" id="trailerschannel" type="text" visible="eq(-3,3)" default="MovieclipsCOMINGSOON,1,50" /> 
         <setting label="30513" id="Movietrailers" type="bool" visible="!eq(-4,0)" default="false" />
         <setting label="30514" id="numtrailers" type="enum" visible="!eq(-5,0)" values="Auto|1|2|3|4|5" default="1"/>
-    	<setting id="HideClips" type="bool" label="30209" default="true"/>
-    	<setting id="ClipLength" type="enum" subsetting="true" label="30210" visible="eq(-1,true)" values="15|30|60|90|120|180|240|300|360|420|460" default="2"/>
-        <setting label="30712" type="lsep"/>
-        <setting label="30903" type="lsep"/>
     </category>
     <!--APIs-->
     <category label="30700">  
@@ -120,6 +119,7 @@
     <category label="30900">
         <setting id="Donor_Enabled" label="30901" type="bool" default="false"/>
         <setting id="Donor_UP" subsetting="true" label="30902" visible="eq(-1,true)" type="text" default="User:Password" />    
+        <setting id="Donor_Update" subsetting="true"  visible="eq(-2,true)" label="30904" type="bool" default="false"/>
         <setting label="30903" visible="eq(-2,true)" type="lsep" default="" /> 
         <setting label="30990" type="lsep"/>
         <setting id="Override_ok" type="bool" label="30991" default="false"/>

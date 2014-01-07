@@ -52,6 +52,7 @@ from sickbeard import *
 from couchpotato import *
 from tvdb import *
 from tmdb import *
+from Donor import *
 
 
 class ChannelList:
@@ -77,7 +78,7 @@ class ChannelList:
         self.cached_json_detailed_TV = []
         self.cached_json_detailed_Movie = []
         self.cached_json_detailed_trailers = []
-        
+        self.Donor = Donor()
 
     def readConfig(self):
         self.channelResetSetting = int(REAL_SETTINGS.getSetting("ChannelResetSetting"))
@@ -3352,7 +3353,7 @@ class ChannelList:
             if CacheExpired == False:
                 BumperLST = self.readCache(BumperCachePath, BumperLocalCache)
                 
-            elif CacheExpired == True or self.forceReset == True: 
+            elif CacheExpired == True: 
                 LocalFLE = ''
                 LocalBumper = ''
                 LocalLST = xbmcvfs.listdir(PATH)[1]
@@ -3389,7 +3390,7 @@ class ChannelList:
         LocalCommercialLST = []
         InternetCommercialLST = []
         YoutubeCommercialLST = []
-        CommercialLST = [] # = LocalCommercialLST,InternetCommercialLST,YoutubeCommercialLST
+        CommercialLST = []
         duration = 0
         self.logDebug("GetCommercialList, channel = " + str(channel))
         self.logDebug("GetCommercialList, chname = " + str(chname))
@@ -3404,7 +3405,7 @@ class ChannelList:
             if CacheExpired == False:
                 CommercialLST = self.readCache(CommercialCachePath, CommercialLocalCache)
                 
-            elif CacheExpired == True or self.forceReset == True: 
+            elif CacheExpired == True: 
                 self.logDebug("GetCommercialList, Local.PATH = " + str(PATH))
                 LocalFLE = ''
                 LocalCommercial = ''
@@ -3412,7 +3413,7 @@ class ChannelList:
                 for i in range(len(LocalLST)):
                     LocalFLE = LocalLST[i]
                     self.logDebug("GetCommercialList, Local.LocalFLE = " + str(LocalFLE))
-                    filename = (PATH + '/' + LocalFLE)
+                    filename = (PATH + LocalFLE)
                     duration = self.videoParser.getVideoLength(filename)
                     self.logDebug("GetCommercialList, Local.duration = " + str(duration))
                     if duration > 0:
@@ -3421,196 +3422,23 @@ class ChannelList:
                 CommercialLST.extend(LocalCommercialLST)                
                 self.writeCache(CommercialLST, CommercialCachePath, CommercialLocalCache)
         
-        
-        # #Internet (advertolog.com)
-        # # if REAL_SETTINGS.getSetting('commercials') == '2' or REAL_SETTINGS.getSetting('commercials') == '4':
-                # baseurl='http://www.advertolog.com'
-            # # #sample-url = 'http://www.advertolog.com/countries/usa%2Cmedia-adverts%2Cyear-2013/page1/'
-            # # InternetCommercial = REAL_SETTINGS.getSetting('commercialsconfig') # Region,Year
-            # # self.logDebug("GetCommercialList, Internet.InternetCommercial = " + str(InternetCommercial))
-            # # InternetCommercial = InternetCommercial.split(',')
-            # # Region = InternetCommercial[0]
-            # # Year = InternetCommercial[1]
-            # # AdResNum = {}
-            # # AdResNum['0'] = '360p' 
-            # # AdResNum['1'] = '480p' 
-            # # AdResNum['2'] = '720p'      
-            # # AdRes = (AdResNum[REAL_SETTINGS.getSetting('commercialsResolution')])    
-            
-            # # # try:
-            # # #LISTCOUNTRIES
-            # # url = 'http://www.advertolog.com/countries/'
-            # # req = urllib2.Request(url)
-            # # req.add_header('User-Agent', 'Mozilla/5.0 (Windows; U; Windows NT 5.1; en-GB; rv:1.9.0.3) Gecko/2008092417 Firefox/3.0.3')
-            # # response = urllib2.urlopen(req)
-            # # link=response.read()
-            # # response.close()
-            # # countries=re.compile('<a href="/countries/(.+?)">(.+?)</a>').findall(link)
-            # # RegionLST = []
-            # # for url,country in countries:
-                # # RegionElem = (country,'http://www.advertolog.com/countries/'+url)
-                # # RegionLST.append(RegionElem)
-            # # self.logDebug("GetCommercialList, Internet.LISTCOUNTRIES.RegionLST = " + str(RegionLST))
-            # # match = str([s for s in RegionLST if Region in s])
-            # # match = match.split("', '")
-            # # self.logDebug("GetCommercialList, Internet.LISTCOUNTRIES.RegionLST.match = " + Region + ', match = ' + str(match))
-            # # MatchRegionURL = match[1]
-            # # MatchRegionURL = MatchRegionURL.split("/')]")[0]
-            # # MatchRegionURLPage = '/page' + str(random.randint(1, 100))
-            # # MatchRegionURLcat = '%2Cmedia-adverts'
-            # # MatchRegionURLP = MatchRegionURL + MatchRegionURLPage
-            # # MatchRegionURLC = MatchRegionURL + MatchRegionURLcat + MatchRegionURLPage
-            # # self.logDebug("GetCommercialList, Internet.LISTCOUNTRIES.MatchRegionURLP = " + str(MatchRegionURLP))    
-            # # self.logDebug("GetCommercialList, Internet.LISTCOUNTRIES.MatchRegionURLC = " + str(MatchRegionURLC))    
+        #Internet (advertolog.com)
+        if REAL_SETTINGS.getSetting('commercials') == '2' and REAL_SETTINGS.getSetting("Donor_Enabled") == "true":
+            CommercialInternetCache = 'Commercial_Internet_Cache.xml'
+            self.logDebug("GetCommercialList,  CommercialCachePath = " + str(CommercialCachePath) + str(CommercialInternetCache))
+            CacheExpired = self.Cache_ok(CommercialCachePath, CommercialInternetCache) 
 
-            # # #BRANDORCOUNTRYPAGE
-            # # req = urllib2.Request(MatchRegionURL)
-            # # req.add_header('User-Agent', 'Mozilla/5.0 (Windows; U; Windows NT 5.1; en-GB; rv:1.9.0.3) Gecko/2008092417 Firefox/3.0.3')
-            # # response = urllib2.urlopen(req)
-            # # link = response.read()
-            # # response.close()
-            # # link = link.decode('utf-8')
-            # # soup = BeautifulSoup(link,convertEntities=BeautifulSoup.HTML_ENTITIES)
-            # # catlink = re.compile('<a href="(.+?)" >TV & Cinema</a>').findall(link)
-            # # if catlink:
-                    # # url = baseurl+catlink[0]
-                    # # # url = url + MatchRegionURLPage
-                    # # # self.logDebug("GetCommercialList, Internet.BRANDORCOUNTRYPAGE.url = " + str(url))  
-                    # # req = urllib2.Request(url)
-                    # # req.add_header('User-Agent', 'Mozilla/5.0 (Windows; U; Windows NT 5.1; en-GB; rv:1.9.0.3) Gecko/2008092417 Firefox/3.0.3')
-                    # # response = urllib2.urlopen(req)
-                    # # link = response.read()
-                    # # response.close()
-                    # # soup = BeautifulSoup(link)
-            # # if Year != 'All':        
-                # # #find the year links, if any
-                # # yearlink = soup.find(text='Year:')
-                # # if yearlink:
-                        # # yearlink = soup.find(text='Year:').findNext('div').findAll('a')
-                        # # years = []
-                        # # for links in yearlink:
-                            # # temp = re.compile('<a href="(.+?)">(.+?)</a>').findall(str(links))
-                            # # years.append(temp[0])
-                        # # YearLST = []
-                        # # for yearurl, name in years:
-                            # # YearElem = (name,baseurl+yearurl)
-                            # # YearLST.append(YearElem) 
-                        # # self.logDebug("GetCommercialList, Internet.BRANDORCOUNTRYPAGE.YearLST = " + str(YearLST))
-                        # # match = str([s for s in YearLST if Year in s])
-                        # # match = match.split("', '")
-                        # # self.logDebug("GetCommercialList, Internet.BRANDORCOUNTRYPAGE.YearLST.match = " + Year + ', match = ' + str(match))
-                        # # MatchYearURL = match[1]
-                        # # MatchYearURL = MatchYearURL.split("/')]")[0] 
-                        # # print 'MatchYearURL', MatchYearURL
-            # # else:
-                # # #find the adverts, if any                    
-                # # if soup.find('ul', "col-media-list"):
-                    # # adverts=soup.find('ul', "col-media-list").findAll('li')
-                    # # AdLST = []
-                    # # for ad in adverts:
-                        # # if ad.find(text="  TV & Cinema"):
-                            # # name = ad.a.img["alt"].encode('UTF-8')
-                            # # adurl = ad.a["href"]
-                            # # thumbnail = ad.a.img["src"]
-                            # # AdElem = (uni(name) + ', ' + uni(baseurl) + uni(adurl))
-                            # # self.logDebug("GetCommercialList, Internet.BRANDORCOUNTRYPAGE.AdElem = " + uni(AdElem))
-                            # # AdLST.append(AdElem) 
-                    # # self.logDebug("GetCommercialList, Internet.BRANDORCOUNTRYPAGE.AdLST = " + str(AdLST))
-                    # # for i in range(len(AdLST)):
-                        # # AdInfo = AdLST[i]
-                        # # self.logDebug("GetCommercialList, Internet.BRANDORCOUNTRYPAGE.AdInfo = " + str(AdInfo))
-                        # # AdInfo = str(AdInfo)
-                        # # AdInfo1 = AdInfo.split(', ')
-                        # # self.logDebug("GetCommercialList, Internet.BRANDORCOUNTRYPAGE.AdInfo1 = " + str(AdInfo1))
-                        
-                        # # # if 'http' in AdInfo1:
-                            # # # AdInfoURL = AdInfo1[1]
-                        # # # else:
-                            # # # AdInfo2 = AdInfo.rsplit(', ', 1)[-1]
-                            # # # self.logDebug("GetCommercialList, Internet.BRANDORCOUNTRYPAGE.AdInfo2 = " + str(AdInfo2))
-                            # # # AdInfoURL = AdInfo2[0]
-                            
-                        # # AdInfoURL = AdInfoURL.split("/')")[0] 
-                        # # self.logDebug("GetCommercialList, Internet.BRANDORCOUNTRYPAGE.AdInfoURL = " + str(AdInfoURL))
-                    
-                        # # # #Get the "Next Page" link, if any
-                        # # # if soup.find(text=re.compile("Next \xbb\xbb")):
-                            # # # if soup.find(text = re.compile("Next \xbb\xbb")).findPrevious('span').findAll('a'):
-                                # # # nextpage = soup.find(text=re.compile("Next \xbb\xbb")).findPrevious('span').findAll('a')
-                                # # # nextpage = re.compile('\[<a href="(.+?)">Next').findall(str(nextpage))
-                                # # # nextpage = baseurl+nextpage[0]
-                                # # # self.logDebug("GetCommercialList, Internet.BRANDORCOUNTRYPAGE.nextpage = " + str(nextpage))
+            if CacheExpired == False:
+                CommercialLST = self.readCache(CommercialCachePath, CommercialInternetCache)
+                
+            elif CacheExpired == True:
+                try:
+                    CommercialLST = self.Donor.InternetCommercial(CommercialCachePath)
+                    self.writeCache(CommercialLST, CommercialCachePath, CommercialInternetCache)
+                except:
+                    self.log("Donor Code Unavailable")
+                    pass
 
-                        # # #VIDEOLINKS
-                        # # req = urllib2.Request(AdInfoURL)
-                        # # req.add_header('User-Agent', 'Mozilla/5.0 (Windows; U; Windows NT 5.1; en-GB; rv:1.9.0.3) Gecko/2008092417 Firefox/3.0.3')
-                        # # response = urllib2.urlopen(req)
-                        # # link = response.read()
-                        # # response.close()
-                        # # soup = BeautifulSoup(link)
-                        # # #GET THE VIDEO LINKS FROM THE PAGE, IF ANY
-                        # # #get the image
-                        # # image = re.compile('meta property="og:image" content="(.+?)" />').findall(link)
-                        # # if image:
-                                # # image[0] = self.replaceXmlEntities(image[0])
-                        # # else:
-                                # # image = ''
-                        
-                        # # #get the default video link (most are hidden due to subscription, but the low res video link is hidden in the header tag    
-                        # # vid=re.compile('meta property="og:video" content="(.+?)" />').findall(link)
-                        
-                        # # if vid:
-                                # # vid[0] = self.replaceXmlEntities(vid[0])
-                                # # vid[0] = re.sub('http.*?clip":{"url":','/',vid[0])
-                                # # vid[0] = re.search('h.*?.mp4', vid[0]).group()
-                        # # #get alternate high res links if any
-                        # # vids = soup.find('ul',"resolutions")
-                        # # AdResURLLST = []
-                        # # AdHD = False
-                        # # if vids:
-                            # # vids = soup.find('ul',"resolutions").findAll('a')
-                            # # vid = []
-                            # # if vids:
-                                # # vids = soup.find('ul',"resolutions").findAll('a')
-                                # # for url in vids:
-                                    # # AdResURL = (url.string + ', ' + url['name'])
-                                    # # AdHD = True
-                                    # # self.logDebug("GetCommercialList, Internet.VIDEOLINKS.AdHD = " + str(AdHD))
-                                    # # AdResURLLST.append(AdResURL)
-                        # # else:
-                            # # vid = vid[0]
-                            # # vid = vid.replace('hive/flowplayer.commercial-3.2.2.swf?config={"clip":{"url":"', "")
-                            # # AdResURL = ('360p, ' + str(vid))
-                            # # AdHD = False
-                            # # AdResURLLST.append(AdResURL)  
-                        # # self.logDebug("GetCommercialList, Internet.VIDEOLINKS.AdResURLLST = " + str(AdResURLLST))
-                        
-                        # # if AdResNum != '0' and AdHD == True:
-                            # # match = ([s for s in AdResURLLST if AdRes in s])
-                            # # self.logDebug("GetCommercialList, Internet.VIDEOLINKS.AdRes.match = " + str(match))
-                            # # match = match[0]
-                            # # self.logDebug("GetCommercialList, Internet.VIDEOLINKS.AdRes.match.1 = " + str(match))
-                            # # match = (match.split(", "))
-                            # # self.logDebug("GetCommercialList, Internet.VIDEOLINKS.AdRes.match.2 = " + str(match))
-                            # # MatchResURL = match[1]
-                            # # self.logDebug("GetCommercialList, Internet.VIDEOLINKS.AdRes.MatchResURL = " + str(MatchResURL))
-                        # # else:
-                            # # AdResURLLST = AdResURLLST[0]
-                            # # self.logDebug("GetCommercialList, Internet.VIDEOLINKS.AdRes.AdResURLLST = " + str(AdResURLLST))
-                            # # AdResURLLST = AdResURLLST.split(', ')
-                            # # self.logDebug("GetCommercialList, Internet.VIDEOLINKS.AdRes.AdResURLLST = " + str(AdResURLLST))
-                            # # MatchResURL = AdResURLLST[1]
-                            # # self.logDebug("GetCommercialList, Internet.VIDEOLINKS.AdRes.MatchResURL = " + str(MatchResURL))                        
-                        
-                        # # duration = 30
-                        # # InternetCommercial = (str(duration) + ',' + str(MatchResURL))
-                        # # self.logDebug("GetCommercialList, Internet.InternetCommercial = " + str(InternetCommercial))
-                        # # InternetCommercialLST.append(InternetCommercial)
-                        # # CommercialLST.extend(InternetCommercialLST)
-                        # # self.logDebug("GetCommercialList, Internet.CommercialLST = " + str(InternetCommercialLST) + ',' + str(len(InternetCommercialLST)))
-                    
-            # # # except:
-                # # # pass
                     
         #Youtube
         if REAL_SETTINGS.getSetting('commercials') == '3' or REAL_SETTINGS.getSetting('commercials') == '4':
@@ -3633,15 +3461,6 @@ class ChannelList:
             CommercialLST.extend(YoutubeCommercialLST)
 
         return (CommercialLST)    
-    
-    
-    def replaceXmlEntities(self, link):
-        entities = (
-            ("%3A",":"),("%2F","/"),("%3D","="),("%3F","?"),("%26","&"),("%22","\""),("%7B","{"),("%7D",")"),("%2C",","),("%24","$"),("%23","#"),("%40","@")
-          );
-        for entity in entities:
-           link = link.replace(entity[0],entity[1]);
-        return link;        
 
     
     def GetTrailerList (self, channel, fileList):
@@ -3685,7 +3504,7 @@ class ChannelList:
             if CacheExpired == False:
                 TrailerLST = self.readCache(TrailerCachePath, TrailerLocalCache)
                 
-            elif CacheExpired == True or self.forceReset == True: 
+            elif CacheExpired == True: 
                 self.logDebug("GetTrailerList, Local.PATH = " + str(PATH))
                 LocalFLE = ''
                 LocalTrailer = ''
@@ -3713,7 +3532,7 @@ class ChannelList:
             if REAL_SETTINGS.getSetting('trailersgenre') == 'true' and GenreChtype == True:
                 TrailerInternetCache = 'Trailer_Internet_Cache_' + genre + '.xml'
             else:
-                TrailerInternetCache = 'Trailer_Internet_Cache.xml'
+                TrailerInternetCache = 'Trailer_Internet_Cache_All.xml'
             
             self.logDebug("GetTrailerList,  TrailerCachePath = " + str(TrailerCachePath) + str(TrailerInternetCache))
             CacheExpired = self.Cache_ok(TrailerCachePath, TrailerInternetCache) 
@@ -3831,7 +3650,7 @@ class ChannelList:
     
     def writeCache(self, thelist, thepath, thefile):
         self.log("writeCache")  
-        now = str(datetime.datetime.today())
+        now = datetime.datetime.today()
 
         if not os.path.exists(os.path.join(thepath)):
             os.makedirs(os.path.join(thepath))
@@ -3867,22 +3686,25 @@ class ChannelList:
         thefile = thepath + thefile
         now = datetime.datetime.today()
         self.logDebug("Cache_ok, now = " + str(now))
-        if REAL_SETTINGS.getSetting('ForceChannelReset') == "true":
+        # if REAL_SETTINGS.getSetting('ForceChannelReset') == "true":
+            # REAL_SETTINGS.setSetting('ForceChannelReset', 'false')
+            # CacheExpired = True
+        # else:
+        try:
+            fle = FileAccess.open(thefile, "r")
+            cacheDate = str(fle.readlines()[0])
+            cacheDate = cacheDate.split('.')[0]
+            cacheDate = datetime.datetime.strptime(cacheDate, '%Y-%m-%d %H:%M:%S')
+            self.logDebug("Cache_ok, cacheDate = " + str(cacheDate))
+            cacheDateEXP = (cacheDate + datetime.timedelta(days=30))
+            self.logDebug("Cache_ok, cacheDateEXP = " + str(cacheDateEXP))
+            fle.close()
+            
+            if now >= cacheDateEXP:
+                CacheExpired = True            
+        except:
             CacheExpired = True
-        else:
-            try:
-                fle = FileAccess.open(thefile, "r")
-                cacheDate = str(fle.readlines()[0])
-                cacheDate = datetime.datetime.strptime(cacheDate, '%Y-%m-%d') 
-                cacheDateEXP = (cacheDate + datetime.timedelta(days=30))
-                fle.close()
-                self.logDebug("readCache, cacheDate = " + str(cacheDate))
-                self.logDebug("readCache, cacheDateEXP = " + str(cacheDateEXP))
-                
-                if now >= cacheDateEXP:
-                    CacheExpired = True            
-            except:
-                CacheExpired = True
+            self.logDebug("Cache_ok, exception")
         
         self.log("Cache_ok, CacheExpired = " + str(CacheExpired))
         return CacheExpired
