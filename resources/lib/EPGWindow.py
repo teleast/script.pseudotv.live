@@ -54,7 +54,7 @@ class EPGWindow(xbmcgui.WindowXMLDialog):
         self.clockMode = 0
         self.textfont  = "font14"
         self.startup = time.time()
-        # self.showingInfo = False
+        self.showingInfo = False
         self.infoOffset = 0
         self.infoOffsetV = 0
         
@@ -75,14 +75,14 @@ class EPGWindow(xbmcgui.WindowXMLDialog):
         elif xbmc.skinHasImage(self.mediaPath + BUTTON_FOCUS):
             self.textureButtonFocus = self.mediaPath + BUTTON_FOCUS
         else:
-            self.textureButtonFocus = 'pstvButtonFocus.png'
+            self.textureButtonFocus = 'pstvlButtonFocus.png'
 
         if os.path.exists(self.mediaPath + BUTTON_NO_FOCUS):
             self.textureButtonNoFocus = self.mediaPath + BUTTON_NO_FOCUS
         elif xbmc.skinHasImage(self.mediaPath + BUTTON_NO_FOCUS):
             self.textureButtonNoFocus = self.mediaPath + BUTTON_NO_FOCUS
         else:
-            self.textureButtonNoFocus = 'pstvButtonNoFocus.png'
+            self.textureButtonNoFocus = 'pstvlButtonNoFocus.png'
 
         for i in range(self.rowCount):
             self.channelButtons[i] = []
@@ -134,17 +134,32 @@ class EPGWindow(xbmcgui.WindowXMLDialog):
         self.addControl(self.currentTimeBar)
 
         try:
-            textcolor = int(self.getControl(100).getLabel(), 16)
-            focusedcolor = int(self.getControl(100).getLabel2(), 16)
-            self.textfont =  self.getControl(105).getLabel()
-
+            textcolor = int(self.getControl(100).getLabel(), 16)            
             if textcolor > 0:
                 self.textcolor = hex(textcolor)[2:]
-
-            if focusedcolor > 0:
-                self.focusedcolor = hex(focusedcolor)[2:]
+                self.logDebug("onInit, Self.textcolor = " + str(self.textcolor))
         except:
             pass
+        
+        try:
+            focusedcolor = int(self.getControl(99).getLabel2(), 16)
+            if focusedcolor > 0:
+                self.focusedcolor = hex(focusedcolor)[2:]
+                self.logDebug("onInit, Self.focusedcolor = " + str(self.focusedcolor))
+        except:
+            pass
+        
+        try:    
+            self.textfont = self.getControl(105).getLabel()
+            self.logDebug("onInit, Self.textfont = " + str(self.textfont))
+        except:
+            pass
+        
+        # try: 
+            # self.rowCount = self.getControl(106).getLabel()
+            # self.logDebug("onInit, Self.rowCount = " + str(self.rowCount))       
+        # except:
+            # pass
 
         try:
             if self.setChannelButtons(time.time(), self.MyOverlayWindow.currentChannel) == False:
@@ -245,8 +260,11 @@ class EPGWindow(xbmcgui.WindowXMLDialog):
                 pass
 
 
-            try:
-                self.getControl(321 + i).setImage(self.channelLogos + self.MyOverlayWindow.channels[curchannel - 1].name + '_c.png')
+            try:        
+                if REAL_SETTINGS.getSetting("ColorEPG") == "true":
+                    self.getControl(321 + i).setImage(self.channelLogos + self.MyOverlayWindow.channels[curchannel - 1].name + '_c.png')
+                else:
+                    self.getControl(321 + i).setImage(self.channelLogos + self.MyOverlayWindow.channels[curchannel - 1].name + '.png')
             except:
                 pass
 
@@ -777,7 +795,7 @@ class EPGWindow(xbmcgui.WindowXMLDialog):
         else:
             self.apis = False
         
-        if REAL_SETTINGS.getSetting("art.enable") == "true":        
+        if REAL_SETTINGS.getSetting("art.enable") == "true" or REAL_SETTINGS.getSetting("Live.art.enable") == "true":        
             if self.infoOffset > 0:
                 self.getControl(522).setLabel('COMING UP:')
             elif self.infoOffset < 0:
@@ -800,10 +818,10 @@ class EPGWindow(xbmcgui.WindowXMLDialog):
         mediapath = uni(self.MyOverlayWindow.channels[newchan - 1].getItemFilename(plpos))
         self.logDebug('EPG.mediapath.1 = ' + uni(mediapath))
         chtype = int(ADDON_SETTINGS.getSetting('Channel_' + str(newchan) + '_type'))
-        genre = str(self.MyOverlayWindow.channels[newchan - 1].getItemgenre(plpos))
+        genre = uni(self.MyOverlayWindow.channels[newchan - 1].getItemgenre(plpos))
         title = uni(self.MyOverlayWindow.channels[newchan - 1].getItemTitle(plpos))
-        LiveID = str(self.MyOverlayWindow.channels[newchan - 1].getItemLiveID(plpos))
-        self.logDebug('EPG.LiveID.1 = ' + str(LiveID))  
+        LiveID = uni(self.MyOverlayWindow.channels[newchan - 1].getItemLiveID(plpos))
+        self.logDebug('EPG.LiveID.1 = ' + uni(LiveID))  
         type1 = str(self.getControl(507).getLabel())
         self.logDebug('EPG.type1 = ' + str(type1))  
         type2 = str(self.getControl(509).getLabel())
@@ -840,10 +858,9 @@ class EPGWindow(xbmcgui.WindowXMLDialog):
                 Unaired = LiveLST[3]
                 self.logDebug('EPG.LiveLST.Unaired = ' + str(Unaired))
             except:
+                self.log("EPG.LiveLST Failed")
                 pass     
             try:
-                #Try, and pass if label isn't found (Backward compatibility with PTV Skins)
-                #Sickbeard/Couchpotato
                 if SBCP == 'SB':
                     self.getControl(511).setImage(self.mediaPath + 'SB.png')
                 elif SBCP == 'CP':
@@ -855,8 +872,6 @@ class EPGWindow(xbmcgui.WindowXMLDialog):
                 pass     
 
             try:
-                #Try, and pass if label isn't found (Backward compatibility with PTV Skins)             
-                #Unaired/aired
                 if Unaired == 'NEW':
                     self.getControl(512).setImage(self.mediaPath + 'NEW.png')
                 elif Unaired == 'OLD':
@@ -866,16 +881,19 @@ class EPGWindow(xbmcgui.WindowXMLDialog):
             except:
                 self.getControl(512).setImage(self.mediaPath + 'NA.png')
                 pass     
+        else:
+            self.getControl(511).setImage(self.mediaPath + 'NA.png')
+            self.getControl(512).setImage(self.mediaPath + 'NA.png')
+        
 
-
-        if REAL_SETTINGS.getSetting("art.enable") == "true":
+        if REAL_SETTINGS.getSetting("art.enable") == "true" or REAL_SETTINGS.getSetting('Live.art.enable') == 'true':
             self.log('setShowInfo, Dynamic artwork enabled')
         
             if chtype <= 7:
                 mediapathSeason, filename = os.path.split(mediapath)
-                self.logDebug('EPG.mediapath.2 = ' + str(mediapathSeason))  
+                self.logDebug('EPG.mediapath.2 = ' + uni(mediapathSeason))  
                 mediapathSeries = os.path.dirname(mediapathSeason)
-                self.logDebug('EPG.mediapath.3 = ' + str(mediapathSeries))
+                self.logDebug('EPG.mediapath.3 = ' + uni(mediapathSeries))
                 mediapathSeries1 = (mediapathSeries + '/' + type1EXT)
                 mediapathSeason1 = (mediapathSeason + '/' + type1EXT) 
 
@@ -884,7 +902,7 @@ class EPGWindow(xbmcgui.WindowXMLDialog):
                 elif FileAccess.exists(mediapathSeason1):
                     self.getControl(508).setImage(mediapathSeason1)
                 else:
-                    self.getControl(508).setImage(self.mediaPath + type1 + '.png')#default fallback art
+                    self.getControl(508).setImage(self.mediaPath + type1 + '.png')#default fallback art, call downloader todo
 
                 mediapathSeries2 = (mediapathSeries + '/' + type2EXT) 
                 mediapathSeason2 = (mediapathSeason + '/' + type2EXT)
@@ -894,13 +912,13 @@ class EPGWindow(xbmcgui.WindowXMLDialog):
                 elif FileAccess.exists(mediapathSeason2):
                     self.getControl(510).setImage(mediapathSeason2)
                 else:
-                    self.getControl(510).setImage(self.mediaPath + type2 + '.png')#default fallback art
+                    self.getControl(510).setImage(self.mediaPath + type2 + '.png')#default fallback art, call downloader todo
 
             elif chtype == 8 and self.apis == True:#LiveTV w/ TVDBID via Fanart.TV
-                if tvdbid > 0 and genre != 'Movie':
+                if tvdbid > 0 and genre != 'Movie': #TV
                     fanartTV = fanarttv.FTV_TVProvider()
                     URLLST = fanartTV.get_image_list(tvdbid)
-                    self.logDebug('EPG.tvdb.URLLST.1 = ' + str(URLLST))
+                    self.logDebug('EPG.tvdb.URLLST.1 = ' + uni(URLLST))
                     if URLLST != None:
                         URLLST = str(URLLST)
                         URLLST = URLLST.split("{'art_type': ")
@@ -950,6 +968,7 @@ class EPGWindow(xbmcgui.WindowXMLDialog):
                             URLimage2 = (type2 + '-' + URLimage2)
                             self.logDebug('EPG.tvdb.URLimage2.2 = ' + str(URLimage2))        
                             flename2 = xbmc.translatePath(os.path.join(CHANNELS_LOC, 'generated')  + '/' + 'artwork' + '/' + URLimage2)
+                            
                             if FileAccess.exists(flename2):
                                 self.getControl(510).setImage(flename2)
                             else:
@@ -1003,7 +1022,6 @@ class EPGWindow(xbmcgui.WindowXMLDialog):
                             URLimage2 = URLimage1.rsplit('/')[-1]
                             self.logDebug('EPG.imdb.URLimage2.2 = ' + str(URLimage2))
                             URLimage2 = (type2 + '-' + URLimage2)
-                            ############################################### Move to function todo
                             flename1 = xbmc.translatePath(os.path.join(CHANNELS_LOC, 'generated')  + '/' + 'artwork' + '/' + URLimage1)
 
                             if FileAccess.exists(flename1):
@@ -1012,7 +1030,7 @@ class EPGWindow(xbmcgui.WindowXMLDialog):
                                 if not os.path.exists(os.path.join(Artpath)):
                                     os.makedirs(os.path.join(Artpath))
                                 
-                                resource = urllib.urlopen(Art1)
+                                resource = urllib.urlopen(Art1)# Replace with urlretrieve todo
                                 self.logDebug('EPG.tvdb.resource = ' + str(resource))
                                 output = open(flename1,"wb")
                                 self.logDebug('EPG.tvdb.output = ' + str(output))
@@ -1028,7 +1046,7 @@ class EPGWindow(xbmcgui.WindowXMLDialog):
                                 if not os.path.exists(os.path.join(Artpath)):
                                     os.makedirs(os.path.join(Artpath))
                                 
-                                resource = urllib.urlopen(Art2)
+                                resource = urllib.urlopen(Art2)# Replace with urlretrieve todo
                                 self.logDebug('EPG.tvdb.resource = ' + str(resource))
                                 output = open(flename2,"wb")
                                 self.logDebug('EPG.tvdb.output = ' + str(output))
@@ -1037,6 +1055,8 @@ class EPGWindow(xbmcgui.WindowXMLDialog):
                                 self.getControl(510).setImage(flename2)  
                             ##############################################
                         except:
+                            self.getControl(508).setImage(self.mediaPath + type1 + '.png')
+                            self.getControl(510).setImage(self.mediaPath + type2 + '.png')
                             pass
                             
                     else:#fallback all artwork because there is no id
@@ -1046,8 +1066,6 @@ class EPGWindow(xbmcgui.WindowXMLDialog):
                 else:#fallback all artwork because there is no id
                     self.getControl(508).setImage(self.mediaPath + type1 + '.png')
                     self.getControl(510).setImage(self.mediaPath + type2 + '.png')
-                # except:
-                    # pass
 
             elif chtype == 9:
                 self.getControl(508).setImage(self.mediaPath + 'EPG.Internet.508.png')
@@ -1108,7 +1126,10 @@ class EPGWindow(xbmcgui.WindowXMLDialog):
         #else:
         self.getControl(501).setLabel(self.MyOverlayWindow.channels[newchan - 1].getItemEpisodeTitle(plpos))
         self.getControl(502).setLabel(self.MyOverlayWindow.channels[newchan - 1].getItemDescription(plpos))
-        self.getControl(503).setImage(self.channelLogos + ascii(self.MyOverlayWindow.channels[newchan - 1].name) + '_c.png')
+        if REAL_SETTINGS.getSetting("ColorEPG") == "true":
+            self.getControl(503).setImage(self.channelLogos + ascii(self.MyOverlayWindow.channels[newchan - 1].name) + '_c.png')
+        else:
+            self.getControl(503).setImage(self.channelLogos + ascii(self.MyOverlayWindow.channels[newchan - 1].name) + '.png')
         self.log('setShowInfo return')
 
     # using the currently selected button, play the proper shows

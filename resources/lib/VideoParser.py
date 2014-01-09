@@ -30,6 +30,7 @@ import parsers.AVIParser as AVIParser
 import parsers.MKVParser as MKVParser
 import parsers.FLVParser as FLVParser
 import parsers.TSParser  as TSParser
+# import parsers.STRMParser  as STRMParser
 
 from Globals import *
 from FileAccess import FileAccess
@@ -43,6 +44,7 @@ class VideoParser:
         self.MKVExts = ['.mkv']
         self.FLVExts = ['.flv']
         self.TSExts  = ['.ts', '.m2ts']
+        # self.STRMExts = ['.strm']
         self.mountedFS = False
 
 
@@ -85,6 +87,8 @@ class VideoParser:
             self.parser = FLVParser.FLVParser()
         elif ext in self.TSExts:
             self.parser = TSParser.TSParser()
+        # elif ext in self.STRMExts:
+            # self.parser = STRMParser.STRMParser()
         else:
             self.log("No parser found for extension " + ext)
             return 0

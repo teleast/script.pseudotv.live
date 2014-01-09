@@ -48,7 +48,7 @@ ADDON_ID = 'script.pseudotv.live'
 REAL_SETTINGS = xbmcaddon.Addon(id=ADDON_ID)
 ADDON_INFO = REAL_SETTINGS.getAddonInfo('path')
 ##
-VERSION = "0.2.8"
+VERSION = "0.2.9"
 ##
 TIMEOUT = 15 * 1000
 TOTAL_FILL_CHANNELS = 20
@@ -83,12 +83,17 @@ if int(REAL_SETTINGS.getSetting('SkinSelector')) == 0:
     Skin_Select = 'default'
     if REAL_SETTINGS.getSetting("SkinLogos") == "true":
         REAL_SETTINGS.setSetting('ChannelLogoFolder', 'special://home/addons/script.pseudotv.live/resources/skins/default/images/')
+
 elif int(REAL_SETTINGS.getSetting('SkinSelector')) == 1:
     Skin_Select = 'PTVL'  
-    if REAL_SETTINGS.getSetting("SkinLogos") == "true" and os.path.exists(xbmc.translatePath(os.path.join(ADDON_INFO, 'resources', 'skins', Skin_Select, 'images'))):
+    if REAL_SETTINGS.getSetting("SkinLogos") == "true":
         REAL_SETTINGS.setSetting('ChannelLogoFolder', 'special://home/addons/script.pseudotv.live/resources/skins/' +Skin_Select+ '/images/')
-    else:
-        REAL_SETTINGS.setSetting('ChannelLogoFolder', 'special://home/addons/script.pseudotv.live/resources/skins/default/images/')
+
+elif int(REAL_SETTINGS.getSetting('SkinSelector')) == 2:
+    Skin_Select = 'Aurora'  
+    if REAL_SETTINGS.getSetting("SkinLogos") == "true":
+        REAL_SETTINGS.setSetting('ChannelLogoFolder', 'special://home/addons/script.pseudotv.live/resources/skins/' +Skin_Select+ '/images/')
+        
 ########################################################
             
 if os.path.exists(xbmc.translatePath(os.path.join(ADDON_INFO, 'resources', 'skins', Skin_Select, 'images'))):   
@@ -127,9 +132,9 @@ if USING_EDEN:
     except:
         pass
 
-TIME_BAR = 'pstvTimeBar.png'
-BUTTON_FOCUS = 'pstvButtonFocus.png'
-BUTTON_NO_FOCUS = 'pstvButtonNoFocus.png'
+TIME_BAR = 'pstvlTimeBar.png'
+BUTTON_FOCUS = 'pstvlButtonFocus.png'
+BUTTON_NO_FOCUS = 'pstvlButtonNoFocus.png'
 
 RULES_ACTION_START = 1
 RULES_ACTION_JSON = 2

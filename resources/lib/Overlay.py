@@ -685,8 +685,8 @@ class TVOverlay(xbmcgui.WindowXMLDialog):
         self.mediaPath =  xbmc.translatePath(os.path.join(ADDON_INFO, 'resources', 'skins', 'default', 'media')) + '/'
         genre = str(self.channels[self.currentChannel - 1].getItemgenre(position))
         title = uni(self.channels[self.currentChannel - 1].getItemTitle(position))
-        LiveID = str(self.channels[self.currentChannel - 1].getItemLiveID(position))
-        self.logDebug('Overlay.LiveID.1 = ' + str(LiveID))
+        LiveID = uni(self.channels[self.currentChannel - 1].getItemLiveID(position))
+        self.logDebug('Overlay.LiveID.1 = ' + uni(LiveID))
         type1 = str(self.getControl(507).getLabel())
         self.logDebug('Overlay.type1 = ' + str(type1))  
         type2 = str(self.getControl(509).getLabel())
@@ -723,6 +723,7 @@ class TVOverlay(xbmcgui.WindowXMLDialog):
                 Unaired = LiveLST[3]
                 self.logDebug('Overlay.LiveLST.Unaired = ' + str(Unaired))
             except:
+                self.log("Overlay.LiveLST Failed")
                 pass     
             try:
                 #Try, and pass if label isn't found (Backward compatibility with PTV Skins)
@@ -751,7 +752,7 @@ class TVOverlay(xbmcgui.WindowXMLDialog):
                 pass     
 
 
-        if REAL_SETTINGS.getSetting("art.enable") == "true":
+        if REAL_SETTINGS.getSetting("art.enable") == "true" or REAL_SETTINGS.getSetting('Live.art.enable') == 'true':
             self.log('setShowInfo, Dynamic artwork enabled')
         
             if chtype <= 7:
@@ -759,7 +760,6 @@ class TVOverlay(xbmcgui.WindowXMLDialog):
                 self.logDebug('Overlay.mediapath.2 = ' + uni(mediapathSeason))  
                 mediapathSeries = os.path.dirname(mediapathSeason)
                 self.logDebug('Overlay.mediapath.3 = ' + uni(mediapathSeries))
-                
                 mediapathSeries1 = (mediapathSeries + '/' + type1EXT)
                 mediapathSeason1 = (mediapathSeason + '/' + type1EXT) 
 
@@ -782,8 +782,7 @@ class TVOverlay(xbmcgui.WindowXMLDialog):
 
                     
             elif chtype == 8 and self.apis == True:#LiveTV w/ TVDBID via Fanart.TV
-                # try:
-                if tvdbid > 0 and genre != 'Movie':
+                if tvdbid > 0 and genre != 'Movie': #TV
                     fanartTV = fanarttv.FTV_TVProvider()
                     URLLST = fanartTV.get_image_list(tvdbid)
                     self.logDebug('Overlay.tvdb.URLLST.1 = ' + str(URLLST))
@@ -891,8 +890,6 @@ class TVOverlay(xbmcgui.WindowXMLDialog):
                             URLimage2 = URLimage1.rsplit('/')[-1]
                             self.logDebug('Overlay.imdb.URLimage2.2 = ' + str(URLimage2))
                             URLimage2 = (type2 + '-' + URLimage2)
-
-                            ############################################### Move to function todo
                             flename1 = xbmc.translatePath(os.path.join(CHANNELS_LOC, 'generated')  + '/' + 'artwork' + '/' + URLimage1)
 
                             if FileAccess.exists(flename1):
@@ -926,6 +923,8 @@ class TVOverlay(xbmcgui.WindowXMLDialog):
                                 self.getControl(510).setImage(flename2)  
                             ##############################################
                         except:
+                            self.getControl(508).setImage(self.mediaPath + type1 + '.png')
+                            self.getControl(510).setImage(self.mediaPath + type2 + '.png')
                             pass
                        
                     else:#fallback all artwork because there is no id
@@ -935,9 +934,7 @@ class TVOverlay(xbmcgui.WindowXMLDialog):
                 else:#fallback all artwork because there is no id
                     self.getControl(508).setImage(self.mediaPath + type1 + '.png')
                     self.getControl(510).setImage(self.mediaPath + type2 + '.png')
-                # except:
-                    # pass
-                
+
             elif chtype == 9:
                 self.getControl(508).setImage(self.mediaPath + 'Overlay.Internet.508.png')
                 self.getControl(510).setImage(self.mediaPath + 'Overlay.Internet.510.png')
@@ -955,6 +952,7 @@ class TVOverlay(xbmcgui.WindowXMLDialog):
         self.getControl(503).setLabel(self.channels[self.currentChannel - 1].getItemTitle(position))
         self.getControl(504).setLabel(self.channels[self.currentChannel - 1].getItemEpisodeTitle(position))
         self.getControl(505).setLabel(self.channels[self.currentChannel - 1].getItemDescription(position))
+       
         if REAL_SETTINGS.getSetting("ColorOverlay") == "true":
             self.getControl(506).setImage(self.channelLogos + ascii(self.channels[self.currentChannel - 1].name) + '_c.png')
         else:

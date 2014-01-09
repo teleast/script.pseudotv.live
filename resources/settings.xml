@@ -24,9 +24,10 @@
         <setting id="EPGcolor_MovieGenre" subsetting="true" type="bool" label="30215" default="false" visible="eq(-1,1)" />
         <setting id="art.enable" label="30214" type="bool" default="true" /> 
         <setting id="ShowChannelBug" type="bool" label="30204" default="true"/>
+    	<setting id="ColorEPG" type="bool" label="30217" default="true"/>
     	<setting id="ColorOverlay" type="bool" label="30205" default="false"/>
     	<setting id="ChannelLogoFolder" type="folder" source="auto" label="30206" default="special://home/addons/script.pseudotv.live/resources/skins/default/images/"/>
-    	<setting id="SkinSelector" type="enum"  label="30211" values="Default|PTVL" default="0"/>
+    	<setting id="SkinSelector" type="enum"  label="30211" values="Default|PTVL|Aurora" default="0"/>
     	<setting id="SkinLogos" type="bool" label="30212" default="false"/>
    </category>
 <!--Tweaks-->
@@ -49,6 +50,7 @@
         <setting id="PVR_Enabled" label="30801" type="bool" default="false"/>
         <setting id="PVR_Folder" subsetting="true" label="30802" visible="eq(-1,true)" type="text" default="" />
         <setting id="IncludeIceLib" type="bool" label="30402" visible="eq(-1,!true)" default="true"/>
+        <setting id="Live.art.enable" label="30803" type="bool" default="false" /> 
     </category>
 <!--Autotune-->
     <category label="30070">
@@ -73,7 +75,7 @@
       	<setting type="lsep" label="30090" visible="eq(-17,true)"/>
         <setting id="autoFindInternetStrms" type="bool" label="30091" subsetting="true" visible="eq(-18,true)" default="false"/>
       	<setting type="lsep" label="30097" visible="eq(-21,true)"/>
-        <setting id="ATLimit" label="30098" subsetting="true" type="enum" values="25|50|100|250|500|1000|Unlimited" visible="eq(-22,true)" default="0"/>
+        <setting id="ATLimit" label="30098" subsetting="true" type="enum" values="25|50|100|250|500|1000|Unlimited" visible="eq(-21,true)" default="0"/>
         <setting id="ATRestore" type="bool" label="30099" visible="eq(-24,false) "default="false"/>
       	<setting id="Warning2" type="bool" subsetting="true" label="30100" visible="eq(-1,true)" default="false" action="RunScript($CWD/restore.py)"/>
         <setting label="30903" type="lsep" visible="eq(-23,true)"/>
@@ -98,6 +100,8 @@
         <setting label="30512" id="trailerschannel" type="text" visible="eq(-3,3)" default="MovieclipsCOMINGSOON,1,50" /> 
         <setting label="30513" id="Movietrailers" type="bool" visible="!eq(-4,0)" default="false" />
         <setting label="30514" id="numtrailers" type="enum" visible="!eq(-5,0)" values="Auto|1|2|3|4|5" default="1"/>
+        <setting label="30712" type="lsep"/>
+        <setting label="30903" type="lsep" default="" /> 
     </category>
     <!--APIs-->
     <category label="30700">  
