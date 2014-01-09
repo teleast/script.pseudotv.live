@@ -26,32 +26,20 @@ import httplib
 import base64
 import Globals
 import urllib2 
-import feedparser
-import tvdb_api
-import tmdbsimple
 import shutil
-try:
-    import StorageServer
-except:
-   import storageserverdummy as StorageServer
-
-   cache = StorageServer.StorageServer("script.pseudotv.live", 24) # (Your plugin name, Cache time in hours)
 
 from urllib import unquote
 from urllib import urlopen
 from xml.etree import ElementTree as ET
 from xml.dom.minidom import parse, parseString
-from subprocess import Popen, PIPE, STDOUT
 from BeautifulSoup import BeautifulSoup
-from Playlist import Playlist
 from Globals import *
 from Channel import Channel
-from VideoParser import VideoParser
 from FileAccess import FileLock, FileAccess
 
-
 class Donor:
-    
+
+
     def log(self, msg, level = xbmc.LOGDEBUG):
         log('ChannelList: ' + msg, level)
 

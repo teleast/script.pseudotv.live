@@ -15,7 +15,7 @@
             <width>600</width>
             <height>520</height>
             <description>Background</description>
-            <texture border="15,15,15,15">pstvBorder.png</texture>
+            <texture border="15,15,15,15">pstvlBorder.png</texture>
             <colordiffuse>FFFFFFFF</colordiffuse>
         </control>
 
@@ -24,7 +24,7 @@
             <posy>125</posy>
             <width>350</width>
             <height>85</height>
-            <texture border="2,2,2,2">pstvBorder2.png</texture>
+            <texture border="2,2,2,2">pstvlBorder2.png</texture>
             <colordiffuse>FFFFFFFF</colordiffuse>
         </control>
 
@@ -63,7 +63,7 @@
                 <posy>0</posy>
                 <width>515</width>
                 <height>370</height>
-                <texture border="2,2,2,2">pstvBorder2.png</texture>
+                <texture border="2,2,2,2">pstvlBorder2.png</texture>
                 <colordiffuse>FFFFFFFF</colordiffuse>
             </control>
 
@@ -92,7 +92,7 @@
                 <posy>37</posy>
                 <width>515</width>
                 <height>2</height>
-                <texture>pstvSolid.png</texture>
+                <texture>pstvlSolid.png</texture>
                 <colordiffuse>FF000000</colordiffuse>
             </control>
 
@@ -106,11 +106,11 @@
                 <width>25</width>
                 <height>360</height>
                 <visible>Control.IsVisible(102)</visible>
-                <texturesliderbackground border="10,10,10,10">pstvScrollBar.png</texturesliderbackground>
-                <texturesliderbar border="10,10,10,10">pstvScrollBarNofocus.png</texturesliderbar>
-                <texturesliderbarfocus border="10,10,10,10">pstvScrollBarFocus.png</texturesliderbarfocus>
-                <textureslidernib>pstvEmpty.png</textureslidernib>
-                <textureslidernibfocus>pstvEmpty.png</textureslidernibfocus>
+                <texturesliderbackground border="10,10,10,10">pstvlScrollBar.png</texturesliderbackground>
+                <texturesliderbar border="10,10,10,10">pstvlScrollBarNofocus.png</texturesliderbar>
+                <texturesliderbarfocus border="10,10,10,10">pstvlScrollBarFocus.png</texturesliderbarfocus>
+                <textureslidernib>pstvlEmpty.png</textureslidernib>
+                <textureslidernibfocus>pstvlEmpty.png</textureslidernibfocus>
                 <orientation>vertical</orientation>
             </control>
 
@@ -157,7 +157,7 @@
                         <posy>0</posy>
                         <width>505</width>
                         <height>30</height>
-                        <texture>pstvSolid.png</texture>
+                        <texture>pstvlSolid.png</texture>
                         <colordiffuse>FF000000</colordiffuse>
                     </control>
 
@@ -209,7 +209,7 @@
                 <posy>50</posy>
                 <width>600</width>
                 <height>2</height>
-                <texture>pstvSolid.png</texture>
+                <texture>pstvlSolid.png</texture>
                 <colordiffuse>FF000000</colordiffuse>
             </control>
 
@@ -240,8 +240,8 @@
                 <posy>60</posy>
                 <width>30</width>
                 <height>30</height>
-                <texturefocus>pstvDownFocus.png</texturefocus>
-                <texturenofocus border="4,4,4,4">pstvDownNoFocus.png</texturenofocus>
+                <texturefocus>pstvlDownFocus.png</texturefocus>
+                <texturenofocus border="4,4,4,4">pstvlDownNoFocus.png</texturenofocus>
                 <onleft>111</onleft>
                 <onright>111</onright>
             </control>
@@ -251,8 +251,8 @@
                 <posy>60</posy>
                 <width>30</width>
                 <height>30</height>
-                <texturefocus>pstvUpFocus.png</texturefocus>
-                <texturenofocus border="4,4,4,4">pstvUpNoFocus.png</texturenofocus>
+                <texturefocus>pstvlUpFocus.png</texturefocus>
+                <texturenofocus border="4,4,4,4">pstvlUpNoFocus.png</texturenofocus>
                 <onleft>110</onleft>
                 <onright>110</onright>
             </control>
@@ -263,8 +263,8 @@
                 <width>300</width>
                 <height>30</height>
                 <label>Advanced Channel Rules</label>
-                <texturefocus>pstvButtonFocus.png</texturefocus>
-                <texturenofocus border="2,2,2,2">pstvBorder2.png</texturenofocus>
+                <texturefocus>pstvlButtonFocus.png</texturefocus>
+                <texturenofocus border="2,2,2,2">pstvlBorder2.png</texturenofocus>
                 <textcolor>FF000000</textcolor>
                 <onup>107</onup>
                 <ondown>112</ondown>
@@ -277,8 +277,8 @@
                 <width>120</width>
                 <height>40</height>
                 <label>Ok</label>
-                <texturefocus>pstvButtonFocus.png</texturefocus>
-                <texturenofocus border="2,2,2,2">pstvBorder2.png</texturenofocus>
+                <texturefocus>pstvlButtonFocus.png</texturefocus>
+                <texturenofocus border="2,2,2,2">pstvlBorder2.png</texturenofocus>
                 <textcolor>FF000000</textcolor>
                 <onup>114</onup>
                 <onleft>113</onleft>
@@ -292,8 +292,8 @@
                 <width>120</width>
                 <height>40</height>
                 <label>Cancel</label>
-                <texturefocus>pstvButtonFocus.png</texturefocus>
-                <texturenofocus border="2,2,2,2">pstvBorder2.png</texturenofocus>
+                <texturefocus>pstvlButtonFocus.png</texturefocus>
+                <texturenofocus border="2,2,2,2">pstvlBorder2.png</texturenofocus>
                 <textcolor>FF000000</textcolor>
                 <onup>114</onup>
                 <onleft>112</onleft>
@@ -366,8 +366,8 @@
                     <posy>100</posy>
                     <width>30</width>
                     <height>30</height>
-                    <texturefocus>pstvDownFocus.png</texturefocus>
-                    <texturenofocus border="4,4,4,4">pstvDownNoFocus.png</texturenofocus>
+                    <texturefocus>pstvlDownFocus.png</texturefocus>
+                    <texturenofocus border="4,4,4,4">pstvlDownNoFocus.png</texturenofocus>
                     <onup>110</onup>
                     <ondown>114</ondown>
                     <onleft>141</onleft>
@@ -379,8 +379,8 @@
                     <posy>100</posy>
                     <width>30</width>
                     <height>30</height>
-                    <texturefocus>pstvUpFocus.png</texturefocus>
-                    <texturenofocus border="4,4,4,4">pstvUpNoFocus.png</texturenofocus>
+                    <texturefocus>pstvlUpFocus.png</texturefocus>
+                    <texturenofocus border="4,4,4,4">pstvlUpNoFocus.png</texturenofocus>
                     <onup>111</onup>
                     <ondown>113</ondown>
                     <onleft>140</onleft>
@@ -422,8 +422,8 @@
                     <posy>100</posy>
                     <width>30</width>
                     <height>30</height>
-                    <texturefocus>pstvDownFocus.png</texturefocus>
-                    <texturenofocus border="4,4,4,4">pstvDownNoFocus.png</texturenofocus>
+                    <texturefocus>pstvlDownFocus.png</texturefocus>
+                    <texturenofocus border="4,4,4,4">pstvlDownNoFocus.png</texturenofocus>
                     <onup>110</onup>
                     <ondown>114</ondown>
                     <onleft>151</onleft>
@@ -435,8 +435,8 @@
                     <posy>100</posy>
                     <width>30</width>
                     <height>30</height>
-                    <texturefocus>pstvUpFocus.png</texturefocus>
-                    <texturenofocus border="4,4,4,4">pstvUpNoFocus.png</texturenofocus>
+                    <texturefocus>pstvlUpFocus.png</texturefocus>
+                    <texturenofocus border="4,4,4,4">pstvlUpNoFocus.png</texturenofocus>
                     <onup>111</onup>
                     <ondown>113</ondown>
                     <onleft>150</onleft>
@@ -478,8 +478,8 @@
                     <posy>100</posy>
                     <width>30</width>
                     <height>30</height>
-                    <texturefocus>pstvDownFocus.png</texturefocus>
-                    <texturenofocus border="4,4,4,4">pstvDownNoFocus.png</texturenofocus>
+                    <texturefocus>pstvlDownFocus.png</texturefocus>
+                    <texturenofocus border="4,4,4,4">pstvlDownNoFocus.png</texturenofocus>
                     <onup>110</onup>
                     <ondown>114</ondown>
                     <onleft>161</onleft>
@@ -491,8 +491,8 @@
                     <posy>100</posy>
                     <width>30</width>
                     <height>30</height>
-                    <texturefocus>pstvUpFocus.png</texturefocus>
-                    <texturenofocus border="4,4,4,4">pstvUpNoFocus.png</texturenofocus>
+                    <texturefocus>pstvlUpFocus.png</texturefocus>
+                    <texturenofocus border="4,4,4,4">pstvlUpNoFocus.png</texturenofocus>
                     <onup>111</onup>
                     <ondown>113</ondown>
                     <onleft>160</onleft>
@@ -534,8 +534,8 @@
                     <posy>100</posy>
                     <width>30</width>
                     <height>30</height>
-                    <texturefocus>pstvDownFocus.png</texturefocus>
-                    <texturenofocus border="4,4,4,4">pstvDownNoFocus.png</texturenofocus>
+                    <texturefocus>pstvlDownFocus.png</texturefocus>
+                    <texturenofocus border="4,4,4,4">pstvlDownNoFocus.png</texturenofocus>
                     <onup>110</onup>
                     <ondown>114</ondown>
                     <onleft>171</onleft>
@@ -547,8 +547,8 @@
                     <posy>100</posy>
                     <width>30</width>
                     <height>30</height>
-                    <texturefocus>pstvUpFocus.png</texturefocus>
-                    <texturenofocus border="4,4,4,4">pstvUpNoFocus.png</texturenofocus>
+                    <texturefocus>pstvlUpFocus.png</texturefocus>
+                    <texturenofocus border="4,4,4,4">pstvlUpNoFocus.png</texturenofocus>
                     <onup>111</onup>
                     <ondown>113</ondown>
                     <onleft>170</onleft>
@@ -590,8 +590,8 @@
                     <posy>100</posy>
                     <width>30</width>
                     <height>30</height>
-                    <texturefocus>pstvDownFocus.png</texturefocus>
-                    <texturenofocus border="4,4,4,4">pstvDownNoFocus.png</texturenofocus>
+                    <texturefocus>pstvlDownFocus.png</texturefocus>
+                    <texturenofocus border="4,4,4,4">pstvlDownNoFocus.png</texturenofocus>
                     <onup>110</onup>
                     <ondown>114</ondown>
                     <onleft>181</onleft>
@@ -603,8 +603,8 @@
                     <posy>100</posy>
                     <width>30</width>
                     <height>30</height>
-                    <texturefocus>pstvUpFocus.png</texturefocus>
-                    <texturenofocus border="4,4,4,4">pstvUpNoFocus.png</texturenofocus>
+                    <texturefocus>pstvlUpFocus.png</texturefocus>
+                    <texturenofocus border="4,4,4,4">pstvlUpNoFocus.png</texturenofocus>
                     <onup>111</onup>
                     <ondown>113</ondown>
                     <onleft>180</onleft>
@@ -646,8 +646,8 @@
                     <posy>100</posy>
                     <width>30</width>
                     <height>30</height>
-                    <texturefocus>pstvDownFocus.png</texturefocus>
-                    <texturenofocus border="4,4,4,4">pstvDownNoFocus.png</texturenofocus>
+                    <texturefocus>pstvlDownFocus.png</texturefocus>
+                    <texturenofocus border="4,4,4,4">pstvlDownNoFocus.png</texturenofocus>
                     <onup>110</onup>
                     <ondown>194</ondown>
                     <onleft>191</onleft>
@@ -659,8 +659,8 @@
                     <posy>100</posy>
                     <width>30</width>
                     <height>30</height>
-                    <texturefocus>pstvUpFocus.png</texturefocus>
-                    <texturenofocus border="4,4,4,4">pstvUpNoFocus.png</texturenofocus>
+                    <texturefocus>pstvlUpFocus.png</texturefocus>
+                    <texturenofocus border="4,4,4,4">pstvlUpNoFocus.png</texturenofocus>
                     <onup>111</onup>
                     <ondown>194</ondown>
                     <onleft>190</onleft>

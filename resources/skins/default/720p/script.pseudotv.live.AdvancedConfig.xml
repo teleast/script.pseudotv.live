@@ -18,7 +18,7 @@
             <width>600</width>
             <height>350</height>
             <description>Background</description>
-            <texture border="15,15,15,15">pstvBorder.png</texture>
+            <texture border="15,15,15,15">pstvlBorder.png</texture>
             <colordiffuse>FFFFFFFF</colordiffuse>
         </control>
 
@@ -27,7 +27,7 @@
             <posy>180</posy>
             <width>300</width>
             <height>50</height>
-            <texture border="2,2,2,2">pstvBorder2.png</texture>
+            <texture border="2,2,2,2">pstvlBorder2.png</texture>
             <colordiffuse>FFFFFFFF</colordiffuse>
         </control>
 
@@ -54,7 +54,7 @@
                 <posy>0</posy>
                 <width>540</width>
                 <height>240</height>
-                <texture border="2,2,2,2">pstvBorder2.png</texture>
+                <texture border="2,2,2,2">pstvlBorder2.png</texture>
                 <colordiffuse>FFFFFFFF</colordiffuse>
             </control>
 
@@ -242,7 +242,7 @@
                         <width>530</width>
                         <height>200</height>
                         <description>Background</description>
-                        <texture border="2,2,2,2">pstvBorder2.png</texture>
+                        <texture border="2,2,2,2">pstvlBorder2.png</texture>
                         <colordiffuse>FFFFFFFF</colordiffuse>
                     </control>
 
@@ -348,7 +348,7 @@
                         <posy>175</posy>
                         <width>20</width>
                         <height>20</height>
-                        <texture border="0,0,0,0">pstvDownNoFocus.png</texture>
+                        <texture border="0,0,0,0">pstvlDownNoFocus.png</texture>
                         <colordiffuse>FFFFFFFF</colordiffuse>
                     </control>
                     
@@ -358,7 +358,7 @@
                         <posy>55</posy>
                         <width>20</width>
                         <height>20</height>
-                        <texture border="0,0,0,0">pstvUpNoFocus.png</texture>
+                        <texture border="0,0,0,0">pstvlUpNoFocus.png</texture>
                         <colordiffuse>FFFFFFFF</colordiffuse>
                     </control>
                 </control>
