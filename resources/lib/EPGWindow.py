@@ -894,8 +894,8 @@ class EPGWindow(xbmcgui.WindowXMLDialog):
                 self.logDebug('EPG.mediapath.2 = ' + uni(mediapathSeason))  
                 mediapathSeries = os.path.dirname(mediapathSeason)
                 self.logDebug('EPG.mediapath.3 = ' + uni(mediapathSeries))
-                mediapathSeries1 = (mediapathSeries + '/' + type1EXT)
-                mediapathSeason1 = (mediapathSeason + '/' + type1EXT) 
+                mediapathSeries1 = uni(mediapathSeries + '/' + type1EXT)
+                mediapathSeason1 = uni(mediapathSeason + '/' + type1EXT) 
 
                 if FileAccess.exists(mediapathSeries1):
                     self.getControl(508).setImage(mediapathSeries1)
@@ -904,8 +904,8 @@ class EPGWindow(xbmcgui.WindowXMLDialog):
                 else:
                     self.getControl(508).setImage(self.mediaPath + type1 + '.png')#default fallback art, call downloader todo
 
-                mediapathSeries2 = (mediapathSeries + '/' + type2EXT) 
-                mediapathSeason2 = (mediapathSeason + '/' + type2EXT)
+                mediapathSeries2 = uni(mediapathSeries + '/' + type2EXT) 
+                mediapathSeason2 = uni(mediapathSeason + '/' + type2EXT)
                 
                 if FileAccess.exists(mediapathSeries2):
                     self.getControl(510).setImage(mediapathSeries2)

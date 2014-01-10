@@ -6,10 +6,6 @@
         <posy>0</posy>
     </coordinates>
     <controls>     
-<!--         <control type="button" id="100">
-            <visible>false</visible>			
-            <label>0xC0C0C0C0</label> --><!--Channel Num Image Diffusion-->
-<!--         </control>     -->
         <control type="image" id="101">
             <description>Background</description>
             <posx>0</posx>
@@ -46,15 +42,15 @@
             </control>      
             <control type="button" id="509">
                 <description>Dynamic art</description>
-                <label>logo</label>
+                <label>poster</label>
                 <visible>false</visible>
             </control>
             <control type="image" id="510">
-                <posx>1100</posx>
-                <posy>575</posy>
+                <posx>1135</posx>
+                <posy>530</posy>
                 <description>Dynamic art</description>
                 <width>150</width>
-                <height>62</height>
+                <height>185</height>
                 <align>right</align>
                 <aligny>center</aligny>
                 <aspectratio>keep</aspectratio>
@@ -113,38 +109,44 @@
             <control type="grouplist">
                 <posx>285</posx>
                 <posy>525</posy>
-                <width>750</width>
-                <height>30</height>
+                <width>1000</width>
+                <height>40</height>
+                <align>left</align>
+                <aligny>bottom</aligny>
                 <orientation>horizontal</orientation>
                 <itemgap>5</itemgap>
                 <control type="label" id="503">
                     <description>Show Name Label</description>
-                    <width min="100" max="675">auto</width>
+                    <width min="55" max="600">auto</width>
                     <height>30</height>
-                    <label>Show title</label>
-                    <font>font14</font>
-                    <align>left</align>
+                    <label>Show Name</label>
+                    <font>font12</font>
                     <textcolor>FF0297eb</textcolor>
+                    <scroll>true</scroll>
+                    <wrapmultiline>false</wrapmultiline>
+                    <scrollspeed>50</scrollspeed>
+                    <scrollsuffix> - </scrollsuffix>
                 </control>
                 <control type="label">
                     <description>Showtitle Sep Label</description>
                     <width>10</width>
                     <height>30</height>
                     <label>•</label>
-                    <font>font14</font>
-                    <align>center</align>
-                    <aligny>center</aligny>
+                    <font>font12</font>
                     <textcolor>FF0297eb</textcolor>
                     <visible>!VideoPlayer.Content(movie)</visible>
                 </control>
                 <control type="label" id="504">
                     <description>Show Title Label</description>
-                    <width>550</width>
+                    <width min="55" max="600">auto</width>
                     <height>30</height>
-                    <label>Show Title detail</label>
-                    <font>font14</font>
-                    <align>left</align>
+                    <label>Show Title</label>
+                    <font>font12</font>
                     <textcolor>FFFFFFFF</textcolor>
+                    <scroll>true</scroll>
+                    <wrapmultiline>false</wrapmultiline>
+                    <scrollspeed>50</scrollspeed>
+                    <scrollsuffix> - </scrollsuffix>
                 </control>
                 <control type="image" id="511">
                     <description>Sickbeard/Couchpotato Icon</description>            
@@ -297,31 +299,58 @@
                 <texture>hulu.png</texture>
                 <visible>[substring(Player.FilenameAndPath,hulu)]</visible>
             </control>-->
-        <control type="image" id="506">
-            <description>Show Channel Icon</description>
-            <posx>-40</posx>
+        <control type="grouplist">
+            <posx>20</posx>
             <posy>680</posy>
-            <width>180</width>
-            <height>40</height>
-            <aspectratio>keep</aspectratio>
+            <width>1280</width>
+            <height>50</height>
             <align>left</align>
             <aligny>center</aligny>
-        </control>
-        <control type="label" id="512">
-            <description>Weather</description>
-            <posx>17</posx>
-            <posy>55</posy>
-            <width min="40" max="200">auto</width>
-            <height>30</height>
-            <label>$INFO[Weather.Conditions]</label>
-            <font>font12</font>
-            <align>left</align>
-            <textcolor>FFFFFFFF</textcolor>
-        </control> -->
-        
-        
-        
-        
+            <orientation>horizontal</orientation>
+            <itemgap>8</itemgap>
+                <control type="image" id="506">
+                    <description>Show Channel Icon</description>
+                    <width>50</width>
+                    <height>50</height>
+                    <align>left</align>
+                    <aligny>center</aligny>
+                    <aspectratio>keep</aspectratio>
+                </control>            
+                <control type="image">
+                    <description>Video rez Image</description>
+                    <width>50</width>
+                    <height>50</height>                    
+                    <align>left</align>
+                    <aligny>center</aligny>
+                    <aspectratio>keep</aspectratio>
+                    <texture>$INFO[VideoPlayer.VideoResolution,flags\resolution\,.png]</texture>
+                    <colordiffuse>white</colordiffuse>
+                    <visible>!IsEmpty(VideoPlayer.VideoResolution)</visible>
+                </control>  
+                <control type="image">
+                    <description>Codec Image</description>
+                    <width>50</width>
+                    <height>50</height>                    
+                    <align>left</align>
+                    <aligny>center</aligny>
+                    <aspectratio>keep</aspectratio>
+                    <texture>$INFO[VideoPlayer.VideoCodec,flags\source\,.png]</texture>
+                    <colordiffuse>white</colordiffuse>
+                    <visible>![substring(VideoPlayer.VideoCodec,div,left) | stringcompare(VideoPlayer.VideoCodec,dx50)]</visible>
+                </control>
+                <control type="image">
+                    <description>Audio Channel Image</description>
+                    <width>50</width>
+                    <height>50</height>                    
+                    <align>left</align>
+                    <aligny>center</aligny>
+                    <aspectratio>keep</aspectratio>
+                    <texture>$INFO[VideoPlayer.AudioChannels,flags\audio\,.png]</texture>
+                    <colordiffuse>white</colordiffuse>
+                    <visible>!IsEmpty(VideoPlayer.AudioChannels)</visible>
+                </control>
+        </control>  
+            
         <control type="label">
             <description>startime</description>
             <posx>285</posx>
@@ -376,8 +405,7 @@
             <font>font12</font>
             <align>right</align>
             <textcolor>C0C0C0C0</textcolor>
-        </control>
-            
+        </control>     
     </control>
     </controls>      
 </window>

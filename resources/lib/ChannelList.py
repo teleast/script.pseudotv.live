@@ -52,8 +52,10 @@ from sickbeard import *
 from couchpotato import *
 from tvdb import *
 from tmdb import *
-from Donor import *
-
+try:
+    from Donor import *
+except:
+    pass
 
 class ChannelList:
     def __init__(self):
@@ -1610,7 +1612,7 @@ class ChannelList:
         LiveID = ''
         cpManaged = False
         sbManaged = False
-        json_query = uni('{"jsonrpc": "2.0", "method": "Files.GetDirectory", "params": {"directory": "%s", "media": "video", "fields":["season","episode","playcount","streamdetails","duration","runtime","tagline","showtitle","album","artist","plot"]}, "id": 1}' % (self.escapeDirJSON(dir_name)))
+        json_query = uni('{"jsonrpc": "2.0", "method": "Files.GetDirectory", "params": {"directory": "%s", "media": "video", "fields":["season","episode","playcount","duration","runtime","tagline","showtitle","album","artist","plot","plotoutline"]}, "id": 1}' % (self.escapeDirJSON(dir_name)))
 
         if self.background == False:
             self.updateDialog.update(self.updateDialogProgress, "Updating channel " + str(self.settingChannel), "adding videos", "querying database")
@@ -1674,14 +1676,18 @@ class ChannelList:
                             tmpstr = str(dur) + ','
                             showtitle = re.search('"showtitle" *: *"(.*?)"', f)
                             plot = re.search('"plot" *: *"(.*?)",', f)
+                            plotoutline = re.search('"plotoutline" *: *"(.*?)",', f)
                             
                             if plot == None:
                                 theplot = ""
                             else:
                                 theplot = plot.group(1)
-
-                            theplot = uni(self.trim(theplot, 300, '...'))
-                            self.log('buildFileList, theplot trim = ' + uni(theplot))
+                            
+                            try:
+                                theplot = uni(self.trim(theplot, 300, '...'))
+                            except:
+                                theplot = uni(theplot[:300])
+                            self.logDebug("buildFileList, theplot = " + uni(theplot))
                             
                             # This is a TV show
                             if showtitle != None and len(showtitle.group(1)) > 0:
@@ -1706,27 +1712,120 @@ class ChannelList:
                                     
                                 GenreLiveID = self.buildGenreLiveID(showtitle.group(1), 'TV')
                                 self.logDebug('buildFileList.GenreLiveID.TV = ' + uni(GenreLiveID))
-                                try:
+
+                                if GenreLiveID != 'Unknown,0':
+                                    GenreLiveID = GenreLiveID.split(',')
+                                    self.logDebug('buildFileList.GenreLiveID.2 = ' + uni(GenreLiveID))
+                                    genre = GenreLiveID[0]
+                                    self.logDebug('buildFileList.genre = ' + uni(genre))
+                                    genre = uni(genre)
+                                    tvdbid = GenreLiveID[1]                     
+                                    tvdbid = int(tvdbid)
+                                    self.logDebug('buildFileList.tvdbid = ' + str(tvdbid))   
+                                
+                                    # Lookup IMDBID, 1st with tvdb, then with tvdb_api
+                                    if imdbid == 0:
+                                        try:
+                                            tvdbAPI = TVDB(REAL_SETTINGS.getSetting('tvdb.apikey'))
+                                            imdbid = tvdbAPI.getIMDBbyShowName(showtitle.group(1))  
+                                            self.logDebug('buildFileList.imdbid.1 = ' + showtitle.group(1) + ' - ' + str(imdbid))
+                                            if imdbid == 0 or imdbid == '0' or imdbid == None or imdbid == 'None':
+                                                t = tvdb_api.Tvdb()
+                                                imdbid = t[showtitle.group(1)]['imdb_id']  
+                                                self.logDebug('buildFileList.imdbid.2 = ' + showtitle.group(1) + ' - ' + str(imdbid))
+                                                if imdbid == 0 or imdbid == '0' or imdbid == None or imdbid == 'None':#clean output
+                                                    imdbid = 0
+                                        except:
+                                            imdbid = 0
+                                            self.logDebug('buildFileList, imdbid lookup failed')
+                                   
+                                    ## Correct Invalid IMDBID format   
+                                    if imdbid != 0 and str(imdbid[0:2]) != 'tt':
+                                        imdbid = ('tt' + str(imdbid))
+                                    
+                                    sbManaged = False
+                                    if REAL_SETTINGS.getSetting('sickbeard.enabled') == 'true':
+                                        try:
+                                            sbAPI = SickBeard(REAL_SETTINGS.getSetting('sickbeard.baseurl'),REAL_SETTINGS.getSetting('sickbeard.apikey'))
+                                            if sbAPI.isShowManaged(tvdbid):
+                                                sbManaged = True
+                                        except:
+                                            pass
+                                    
+                                    #Build LiveID (imdb/tvdb/sickbeard or couchpoato/unaired or aired)
+                                    
+                                    if imdbid != 0:
+                                        IID = ('imdb_' + str(imdbid))
+                                        LiveID = (IID + '|')
+                                    else:
+                                        LiveID = ('NA' + '|')
+                                    
+                                    if tvdbid != 0:
+                                        TID = ('tvdb_' + str(tvdbid))
+                                        LiveID = (LiveID + '|' + TID + '|')
+                                    else:
+                                        LiveID = (LiveID + '|' + 'NA' + '|')
+                                                          
+                                    if sbManaged == True:
+                                        SB = ('SB')
+                                        LiveID = (LiveID + '|' + SB + '|')
+                                    elif cpManaged == True:
+                                        CP = ('CP')
+                                        LiveID = (LiveID + '|' + CP + '|')
+                                    else:
+                                        LiveID = (LiveID + '|' + 'NA' + '|')
+                                    
+                                    LiveID = (LiveID + '|' + 'NA' + '|')
+                                    LiveID = LiveID.replace('||','|')
+                                    LiveID = uni(LiveID)
+                                    self.logDebug('buildFileList.LiveID = ' + LiveID)
+                                    
+                                    genre = uni(genre)
+                                    tmpstr += showtitle.group(1) + "//" + swtitle + "//" + theplot + "//" + genre + "////" + LiveID
+                                    istvshow = True
+
+                                else:##Further parsing todo ??
+                                    tmpstr += showtitle.group(1) + "//" + swtitle + "//" + theplot + "//" + 'Unknown' + "////" + 'LiveID|'
+                                    istvshow = True
+
+                            else:
+                                tmpstr += title.group(1) + "//"
+                                album = re.search('"album" *: *"(.*?)"', f)
+                                # showtitle.group(1)
+
+                                # This is a movie
+                                if album == None or len(album.group(1)) == 0:
+                                    tagline = re.search('"tagline" *: *"(.*?)",', f)
+                                    print tagline
+                                    print f
+                                    
+                                    if tagline != None:
+                                        tmpstr += tagline.group(1)
+                                    print tmpstr
+                                    
+                                    GenreLiveID = self.buildGenreLiveID(title.group(1), 'Movie')
+                                    self.logDebug('buildFileList.GenreLiveID.Movie = ' + uni(GenreLiveID))
+                                    
                                     if GenreLiveID != 'Unknown,0':
                                         GenreLiveID = GenreLiveID.split(',')
                                         self.logDebug('buildFileList.GenreLiveID.2 = ' + uni(GenreLiveID))
                                         genre = GenreLiveID[0]
                                         self.logDebug('buildFileList.genre = ' + uni(genre))
                                         genre = uni(genre)
-                                        tvdbid = GenreLiveID[1]                     
-                                        tvdbid = int(tvdbid)
-                                        self.logDebug('buildFileList.tvdbid = ' + str(tvdbid))   
+                                        tvdbid = 0
+                                        imdbid = GenreLiveID[1]
+                                        self.logDebug('buildFileList.imdbid = ' + str(imdbid))   
                                     
                                         # Lookup IMDBID, 1st with tvdb, then with tvdb_api
                                         if imdbid == 0:
                                             try:
                                                 tvdbAPI = TVDB(REAL_SETTINGS.getSetting('tvdb.apikey'))
-                                                imdbid = tvdbAPI.getIMDBbyShowName(showtitle.group(1))  
-                                                self.logDebug('buildFileList.imdbid.1 = ' + showtitle.group(1) + ' - ' + str(imdbid))
+                                                imdbid = tvdbAPI.getIMDBbyShowName(title.group(1))  
+                                                self.logDebug('buildFileList.imdbid.1 = ' + title.group(1) + ' - ' + str(imdbid))
                                                 if imdbid == 0 or imdbid == '0' or imdbid == None or imdbid == 'None':
                                                     t = tvdb_api.Tvdb()
-                                                    imdbid = t[showtitle.group(1)]['imdb_id']  
-                                                    self.logDebug('buildFileList.imdbid.2 = ' + showtitle.group(1) + ' - ' + str(imdbid))
+                                                    imdbid = t[title.group(1)]['imdb_id']  
+                                                    self.logDebug('buildFileList.imdbid.2 = ' + title.group(1) + ' - ' + str(imdbid))
                                                     if imdbid == 0 or imdbid == '0' or imdbid == None or imdbid == 'None':#clean output
                                                         imdbid = 0
                                             except:
@@ -1736,13 +1835,12 @@ class ChannelList:
                                         ## Correct Invalid IMDBID format   
                                         if imdbid != 0 and str(imdbid[0:2]) != 'tt':
                                             imdbid = ('tt' + str(imdbid))
-                                        
-                                        sbManaged = False
-                                        if REAL_SETTINGS.getSetting('sickbeard.enabled') == 'true':
+
+                                        cpManaged = False
+                                        if REAL_SETTINGS.getSetting('couchpotato.enabled') == 'true':
                                             try:
-                                                sbAPI = SickBeard(REAL_SETTINGS.getSetting('sickbeard.baseurl'),REAL_SETTINGS.getSetting('sickbeard.apikey'))
-                                                if sbAPI.isShowManaged(tvdbid):
-                                                    sbManaged = True
+                                                if cpAPI.getMoviebyTitle(title):
+                                                    cpManaged = True
                                             except:
                                                 pass
                                         
@@ -1775,110 +1873,22 @@ class ChannelList:
                                         self.logDebug('buildFileList.LiveID = ' + LiveID)
                                         
                                         genre = uni(genre)
-                                        tmpstr += showtitle.group(1) + "//" + swtitle + "//" + theplot + "//" + genre + "////" + LiveID
-                                        istvshow = True
-
-                                    else:##Further parsing todo ??
-                                        tmpstr += showtitle.group(1) + "//" + swtitle + "//" + theplot + "//" + 'Unknown' + "////" + 'LiveID|'
-                                        istvshow = True
-                                   
-                                except:
-                                    tmpstr += showtitle.group(1) + "//" + swtitle + "//" + theplot + "//" + 'Unknown' + "////" + 'LiveID|'
-                                    istvshow = True
-                            else:
-                                tmpstr += title.group(1) + "//"
-                                album = re.search('"album" *: *"(.*?)"', f)
-                                # showtitle.group(1)
-
-                                # This is a movie
-                                if album == None or len(album.group(1)) == 0:
-                                    tagline = re.search('"tagline" *: *"(.*?)"', f)
-                                
-                                    if tagline != None:
-                                        tmpstr += tagline.group(1)
-
-                                    GenreLiveID = self.buildGenreLiveID(title.group(1), 'Movie')
-                                    self.logDebug('buildFileList.GenreLiveID.Movie = ' + uni(GenreLiveID))
-                                    try:
-                                        if GenreLiveID != 'Unknown,0':
-                                            GenreLiveID = GenreLiveID.split(',')
-                                            self.logDebug('buildFileList.GenreLiveID.2 = ' + uni(GenreLiveID))
-                                            genre = GenreLiveID[0]
-                                            self.logDebug('buildFileList.genre = ' + uni(genre))
-                                            genre = uni(genre)
-                                            tvdbid = 0
-                                            imdbid = GenreLiveID[1]
-                                            self.logDebug('buildFileList.imdbid = ' + str(imdbid))   
-                                        
-                                            # Lookup IMDBID, 1st with tvdb, then with tvdb_api
-                                            if imdbid == 0:
-                                                try:
-                                                    tvdbAPI = TVDB(REAL_SETTINGS.getSetting('tvdb.apikey'))
-                                                    imdbid = tvdbAPI.getIMDBbyShowName(title.group(1))  
-                                                    self.logDebug('buildFileList.imdbid.1 = ' + title.group(1) + ' - ' + str(imdbid))
-                                                    if imdbid == 0 or imdbid == '0' or imdbid == None or imdbid == 'None':
-                                                        t = tvdb_api.Tvdb()
-                                                        imdbid = t[title.group(1)]['imdb_id']  
-                                                        self.logDebug('buildFileList.imdbid.2 = ' + title.group(1) + ' - ' + str(imdbid))
-                                                        if imdbid == 0 or imdbid == '0' or imdbid == None or imdbid == 'None':#clean output
-                                                            imdbid = 0
-                                                except:
-                                                    imdbid = 0
-                                                    self.logDebug('buildFileList, imdbid lookup failed')
-                                           
-                                            ## Correct Invalid IMDBID format   
-                                            if imdbid != 0 and str(imdbid[0:2]) != 'tt':
-                                                imdbid = ('tt' + str(imdbid))
-
-                                            cpManaged = False
-                                            if REAL_SETTINGS.getSetting('couchpotato.enabled') == 'true':
-                                                try:
-                                                    if cpAPI.getMoviebyTitle(title):
-                                                        cpManaged = True
-                                                except:
-                                                    pass
-                                            
-                                            #Build LiveID (imdb/tvdb/sickbeard or couchpoato/unaired or aired)
-                                            
-                                            if imdbid != 0:
-                                                IID = ('imdb_' + str(imdbid))
-                                                LiveID = (IID + '|')
-                                            else:
-                                                LiveID = ('NA' + '|')
-                                            
-                                            if tvdbid != 0:
-                                                TID = ('tvdb_' + str(tvdbid))
-                                                LiveID = (LiveID + '|' + TID + '|')
-                                            else:
-                                                LiveID = (LiveID + '|' + 'NA' + '|')
-                                                                  
-                                            if sbManaged == True:
-                                                SB = ('SB')
-                                                LiveID = (LiveID + '|' + SB + '|')
-                                            elif cpManaged == True:
-                                                CP = ('CP')
-                                                LiveID = (LiveID + '|' + CP + '|')
-                                            else:
-                                                LiveID = (LiveID + '|' + 'NA' + '|')
-                                            
-                                            LiveID = (LiveID + '|' + 'NA' + '|')
-                                            LiveID = LiveID.replace('||','|')
-                                            LiveID = uni(LiveID)
-                                            self.logDebug('buildFileList.LiveID = ' + LiveID)
-                                            
-                                            genre = uni(genre)
-                                            
-                                            if (REAL_SETTINGS.getSetting('EPGcolor_MovieGenre') == "true" and REAL_SETTINGS.getSetting('EPGcolor_enabled') == "1"):
-                                                tmpstr += "//" + theplot + "//" + genre + "////" + LiveID
-                                            else:
-                                                tmpstr += "//" + theplot + "//" + 'Movie' + "////" + LiveID
-                                    except:
+                                        print tmpstr
+                                        print theplot
+                                        print genre
+                                        print LiveID
+                                        if (REAL_SETTINGS.getSetting('EPGcolor_MovieGenre') == "true" and REAL_SETTINGS.getSetting('EPGcolor_enabled') == "1"):
+                                            tmpstr += "//" + theplot + "//" + genre + "////" + LiveID
+                                        else:
+                                            tmpstr += "//" + theplot + "//" + 'Movie' + "////" + LiveID
+                                    else:
                                         tmpstr += "//" + theplot + "//" + 'Movie' + "////" + 'LiveID|'
                                 else:
                                     artist = re.search('"artist" *: *"(.*?)"', f)
                                     tmpstr += album.group(1) + "//" + artist.group(1) + "//" + 'Music' + "////" + 'LiveID|'
 
                             tmpstr = tmpstr
+                            print tmpstr
                             tmpstr = tmpstr.replace("\\n", " ").replace("\\r", " ").replace("\\\"", "\"")
                             tmpstr = tmpstr + '\n' + match.group(1).replace("\\\\", "\\")
                             
@@ -2280,11 +2290,28 @@ class ChannelList:
                         else:
                             Unaired = False
 
-                        title = uni(title)
-                        description = uni(self.trim(description, 300, '...'))
-                        subtitle = uni(self.trim(subtitle, 100, ''))
-                        episodeDesc = uni(self.trim(episodeDesc, 300, '...'))
-                        episodeName = uni(self.trim(episodeName, 100, ''))
+                        title = uni(title)                            
+                        
+                        try:
+                            description = uni(self.trim(description, 300, '...'))
+                        except:
+                            description = uni(description[:300])
+                        
+                        try:
+                            subtitle = uni(self.trim(subtitle, 100, ''))
+                        except:
+                            subtitle = uni(subtitle[:100])
+                        
+                        try:
+                            episodeDesc = uni(self.trim(episodeDesc, 300, '...'))
+                        except:
+                            episodeDesc = uni(episodeDesc[:300])
+                        
+                        try:
+                            episodeName = uni(self.trim(episodeName, 100, ''))
+                        except:
+                            episodeName = uni(episodeName[:100])
+                            
                         genre = uni(category)
                         
                         #Build LiveID (imdb/tvdb/sickbeard or couchpoato/unaired or aired)
@@ -2540,12 +2567,26 @@ class ChannelList:
                     eptitle = re.sub('[!@#$/:]', '', eptitle)
                     eptitle = uni(eptitle)
                     eptitle = re.sub("[\W]+", " ", eptitle.strip()) 
-                    eptitle = uni(self.trim(eptitle, 100, ''))     
+                    
+                    try:
+                        showtitle = uni(self.trim(showtitle, 100, ''))
+                    except:
+                        showtitle = uni(showtitle[:100])
+                   
+                    try:
+                        eptitle = uni(self.trim(eptitle, 100, ''))
+                    except:
+                        eptitle = uni(eptitle[:100])  
+                        
                     summary = feed.entries[i].summary
                     summary = uni(summary)
-                    summary = re.sub("[\W]+", " ", summary.strip())
-                    summary = uni(self.trim(summary, 300, '...'))
+                    summary = re.sub("[\W]+", " ", summary.strip())                        
                     
+                    try:
+                        summary = uni(self.trim(summary, 300, '...'))
+                    except:
+                        summary = uni(summary[:300])
+                        
                     # try:
                         # runtime = feed.entries[i].media_content[0]['duration']
                         # self.log("createYoutubeFilelist, Invalid media_content_duration")
@@ -2590,7 +2631,7 @@ class ChannelList:
                     if setting2 == '1'or setting2 == '2'or setting2 == '3':
                         inSet = True
                         istvshow = True
-                        tmpstr = str(duration) + ',' + eptitle + "//" + "Youtube" + "//" + summary + "//" + genre + "//NA//" + 'LiveID|' + '\n' + 'plugin://plugin.video.youtube/?path=/root/video&action=play_video&videoid='+url
+                        tmpstr = str(duration) + ',' + eptitle + '//' + "Youtube - " + showtitle + "//" + summary + "//" + genre + "//NA//" + 'LiveID|' + '\n' + 'plugin://plugin.video.youtube/?path=/root/video&action=play_video&videoid='+url
                         tmpstr = tmpstr.replace("\\n", " ").replace("\\r", " ").replace("\\\"", "\"")
                         self.log("createYoutubeFilelist, CHANNEL: " + str(self.settingChannel) + ", " + eptitle + "  DUR: " + str(duration))
                         showList.append(tmpstr)
@@ -2650,7 +2691,17 @@ class ChannelList:
                         eptitle = eptitle.replace(":", " ")
                         eptitle = eptitle.replace("\"", "")
                         eptitle = eptitle.replace("?", "")
-                        eptitle = uni(self.trim(eptitle, 100, ''))
+                        
+                        try:
+                            showtitle = uni(self.trim(showtitle, 100, ''))
+                        except:
+                            showtitle = uni(showtitle[:100])
+                       
+                        try:
+                            eptitle = uni(self.trim(eptitle, 100, ''))
+                        except:
+                            eptitle = uni(eptitle[:100])
+                            
                         if 'author_detail' in feed.entries[i]:
                             studio = feed.entries[i].author_detail['name']  
                         else:
@@ -2670,7 +2721,11 @@ class ChannelList:
                         
                         if epdesc == '':
                             epdesc = eptitle
-                        epdesc = uni(self.trim(epdesc, 300, '...'))
+                            
+                        try:
+                            epdesc = uni(self.trim(epdesc, 300, '...'))
+                        except:
+                            epdesc = uni(epdesc[:300])
                         
                         if 'media_content' in feed.entries[i]:
                             url = feed.entries[i].media_content[0]['url']
@@ -2737,7 +2792,7 @@ class ChannelList:
                         if setting2 == '1':
                             inSet = True
                             istvshow = True
-                            tmpstr = str(duration) + ',' + eptitle + "//" + "RSS" + "//" + epdesc + "//" + genre + "////" + 'LiveID|' + '\n' + url + '\n'
+                            tmpstr = str(duration) + ',' + eptitle + "//" + "RSS - " + showtitle + "//" + epdesc + "//" + genre + "////" + 'LiveID|' + '\n' + url + '\n'
                             tmpstr = tmpstr.replace("\\n", " ").replace("\\r", " ").replace("\\\"", "\"")
                             self.log("createRSSFileList, CHANNEL: " + str(self.settingChannel) + ", " + eptitle + "  DUR: " + str(duration))
                             
@@ -2831,7 +2886,7 @@ class ChannelList:
                 rating = rating[1]
                 
                 eptitle = uni(artist + ' - ' + track)
-                epdesc = uni(eptitle + ', Rated ' + rating + '/5.0')
+                epdesc = uni('Rated ' + rating + '/5.0')
                 
             except:
                 self.log("User hasn't listened to enough artists on Last.fm yet. Using Default User...")
@@ -3664,14 +3719,11 @@ class ChannelList:
         fle = FileAccess.open(thefile, "r")
         thelist = []
         thelist = fle.readlines()
-        print thelist
         LastItem = len(thelist) - 1
-        print LastItem
         thelist.pop(LastItem)#remove last line (empty line)
         thelist.pop(0)#remove first line (datetime)
         self.logDebug("readCache, thelist.count = " + str(len(thelist)))
         fle.close()
-        print thelist
         return thelist
     
     

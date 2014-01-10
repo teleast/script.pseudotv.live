@@ -29,7 +29,11 @@ import sys, re
 
 from xml.etree import ElementTree as ET
 from FileAccess import FileLock, FileAccess
-from Donor import *
+try:
+    from Donor import *
+except:
+    pass
+
 
 class Migrate:
 

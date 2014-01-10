@@ -494,10 +494,14 @@
             <itemgap>5</itemgap>
             <control type="label" id="500">
                 <description>Show Name Label</description>
-                <width min="100" max="675">auto</width>
+                <width min="55" max="600">auto</width>
                 <height>30</height>
                 <label>Show Name</label>
-                <font>font14</font>
+                <font>font12</font>
+                <scroll>true</scroll>
+                <wrapmultiline>false</wrapmultiline>
+                <scrollspeed>50</scrollspeed>
+                <scrollsuffix> - </scrollsuffix>
                 <textcolor>FF0297eb</textcolor>
             </control>
             <control type="label">
@@ -505,17 +509,21 @@
                 <width>10</width>
                 <height>30</height>
                 <label>•</label>
-                <font>font14</font>
+                <font>font12</font>
                 <textcolor>FF0297eb</textcolor>
                 <visible>!VideoPlayer.Content(movie)</visible>
             </control>
             <control type="label" id="501">
                 <description>Show Title Label</description>
-                <width>550</width>
+                <width min="55" max="600">auto</width>
                 <height>30</height>
                 <label>Show Title</label>
-                <font>font14</font>
+                <font>font12</font>
                 <textcolor>FFFFFFFF</textcolor>
+                <scroll>true</scroll>
+                <wrapmultiline>false</wrapmultiline>
+                <scrollspeed>50</scrollspeed>
+                <scrollsuffix> - </scrollsuffix>
             </control> 
             <control type="image" id="511">
                 <description>Sickbeard/Couchpotato Icon</description>            

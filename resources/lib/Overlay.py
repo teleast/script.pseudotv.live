@@ -46,7 +46,7 @@ class MyPlayer(xbmc.Player):
 
     def log(self, msg, level = xbmc.LOGDEBUG):
         log('Player: ' + msg, level)
-
+    
     def onPlayBackStopped(self):
         if self.stopped == False:
             self.log('Playback stopped')
@@ -99,15 +99,9 @@ class TVOverlay(xbmcgui.WindowXMLDialog):
         self.runningActionChannel = 0
         self.channelDelay = 0
         # self.channelbugcolor = '0xC0C0C0C0'  #Cyan
-        self.channelbugcolor = '0xFF0297eb'    #Holo
-        try:
-            self.channelbugcolor = int(self.getControl(100).getLabel(), 16)
-            if self.channelbugcolor > 0:
-                self.channelbugcolor = hex(self.channelbugcolor)[2:]
-            self.logDebug('self.channelbugcolor = ' + str(self.channelbugcolor))
-        except:
-            pass
-        
+        # self.channelbugcolor = '0xFF0297eb'    #Holo
+        self.channelbugcolor = ''
+
         for i in range(3):       
 
             # self.channelLabel.append(xbmcgui.ControlImage(50 + (50 * i), 50, 50, 50, IMAGES_LOC + 'solid.png', colorDiffuse=''))
@@ -759,8 +753,8 @@ class TVOverlay(xbmcgui.WindowXMLDialog):
                 self.logDebug('Overlay.mediapath.2 = ' + uni(mediapathSeason))  
                 mediapathSeries = os.path.dirname(mediapathSeason)
                 self.logDebug('Overlay.mediapath.3 = ' + uni(mediapathSeries))
-                mediapathSeries1 = (mediapathSeries + '/' + type1EXT)
-                mediapathSeason1 = (mediapathSeason + '/' + type1EXT) 
+                mediapathSeries1 = uni(mediapathSeries + '/' + type1EXT)
+                mediapathSeason1 = uni(mediapathSeason + '/' + type1EXT) 
 
                 if FileAccess.exists(mediapathSeries1):
                     self.getControl(508).setImage(mediapathSeries1)
@@ -769,8 +763,8 @@ class TVOverlay(xbmcgui.WindowXMLDialog):
                 else:
                     self.getControl(508).setImage(self.mediaPath + type1 + '.png')#default fallback art
 
-                mediapathSeries2 = (mediapathSeries + '/' + type2EXT) 
-                mediapathSeason2 = (mediapathSeason + '/' + type2EXT)
+                mediapathSeries2 = uni(mediapathSeries + '/' + type2EXT) 
+                mediapathSeason2 = uni(mediapathSeason + '/' + type2EXT)
                 
                 if FileAccess.exists(mediapathSeries2):
                     self.getControl(510).setImage(mediapathSeries2)
