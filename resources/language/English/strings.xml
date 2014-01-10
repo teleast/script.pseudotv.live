@@ -22,6 +22,7 @@
     <string id="30205">Color Overlay channel logo</string>
     <string id="30206">Channel Logo Folder</string>
     <string id="30214">Enable Dynamic Artwork</string>
+    <string id="30219">Enable Dynamic Artwork For LiveTV (requires API's)</string>
     <string id="30207">EPG Clock Mode</string>
     <string id="30208">Show Coming Up Next box</string>
     <string id="30216">Coming Up Artwork Type</string>
@@ -44,7 +45,6 @@
 	<string id="30404">XMLTV file location</string>
     <string id="30801">Enable PVR (Coming Soon)</string>
     <string id="30802">Record Folder</string>
-    <string id="30803">Enable Dynamic Artwork For LiveTV (requires API's)</string>
     <!-- <string id="30402">Include Strms</string> 	 -->
 <string id="30070">AutoTune</string>
     <string id="30071">Enable Autotune</string>

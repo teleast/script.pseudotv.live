@@ -98,21 +98,20 @@ class TVOverlay(xbmcgui.WindowXMLDialog):
         self.shortItemLength = 60
         self.runningActionChannel = 0
         self.channelDelay = 0
-        # Channelbugcolor = '0xC0C0C0C0'  #Cyan
-        Channelbugcolor = '0xFF0297eb'    #Holo
+        # self.channelbugcolor = '0xC0C0C0C0'  #Cyan
+        self.channelbugcolor = '0xFF0297eb'    #Holo
         try:
-            Channelbugcolor = int(self.getControl(100).getLabel(), 16)
-            if Channelbugcolor > 0:
-                Channelbugcolor = hex(Channelbugcolor)[2:]
-            self.logDebug('Channelbugcolor = ' + str(Channelbugcolor))
-        except: 
-            Channelbugcolor = '0xFF0297eb'   
+            self.channelbugcolor = int(self.getControl(100).getLabel(), 16)
+            if self.channelbugcolor > 0:
+                self.channelbugcolor = hex(self.channelbugcolor)[2:]
+            self.logDebug('self.channelbugcolor = ' + str(self.channelbugcolor))
+        except:
             pass
         
         for i in range(3):       
 
             # self.channelLabel.append(xbmcgui.ControlImage(50 + (50 * i), 50, 50, 50, IMAGES_LOC + 'solid.png', colorDiffuse=''))
-            self.channelLabel.append(xbmcgui.ControlImage(50 + (50 * i), 50, 50, 50, IMAGES_LOC + 'solid.png', colorDiffuse = Channelbugcolor))
+            self.channelLabel.append(xbmcgui.ControlImage(50 + (50 * i), 50, 50, 50, IMAGES_LOC + 'solid.png', colorDiffuse = self.channelbugcolor))
             self.addControl(self.channelLabel[i])
             self.channelLabel[i].setVisible(False)
 
@@ -854,7 +853,7 @@ class TVOverlay(xbmcgui.WindowXMLDialog):
                             self.getControl(510).setImage(self.mediaPath + type2 + '.png')
                             pass
 
-                    else:#fallback all artwork because there is no id
+                    else:#fallback all artwork because there is no urlimage
                         self.getControl(508).setImage(self.mediaPath + type1 + '.png')
                         self.getControl(510).setImage(self.mediaPath + type2 + '.png')
 
@@ -927,14 +926,14 @@ class TVOverlay(xbmcgui.WindowXMLDialog):
                             self.getControl(510).setImage(self.mediaPath + type2 + '.png')
                             pass
                        
-                    else:#fallback all artwork because there is no id
+                    else:#fallback all artwork because there is no urlimage
                         self.getControl(508).setImage(self.mediaPath + type1 + '.png')
                         self.getControl(510).setImage(self.mediaPath + type2 + '.png')
                 
-                else:#fallback all artwork because there is no id
+                else:#fallback all artwork because there is no imdb
                     self.getControl(508).setImage(self.mediaPath + type1 + '.png')
                     self.getControl(510).setImage(self.mediaPath + type2 + '.png')
-
+                    
             elif chtype == 9:
                 self.getControl(508).setImage(self.mediaPath + 'Overlay.Internet.508.png')
                 self.getControl(510).setImage(self.mediaPath + 'Overlay.Internet.510.png')
@@ -946,6 +945,10 @@ class TVOverlay(xbmcgui.WindowXMLDialog):
             elif chtype == 11:
                 self.getControl(508).setImage(self.mediaPath + 'Overlay.RSS.508.png')
                 self.getControl(510).setImage(self.mediaPath + 'Overlay.RSS.510.png')    
+            
+            elif chtype == 13:
+                self.getControl(508).setImage(self.mediaPath + 'Overlay.LastFM.508.png')
+                self.getControl(510).setImage(self.mediaPath + 'Overlay.LastFM.510.png')    
 
 
         #self.log('setshowposition ' + str(position))

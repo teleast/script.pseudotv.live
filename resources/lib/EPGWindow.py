@@ -142,7 +142,7 @@ class EPGWindow(xbmcgui.WindowXMLDialog):
             pass
         
         try:
-            focusedcolor = int(self.getControl(99).getLabel2(), 16)
+            focusedcolor = int(self.getControl(99).getLabel(), 16)
             if focusedcolor > 0:
                 self.focusedcolor = hex(focusedcolor)[2:]
                 self.logDebug("onInit, Self.focusedcolor = " + str(self.focusedcolor))
@@ -1059,11 +1059,11 @@ class EPGWindow(xbmcgui.WindowXMLDialog):
                             self.getControl(510).setImage(self.mediaPath + type2 + '.png')
                             pass
                             
-                    else:#fallback all artwork because there is no id
+                    else:#fallback all artwork because there is no urlimage
                         self.getControl(508).setImage(self.mediaPath + type1 + '.png')
                         self.getControl(510).setImage(self.mediaPath + type2 + '.png')
                 
-                else:#fallback all artwork because there is no id
+                else:#fallback all artwork because there is no imdb
                     self.getControl(508).setImage(self.mediaPath + type1 + '.png')
                     self.getControl(510).setImage(self.mediaPath + type2 + '.png')
 
@@ -1078,6 +1078,10 @@ class EPGWindow(xbmcgui.WindowXMLDialog):
             elif chtype == 11:
                 self.getControl(508).setImage(self.mediaPath + 'EPG.RSS.508.png')
                 self.getControl(510).setImage(self.mediaPath + 'EPG.RSS.510.png')
+            
+            elif chtype == 13:
+                self.getControl(508).setImage(self.mediaPath + 'EPG.LastFM.508.png')
+                self.getControl(510).setImage(self.mediaPath + 'EPG.LastFM.510.png')  
 
                 
                 # #TVDB

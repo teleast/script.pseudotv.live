@@ -23,6 +23,7 @@
         <setting id="EPGcolor_enabled" label="30213" type="enum" values="Disabled|Genre Type|Channel Type" default="0" />
         <setting id="EPGcolor_MovieGenre" subsetting="true" type="bool" label="30215" default="false" visible="eq(-1,1)" />
         <setting id="art.enable" label="30214" type="bool" default="true" /> 
+        <setting id="Live.art.enable" subsetting="true" visible="eq(-1,true)" label="30219" type="bool" default="false" /> 
         <setting id="ShowChannelBug" type="bool" label="30204" default="true"/>
     	<setting id="ColorEPG" type="bool" label="30217" default="true"/>
     	<setting id="ColorOverlay" type="bool" label="30205" default="false"/>
@@ -50,7 +51,6 @@
         <setting id="PVR_Enabled" label="30801" type="bool" default="false"/>
         <setting id="PVR_Folder" subsetting="true" label="30802" visible="eq(-1,true)" type="text" default="" />
         <setting id="IncludeIceLib" type="bool" label="30402" visible="eq(-1,!true)" default="true"/>
-        <setting id="Live.art.enable" label="30803" type="bool" default="false" /> 
     </category>
 <!--Autotune-->
     <category label="30070">
