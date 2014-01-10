@@ -10,18 +10,18 @@
     <animation effect="fade" time="700">WindowOpen</animation>
     <animation effect="fade" time="700">WindowClose</animation>
     <controls>
-        <!-- <control type="button" id="99"> -->
-            <!-- <visible>false</visible>			 -->
-            <!-- <label>0xFFFFFFFF</label><!--un-focused text color-->
-        <!-- </control> -->
-        <!-- <control type="button" id="100"> -->
-            <!-- <visible>false</visible>			 -->
-            <!-- <label>0xFFc89008</label><!--focused text color-->
-        <!-- </control> -->
-<!--         <control type="button" id="105">
+        <control type="button" id="99">
             <visible>false</visible>			
-            <label>font14.ttf</label><!--text font-->
-        <!-- </control> -->
+            <label>0xFFFFFFFF</label><!--focused text color-->
+        </control>
+        <control type="button" id="100">
+            <visible>false</visible>			
+            <label>0xFFFFFFFF</label><!--text color-->
+        </control>
+        <control type="button" id="105">
+            <visible>false</visible>			
+            <label>font14</label><!--text font-->
+        </control>
 <!--    <control type="button" id="106">
             <visible>false</visible>			
             <label>3</label><!--EPG row count, 6 default-->
@@ -411,11 +411,13 @@
 <!--Dark Column-->    
        <control type="image" id="503">
             <description>Show Channel Icon</description>
-            <posx>10</posx>
-            <posy>530</posy>
-            <width>200</width>
-            <height>100</height>
+            <posx>-40</posx>
+            <posy>680</posy>
+            <width>180</width>
+            <height>40</height>
             <aspectratio>keep</aspectratio>
+            <align>left</align>
+            <aligny>center</aligny>
         </control>              
         <control type="grouplist">            
             <posx>0</posx>
@@ -904,11 +906,11 @@
         <control type="label">
             <description>Time</description>
             <posx>1255</posx>
-            <posy>675</posy>
+            <posy>680</posy>
             <width min="40" max="200">auto</width>
             <height>80</height>
             <label>$INFO[System.Time]</label>
-            <font>font30</font>
+            <font>font16</font>
             <align>right</align>
             <textcolor>FFFFFFFF</textcolor>
         </control>

@@ -5,7 +5,11 @@
         <posx>0</posx>
         <posy>0</posy>
     </coordinates>
-    <controls>      
+    <controls>     
+<!--         <control type="button" id="100">
+            <visible>false</visible>			
+            <label>0xC0C0C0C0</label> --><!--Channel Num Image Diffusion-->
+<!--         </control>     -->
         <control type="image" id="101">
             <description>Background</description>
             <posx>0</posx>
@@ -293,28 +297,16 @@
                 <texture>hulu.png</texture>
                 <visible>[substring(Player.FilenameAndPath,hulu)]</visible>
             </control>-->
-			<control type="image" id="506">
-                <description>Channel Logo</description>
-                <posx>10</posx>
-                <posy>490</posy>
-                <width>125</width>
-                <height>125</height>
-    			<aspectratio>keep</aspectratio>
-            </control>
-
-        
-        
-        
-<!--         
         <control type="image" id="506">
-            <description>Channel Logo2</description>
-            <posx>160</posx>
-            <posy>437</posy>
-            <width>130</width>
-            <height>75</height>
+            <description>Show Channel Icon</description>
+            <posx>-40</posx>
+            <posy>680</posy>
+            <width>180</width>
+            <height>40</height>
             <aspectratio>keep</aspectratio>
+            <align>left</align>
+            <aligny>center</aligny>
         </control>
-        
         <control type="label" id="512">
             <description>Weather</description>
             <posx>17</posx>
