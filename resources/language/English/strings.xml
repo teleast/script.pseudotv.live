@@ -78,11 +78,10 @@
     <string id="30504">Enable Commercials</string>
     <string id="30505">Select Commercials Folder</string>
     <string id="30506">Internet Commercials Configuration</string>
-    <string id="30515">Advertolog.com</string>
+    <string id="30519">Enable Advertolog.com</string>
     <string id="30507">Youtube Commercials Configuration (info,type,limit)</string>
     <string id="30517">Preferred Internet Commercial Resolution</string>
-    <string id="30516">iSpot.tv</string>
-    <string id="30518">Enable Recent Ads</string>
+    <string id="30518">Enable iSpot.tv, Select Ad Type</string>
     <string id="30508">Number of Commercials Between Shows</string>
     <string id="30509">Enable Trailers</string>
     <string id="30510">Select Trailer Folder</string>
@@ -112,5 +111,6 @@
     <string id="30994">Plugin Validation Level</string>
     <string id="30992">Disable Goggle Analytic's</string>
     <string id="30993">Enable Debugging</string>
+    <string id="30995">Clear BCT Cache</string>
     <string id="30999">Optimize Configurations (Coming Soon)</string>
 </strings>

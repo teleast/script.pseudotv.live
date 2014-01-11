@@ -87,13 +87,12 @@
         <setting label="30503" id="numbumpers" type="enum" visible="eq(-2,true)" values="Auto|1|2|3|4|5" default="1"/>
         <setting label="30504" id="commercials" type="enum" values="Disabled|Local|Internet*|Youtube" default="0"/>
         <setting label="30505" id="commercialsfolder" type="folder" visible="eq(-1,1)" default=""/>
-        <setting label="30515" type="lsep" visible="eq(-2,2)"/>
-        <setting label="30506" id="commercialsconfig" type="text" visible="eq(-3,2)" default="United States,All"/>
-        <setting label="30517" id="commercialsResolution" type="enum" visible="eq(-4,2)" values="360p|480p|720p" default="0"/>
-        <setting label="30516" type="lsep" visible="eq(-5,2)"/>
-        <setting label="30518" id="commercialsispot" visible="eq(-6,2)" type="bool" default="false"/>
-        <setting label="30507" id="commercialschannel" type="text" visible="eq(-7,3)" default="PLlwhS0wsCzbRNwJ4Epac4rHJJ_6m1JaBm,2,50"/>
-        <setting label="30508" id="numcommercials" type="enum" visible="!eq(-8,0)" values="Auto|1|2|3|4|5" default="1"/>
+        <setting label="30519" id="Advertolog" visible="eq(-2,2)" type="bool" default="false"/>
+        <setting label="30506" id="commercialsconfig" type="text" visible="eq(-1,true)" default="United States,All"/>
+        <setting label="30517" id="commercialsResolution" type="enum" visible="eq(-2,true)" values="360p|480p|720p" default="0"/>
+        <setting label="30518" id="iSpot" visible="eq(-5,2)" type="enum" values="Disabled|Recent Ads|Superbowl 2013 Ads" default="0"/>
+        <setting label="30507" id="commercialschannel" type="text" visible="eq(-6,3)" default="PLlwhS0wsCzbRNwJ4Epac4rHJJ_6m1JaBm,2,50"/>
+        <setting label="30508" id="numcommercials" type="enum" visible="!eq(-7,0)" values="Auto|1|2|3|4|5" default="1"/>
         <setting label="30509" id="trailers" type="enum" values="Disabled|Local|Internet|Youtube" default="0"/>
         <setting label="30510" id="trailersfolder" type="folder" visible="eq(-1,1)" default="" />
         <setting label="30511" id="trailersgenre" type="bool" visible="eq(-2,2)" default="false" />
@@ -130,6 +129,7 @@
         <setting id="plugin_ok_level" type="enum" label="30994" values="Low|High" default="0"/>
         <setting id="ga_disable" type="bool" label="30992" default="false"/>
         <setting id="enable_Debug" type="bool" label="30993" default="false"/>
+        <setting id="ClearBCT" type="bool" label="30995" default="false"/>
         <setting type="action" label="30999" action="RunScript($CWD/defrag.py)"/>
     </category>
 </settings>

@@ -3733,10 +3733,6 @@ class ChannelList:
         thefile = thepath + thefile
         now = datetime.datetime.today()
         self.logDebug("Cache_ok, now = " + str(now))
-        # if REAL_SETTINGS.getSetting('ForceChannelReset') == "true":
-            # REAL_SETTINGS.setSetting('ForceChannelReset', 'false')
-            # CacheExpired = True
-        # else:
         try:
             fle = FileAccess.open(thefile, "r")
             cacheDate = str(fle.readlines()[0])

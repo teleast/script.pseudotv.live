@@ -23,6 +23,7 @@ import httplib
 import urllib
 import urllib2 
 import sys, re
+import shutil
 
 from resources.lib.Globals import *
 from urllib import urlopen
@@ -59,6 +60,16 @@ if xbmcgui.Window(10000).getProperty("PseudoTVRunning") != "True":
 #                shouldrestart = True
 
     if shouldrestart == False:
+        if REAL_SETTINGS.getSetting("ClearBCT") == "true":
+            Path1 = (xbmc.translatePath(os.path.join(BCT_LOC)))
+            
+            if os.path.exists(Path1):
+                shutil.rmtree(BCT_LOC)
+                REAL_SETTINGS.setSetting('ClearBCT', "false")
+            else:
+                REAL_SETTINGS.setSetting('ClearBCT', "false")
+
+                
         if REAL_SETTINGS.getSetting("Donor_Enabled") == "true" and REAL_SETTINGS.getSetting("Donor_Update") == "true":   
             try:
                 UserPass = REAL_SETTINGS.getSetting('Donor_UP')
