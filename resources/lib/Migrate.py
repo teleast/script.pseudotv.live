@@ -128,7 +128,10 @@ class Migrate:
         chanlist.background = True
         # chanlist.needsreset = True
         chanlist.makenewlists = True
-        self.Donor = Donor()
+        try:
+            self.Donor = Donor()
+        except:
+            pass
         settingsFile = xbmc.translatePath(os.path.join(Globals.SETTINGS_LOC, 'settings2.xml'))
         
         if  FileAccess.exists(settingsFile):
