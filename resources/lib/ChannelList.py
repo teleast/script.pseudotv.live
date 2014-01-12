@@ -35,7 +35,7 @@ try:
 except:
    import storageserverdummy as StorageServer
 
-   cache = StorageServer.StorageServer("script.pseudotv.live", 24) # (Your plugin name, Cache time in hours)
+  # cache = StorageServer.StorageServer("script.pseudotv.live", 24) # (Your plugin name, Cache time in hours)
 
 from urllib import unquote
 from urllib import urlopen
