@@ -80,7 +80,10 @@ class ChannelList:
         self.cached_json_detailed_TV = []
         self.cached_json_detailed_Movie = []
         self.cached_json_detailed_trailers = []
-        self.Donor = Donor()
+        try:
+            self.Donor = Donor()
+        except:
+            pass
 
     def readConfig(self):
         self.channelResetSetting = int(REAL_SETTINGS.getSetting("ChannelResetSetting"))
